@@ -1,0 +1,27 @@
+inputs:
+  dpi_long_path: "/Users/rahuljha/Desktop/coding projects/DPI/outputs/dpi_ready_long_with_imputation.csv"
+  indicator_mapping_path: "/Users/rahuljha/Desktop/coding projects/DPI/data/indicator_mapping.csv"
+  coverage_by_indicator_path: "/Users/rahuljha/Desktop/coding projects/DPI/outputs/coverage_by_indicator.csv"
+
+gating:
+  year_min: 2014
+  year_max: 2025
+  min_pct_observed: 70.0
+  max_imputation_share: 0.35
+  min_overlap_years: 5
+  min_panel_coverage: 0.40
+  min_per_domain: 4
+  max_per_domain: 8
+  correlation_prune_threshold: 0.90
+  max_vif: 10.0
+
+output:
+  data_dir: "./data"
+  country_output_file: "dclo_country_year.csv"
+  intake_csv_file: "dpi_indicator_intake.csv"
+  selected_json_file: "dpi_selected_indicators_by_domain.json"
+
+scoring:
+  use_confidence_weighting: true
+  min_domains_high_trust: 4
+  min_domains_medium_trust: 3

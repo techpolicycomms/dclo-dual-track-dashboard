@@ -1,0 +1,19 @@
+{
+  "state_track": {
+    "passed": true,
+    "issues": [],
+    "rows": 95,
+    "year_min": 2014,
+    "year_max": 2019
+  },
+  "country_track": {
+    "passed": false,
+    "issues": [
+      "country_sparse_core_domain:SKL:1"
+    ],
+    "rows": 532,
+    "year_min": 2014,
+    "year_max": 2025
+  },
+  "overall_passed": false
+}

@@ -1,0 +1,20 @@
+sources:
+  - name: sample_dataset_1
+    resource_id: "replace-with-resource-id"
+    format: "json"
+    limit: 100
+    fields:
+      - state
+      - district
+      - year
+      - value
+
+  - name: sample_dataset_2
+    resource_id: "replace-with-second-resource-id"
+    format: "json"
+    limit: 100
+    fields:
+      - state
+      - category
+      - month
+      - metric

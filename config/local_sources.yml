@@ -1,0 +1,36 @@
+sources:
+  - source_id: upi_transactions
+    path: "/Users/rahuljha/Downloads/upi-transactions-p2p-and-p2m.csv"
+    enabled: true
+
+  - source_id: internet_banking
+    path: "/Users/rahuljha/Downloads/internet-banking-statistics.csv"
+    enabled: true
+
+  - source_id: nafis
+    path: "/Users/rahuljha/Downloads/nafis.csv"
+    enabled: true
+
+  - source_id: nfhs
+    path: "/Users/rahuljha/Downloads/national-family-health-survey.csv"
+    enabled: true
+
+  - source_id: shg_profile
+    path: "/Users/rahuljha/Downloads/shg-financial-and-member-profile-details.csv"
+    enabled: true
+
+output:
+  data_dir: "./data"
+  output_file: "dclo_state_year.csv"
+
+dpi_context:
+  enabled: true
+  source_path: "/Users/rahuljha/Desktop/coding projects/DPI/outputs/dpi_v2_scores_all_years.csv"
+  economy_name: "India"
+  merge_fields:
+    - dpi_composite_v2
+    - dpi_confidence_score
+    - coverage_ratio
+    - imputation_share
+  context_alpha: 0.15
+  include_context_adjusted_score: true

@@ -1,0 +1,34 @@
+datasets:
+  - name: rbi_upi_monthly
+    enabled: true
+    source_type: local_file
+    path: "/Users/rahuljha/Downloads/upi-transactions-p2p-and-p2m.csv"
+    format: csv
+    field_select:
+      - month
+      - total_vol
+      - total_val
+      - p2p_vol
+      - p2m_vol
+
+  - name: rbi_internet_banking
+    enabled: true
+    source_type: local_file
+    path: "/Users/rahuljha/Downloads/internet-banking-statistics.csv"
+    format: csv
+    field_select:
+      - month
+      - bank_name
+      - no_of_transactions
+      - amt_of_transactions
+      - active_users
+
+  - name: rbi_table_direct_download_example
+    enabled: false
+    source_type: download_url
+    url: "https://example.com/rbi-table.csv"
+    format: csv
+    field_select: []
+
+output:
+  data_dir: "./data"
