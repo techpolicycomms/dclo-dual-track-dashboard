@@ -12,6 +12,10 @@ STATE_DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_
 COUNTRY_DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_country_year.csv"
 EXPLAINER_PATH = Path(__file__).resolve().parents[1] / "docs" / "dashboard-explainer.md"
 STANDARD_CHECKS_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_standard_checks_summary.json"
+CAUSAL_COEF_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_causal_coefficients.csv"
+CAUSAL_FIT_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_causal_model_fit.csv"
+RANK_STABILITY_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_rank_stability.csv"
+METHOD_COMPARISON_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_method_comparison.csv"
 STATE_DOMAIN_SCORE_COLUMNS = [
     "ACC_score",
     "SKL_score",
@@ -83,9 +87,16 @@ def load_explainer(path: Path) -> str:
 @st.cache_data
 def load_standard_checks(path: Path) -> dict:
     if not path.exists():
-        return {"overall_passed": None, "state_track": {}, "country_track": {}}
+        return {"overall_passed": None, "state_track": {}, "country_track": {}, "causal_track": {}}
     with open(path, "r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+@st.cache_data
+def load_optional_csv(path: Path) -> pd.DataFrame:
+    if not path.exists():
+        return pd.DataFrame()
+    return pd.read_csv(path)
 
 
 def render_kpis(df_year: pd.DataFrame, full_df: pd.DataFrame, selected_year: int, entity_col: str, score_col: str) -> None:
@@ -248,6 +259,110 @@ def render_downloads(df_year: pd.DataFrame, score_col: str, entity_col: str, suf
     )
 
 
+def render_causal_forest(coeff_df: pd.DataFrame) -> None:
+    if coeff_df.empty:
+        st.info("Causal coefficient output not available.")
+        return
+    use = coeff_df.copy()
+    use["label"] = use["spec_id"].astype(str) + " | " + use["predictor"].astype(str)
+    use = use.sort_values(["spec_kind", "spec_id", "predictor"])
+    fig = px.scatter(
+        use,
+        x="coef",
+        y="label",
+        color="spec_kind",
+        error_x=1.96 * pd.to_numeric(use["std_error"], errors="coerce"),
+        title="Causal Evidence: Coefficients with 95% intervals",
+        labels={"coef": "Estimated effect", "label": "Specification / Predictor", "spec_kind": "Spec type"},
+    )
+    fig.add_vline(x=0.0, line_dash="dash")
+    fig.update_layout(height=500)
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def render_model_fit_table(fit_df: pd.DataFrame) -> None:
+    if fit_df.empty:
+        st.info("Causal model-fit output not available.")
+        return
+    show_cols = [
+        "spec_kind",
+        "spec_id",
+        "outcome",
+        "lag",
+        "lead",
+        "n_obs",
+        "n_entities",
+        "n_years",
+        "r2_within",
+        "residual_std",
+    ]
+    available = [col for col in show_cols if col in fit_df.columns]
+    st.dataframe(fit_df[available].sort_values(["spec_kind", "spec_id"]), use_container_width=True)
+
+
+def render_rank_stability(stability_df: pd.DataFrame, selected_year: int) -> None:
+    if stability_df.empty:
+        st.info("Rank stability output not available.")
+        return
+    if "year" not in stability_df.columns:
+        st.info("Rank stability file missing `year` column.")
+        return
+    use = stability_df[stability_df["year"] == selected_year].copy()
+    if use.empty:
+        st.info(f"No stability rows available for {selected_year}.")
+        return
+    top = use.sort_values("top_k_freq", ascending=False).head(20)
+    fig = px.bar(
+        top.sort_values("top_k_freq", ascending=True),
+        x="top_k_freq",
+        y="economy",
+        orientation="h",
+        title=f"Top-K Stability Frequency ({selected_year})",
+        labels={"top_k_freq": "Share of perturbation draws in top-K", "economy": "Economy"},
+    )
+    fig.update_layout(height=600)
+    st.plotly_chart(fig, use_container_width=True)
+
+    spread = use.sort_values("sd_rank", ascending=False).head(20)
+    fig2 = px.bar(
+        spread.sort_values("sd_rank", ascending=True),
+        x="sd_rank",
+        y="economy",
+        orientation="h",
+        title=f"Rank Uncertainty (SD of Rank, {selected_year})",
+        labels={"sd_rank": "Rank SD across perturbations", "economy": "Economy"},
+    )
+    fig2.update_layout(height=600)
+    st.plotly_chart(fig2, use_container_width=True)
+
+
+def render_method_comparison(method_df: pd.DataFrame) -> None:
+    if method_df.empty:
+        st.info("Method-comparison output not available.")
+        return
+    value_cols = [
+        "rho_baseline_vs_weighted",
+        "rho_baseline_vs_causal",
+        "rho_weighted_vs_causal",
+    ]
+    available = [col for col in value_cols if col in method_df.columns]
+    if not available:
+        st.info("Method-comparison columns missing.")
+        return
+    long = method_df.melt(id_vars=["year"], value_vars=available, var_name="metric", value_name="rho")
+    fig = px.line(
+        long,
+        x="year",
+        y="rho",
+        color="metric",
+        markers=True,
+        title="Method Agreement Over Time (Spearman rho)",
+        labels={"year": "Year", "rho": "Spearman rho", "metric": "Comparison"},
+    )
+    fig.update_yaxes(range=[-1.0, 1.0])
+    st.plotly_chart(fig, use_container_width=True)
+
+
 def main() -> None:
     st.title("DCLO Dashboard")
     st.caption("Digital Capability for Life Outcomes (Dual-Track: India State-Year + Country-Year)")
@@ -264,6 +379,10 @@ def main() -> None:
 
     explainer_text = load_explainer(EXPLAINER_PATH)
     checks = load_standard_checks(STANDARD_CHECKS_PATH)
+    causal_coef_df = load_optional_csv(CAUSAL_COEF_PATH)
+    causal_fit_df = load_optional_csv(CAUSAL_FIT_PATH)
+    rank_stability_df = load_optional_csv(RANK_STABILITY_PATH)
+    method_comparison_df = load_optional_csv(METHOD_COMPARISON_PATH)
     required_columns = {"state_name", "year", "DCLO_score"}
     if not required_columns.issubset(state_df.columns):
         st.error("State dataset missing required columns: state_name, year, DCLO_score")
@@ -330,6 +449,12 @@ def main() -> None:
             st.caption("Active issues")
             for issue in issues[:5]:
                 st.write(f"- {issue}")
+        if track != "India State-Year":
+            c_issues = checks.get("causal_track", {}).get("issues", [])
+            if c_issues:
+                st.caption("Causal-track issues")
+                for issue in c_issues[:5]:
+                    st.write(f"- {issue}")
         st.divider()
         st.header("Methodology")
         unit_text = "state-year (India track)" if track == "India State-Year" else "country-year (DPI comparative track)"
@@ -338,9 +463,9 @@ def main() -> None:
                 [
                     "- Construct: **DCLO (Digital Capability for Life Outcomes)**",
                     f"- Unit: **{unit_text}**",
-                    "- Baseline approach: **formative multidimensional composite**",
-                    "- Domain scores: z-score normalized indicators aggregated by domain",
-                    "- Overall DCLO: mean of available domain scores",
+                    "- Measurement: **formative multidimensional composite**",
+                    "- Causal layer (country track): **panel model with lagged predictors**",
+                    "- Interpretation: prioritize **effect sizes and uncertainty** over raw ranks",
                 ]
             )
         )
@@ -358,25 +483,74 @@ def main() -> None:
             "Use rankings with caution and review `data/gold/dclo_standard_checks_summary.md`."
         )
 
-    render_kpis(df_year, working_df, selected_year, entity_col=entity_col, score_col=score_col)
+    tab_measure, tab_causal, tab_robust = st.tabs(["Measurement", "Causal Evidence", "Robustness"])
 
-    col1, col2 = st.columns([1.25, 1])
-    with col1:
-        rank_title = "State Ranking by DCLO Score" if track == "India State-Year" else "Country Ranking by DCLO Score"
-        render_ranking(df_year, entity_col=entity_col, score_col=score_col, title=rank_title)
-    with col2:
-        render_domain_profile(df_year, selected_profile_entity, entity_col=entity_col, domain_cols=domain_cols)
+    with tab_measure:
+        render_kpis(df_year, working_df, selected_year, entity_col=entity_col, score_col=score_col)
+        col1, col2 = st.columns([1.25, 1])
+        with col1:
+            rank_title = "State Ranking by DCLO Score" if track == "India State-Year" else "Country Ranking by DCLO Score"
+            render_ranking(df_year, entity_col=entity_col, score_col=score_col, title=rank_title)
+        with col2:
+            render_domain_profile(df_year, selected_profile_entity, entity_col=entity_col, domain_cols=domain_cols)
 
-    if track == "India State-Year":
-        render_state_map(df_year)
-        render_trends(working_df, selected_entities, entity_col=entity_col, score_col=score_col, title="DCLO Trend Over Time (Selected States)")
-        render_domain_heatmap(df_year, entity_col=entity_col, domain_cols=domain_cols, title="Domain Score Heatmap by State")
-        render_downloads(df_year, score_col=score_col, entity_col=entity_col, suffix="state_year")
-    else:
-        render_country_map(df_year, score_col=score_col)
-        render_trends(working_df, selected_entities, entity_col=entity_col, score_col=score_col, title="DCLO Trend Over Time (Selected Countries)")
-        render_domain_heatmap(df_year, entity_col=entity_col, domain_cols=domain_cols, title="Domain Score Heatmap by Country")
-        render_downloads(df_year, score_col=score_col, entity_col=entity_col, suffix="country_year")
+        if track == "India State-Year":
+            render_state_map(df_year)
+            render_trends(
+                working_df,
+                selected_entities,
+                entity_col=entity_col,
+                score_col=score_col,
+                title="DCLO Trend Over Time (Selected States)",
+            )
+            render_domain_heatmap(df_year, entity_col=entity_col, domain_cols=domain_cols, title="Domain Score Heatmap by State")
+            render_downloads(df_year, score_col=score_col, entity_col=entity_col, suffix="state_year")
+        else:
+            render_country_map(df_year, score_col=score_col)
+            render_trends(
+                working_df,
+                selected_entities,
+                entity_col=entity_col,
+                score_col=score_col,
+                title="DCLO Trend Over Time (Selected Countries)",
+            )
+            render_domain_heatmap(df_year, entity_col=entity_col, domain_cols=domain_cols, title="Domain Score Heatmap by Country")
+            render_downloads(df_year, score_col=score_col, entity_col=entity_col, suffix="country_year")
+
+    with tab_causal:
+        if track == "India State-Year":
+            st.info("Causal evidence tab is currently available for the country-year comparative track.")
+        else:
+            st.caption(
+                "Interpret coefficients as conditional associations from the configured panel model. "
+                "They are not guaranteed causal unless identification assumptions hold."
+            )
+            render_causal_forest(causal_coef_df)
+            st.subheader("Specification Fit")
+            render_model_fit_table(causal_fit_df)
+            if not causal_coef_df.empty:
+                pvals = pd.to_numeric(causal_coef_df["p_value_norm_approx"], errors="coerce")
+                sig = causal_coef_df[pvals < 0.05].copy()
+                st.subheader("Statistically Significant Terms (p < 0.05)")
+                st.dataframe(sig.sort_values(["spec_kind", "spec_id", "p_value_norm_approx"]), use_container_width=True)
+
+    with tab_robust:
+        if track == "India State-Year":
+            st.info("Robustness diagnostics are currently generated for the country-year comparative track.")
+        else:
+            render_method_comparison(method_comparison_df)
+            render_rank_stability(rank_stability_df, selected_year=selected_year)
+            st.subheader("Caveats and Identification Notes")
+            st.markdown(
+                "\n".join(
+                    [
+                        "- Fixed effects absorb time-invariant country confounders but not all time-varying confounders.",
+                        "- Lag structure reduces simultaneity risk but does not fully prove causality.",
+                        "- Placebo and robustness diagnostics should be reviewed before policy interpretation.",
+                        "- Use this tab jointly with Model QA status from the sidebar.",
+                    ]
+                )
+            )
 
     with st.expander("About this dashboard", expanded=False):
         st.markdown(explainer_text)

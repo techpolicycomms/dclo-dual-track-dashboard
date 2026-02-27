@@ -15,5 +15,13 @@
     "year_min": 2014,
     "year_max": 2025
   },
+  "causal_track": {
+    "passed": false,
+    "issues": [
+      "causal_placebo_not_weaker_than_baseline"
+    ],
+    "rows": 9,
+    "n_specs": 5
+  },
   "overall_passed": false
 }

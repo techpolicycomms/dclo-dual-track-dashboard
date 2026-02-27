@@ -35,16 +35,19 @@ The dashboard aggregates indicators into six domains:
 - SHG financial and member profile data (chunk-processed large file)
 - DPI long panel and indicator mapping outputs for country-year comparative mode
 
-## Panel-by-panel guide
+## Tab-by-tab guide
 
-- **KPI cards**: mean score, coverage, top and bottom entity for selected year.
-- **Ranking chart**: compares states or countries (depending on selected track).
-- **Map**:
-  - state map for India track
-  - country choropleth for comparative track
-- **Trend chart**: trajectories for selected states/countries over time.
-- **Domain heatmap**: reveals strengths/weaknesses by domain.
-- **Domain profile**: domain detail for one selected entity.
+- **Measurement**:
+  - KPI cards, ranking, map, trend, domain heatmap, and profile.
+  - Use this tab for descriptive benchmarking.
+- **Causal Evidence** (country track):
+  - coefficient forest plot with 95% confidence intervals,
+  - specification fit table,
+  - significant-term view (`p < 0.05`, normal approximation).
+- **Robustness** (country track):
+  - method-agreement trend over time,
+  - rank stability frequencies and rank uncertainty,
+  - identification caveats summary.
 
 ## Method summary
 
@@ -53,10 +56,12 @@ The dashboard aggregates indicators into six domains:
 - Overall DCLO is the mean of available domain scores.
 - Missing values are handled by using available indicators/domains rather than forcing imputation in this dashboard layer.
 - Country-year track uses a quality-gated indicator intake (`core_formative/context/exclude`) before scoring.
+- Country-year causal layer estimates lagged panel associations with entity/year fixed effects and clustered uncertainty.
 
 ## Important caveats
 
-- This is a **comparative composite**, not a causal impact estimate.
+- Measurement tab is a **comparative composite**, not by itself a causal impact estimate.
+- Causal Evidence tab is assumption-dependent; coefficients should be interpreted with the robustness tab and QA checks together.
 - Coverage and comparability differ across sources and years.
 - Some indicators are proxy measures due to administrative data availability.
 - SHG integration includes state-level fallback for sparse year matches; interpret year-specific changes with caution.
@@ -64,6 +69,7 @@ The dashboard aggregates indicators into six domains:
 
 ## Recommended use
 
-- Use for benchmarking and diagnostic targeting.
-- Pair with domain view before making policy conclusions.
-- Cross-check important findings with raw indicator tables and metadata notes.
+- Use Measurement for benchmarking and diagnostics.
+- Use Causal Evidence for effect-size interpretation, not rank-only interpretation.
+- Use Robustness before final policy claims.
+- Cross-check important findings with raw indicator tables, QA summaries, and methodology notes.

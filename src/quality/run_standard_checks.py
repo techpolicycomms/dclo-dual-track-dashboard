@@ -86,15 +86,82 @@ def build_country_checks(country_df: pd.DataFrame, intake_df: pd.DataFrame) -> D
     }
 
 
+def build_causal_checks(coeff_df: pd.DataFrame, fit_df: pd.DataFrame, stability_df: pd.DataFrame) -> Dict[str, object]:
+    issues: List[str] = []
+    if coeff_df.empty:
+        return {"passed": False, "issues": ["missing_causal_coefficients"], "rows": 0}
+    if fit_df.empty:
+        return {"passed": False, "issues": ["missing_causal_model_fit"], "rows": 0}
+
+    req_coef = ["spec_kind", "spec_id", "outcome", "predictor", "coef", "std_error", "p_value_norm_approx"]
+    req_fit = ["spec_kind", "spec_id", "n_obs", "n_entities", "n_years", "r2_within"]
+    miss_coef = check_required_columns(coeff_df, req_coef)
+    miss_fit = check_required_columns(fit_df, req_fit)
+    if miss_coef:
+        issues.append(f"causal_missing_coefficient_columns:{','.join(miss_coef)}")
+    if miss_fit:
+        issues.append(f"causal_missing_fit_columns:{','.join(miss_fit)}")
+        return {"passed": False, "issues": issues, "rows": int(len(coeff_df))}
+
+    # Minimum panel adequacy checks.
+    baseline_fit = fit_df[fit_df["spec_kind"].astype(str).eq("baseline")]
+    if baseline_fit.empty:
+        issues.append("causal_missing_baseline_spec")
+    else:
+        b_row = baseline_fit.iloc[0]
+        if int(pd.to_numeric(b_row.get("n_obs"), errors="coerce")) < 200:
+            issues.append("causal_low_n_obs_baseline")
+        if int(pd.to_numeric(b_row.get("n_entities"), errors="coerce")) < 25:
+            issues.append("causal_low_n_entities_baseline")
+        if int(pd.to_numeric(b_row.get("n_years"), errors="coerce")) < 8:
+            issues.append("causal_low_n_years_baseline")
+
+    # Placebo should generally be weaker than baseline in this framework.
+    base_sig = coeff_df[
+        coeff_df["spec_kind"].astype(str).eq("baseline")
+        & coeff_df["p_value_norm_approx"].apply(pd.to_numeric, errors="coerce").lt(0.05)
+    ]
+    placebo_sig = coeff_df[
+        coeff_df["spec_kind"].astype(str).eq("placebo")
+        & coeff_df["p_value_norm_approx"].apply(pd.to_numeric, errors="coerce").lt(0.05)
+    ]
+    if not base_sig.empty and len(placebo_sig) >= len(base_sig):
+        issues.append("causal_placebo_not_weaker_than_baseline")
+
+    # Stability diagnostics should not be degenerate.
+    if stability_df.empty:
+        issues.append("causal_missing_rank_stability")
+    else:
+        if "sd_rank" not in stability_df.columns:
+            issues.append("causal_missing_stability_sd_rank")
+        else:
+            mean_sd = pd.to_numeric(stability_df["sd_rank"], errors="coerce").mean()
+            if pd.notna(mean_sd) and float(mean_sd) <= 0:
+                issues.append("causal_degenerate_rank_stability")
+
+    return {
+        "passed": len(issues) == 0,
+        "issues": issues,
+        "rows": int(len(coeff_df)),
+        "n_specs": int(fit_df["spec_id"].nunique()),
+    }
+
+
 def run(data_dir: str) -> None:
     root = Path(data_dir)
     state_path = root / "dclo_state_year.csv"
     country_path = root / "dclo_country_year.csv"
     intake_path = root / "dpi_indicator_intake.csv"
+    causal_coef_path = root / "dclo_causal_coefficients.csv"
+    causal_fit_path = root / "dclo_causal_model_fit.csv"
+    rank_stability_path = root / "dclo_rank_stability.csv"
 
     state_df = pd.read_csv(state_path) if state_path.exists() else pd.DataFrame()
     country_df = pd.read_csv(country_path) if country_path.exists() else pd.DataFrame()
     intake_df = pd.read_csv(intake_path) if intake_path.exists() else pd.DataFrame()
+    causal_coef_df = pd.read_csv(causal_coef_path) if causal_coef_path.exists() else pd.DataFrame()
+    causal_fit_df = pd.read_csv(causal_fit_path) if causal_fit_path.exists() else pd.DataFrame()
+    rank_stability_df = pd.read_csv(rank_stability_path) if rank_stability_path.exists() else pd.DataFrame()
 
     state_result = (
         build_state_checks(state_df)
@@ -106,11 +173,15 @@ def run(data_dir: str) -> None:
         if not country_df.empty
         else {"passed": False, "issues": ["missing_country_output"], "rows": 0}
     )
+    causal_result = build_causal_checks(causal_coef_df, causal_fit_df, rank_stability_df)
 
     summary = {
         "state_track": state_result,
         "country_track": country_result,
-        "overall_passed": bool(state_result.get("passed", False) and country_result.get("passed", False)),
+        "causal_track": causal_result,
+        "overall_passed": bool(
+            state_result.get("passed", False) and country_result.get("passed", False) and causal_result.get("passed", False)
+        ),
     }
 
     out_json = root / "dclo_standard_checks_summary.json"
@@ -141,6 +212,18 @@ def run(data_dir: str) -> None:
         ]
     )
     for issue in country_result.get("issues", []):
+        lines.append(f"  - {issue}")
+    lines.extend(
+        [
+            "",
+            "## Causal Track",
+            f"- passed: `{causal_result.get('passed')}`",
+            f"- coefficient_rows: `{causal_result.get('rows', 0)}`",
+            f"- n_specs: `{causal_result.get('n_specs', 'n/a')}`",
+            "- issues:",
+        ]
+    )
+    for issue in causal_result.get("issues", []):
         lines.append(f"  - {issue}")
     out_md.write_text("\n".join(lines), encoding="utf-8")
 
