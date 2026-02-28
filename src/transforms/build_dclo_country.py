@@ -59,7 +59,17 @@ def infer_dclo_domain(row: pd.Series) -> str:
     code = str(row.get("indicator_code", "")).strip().lower()
     text = f"{name} {code}"
 
-    if "skill" in text or "literacy" in text or "education" in text:
+    if (
+        "skill" in text
+        or "literacy" in text
+        or "education" in text
+        or "school" in text
+        or "enroll" in text
+        or "enrollment" in text
+        or "training" in text
+        or "learning" in text
+        or code.startswith("wb_se.")
+    ):
         return "SKL"
     if "internet" in text or "mobile" in text or "broadband" in text or "connect" in text:
         return "ACC"

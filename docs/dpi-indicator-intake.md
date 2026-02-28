@@ -27,7 +27,8 @@ This file classifies indicators for country-year DCLO into `core_formative`, `co
 | WB_SP.POP.GROW | Population growth (annual %) | sustainability_resilience | 10 | 5 | 0.0 | OUT | 100.0 | 0.08650519031141868 | 111.65051903114187 | core_formative | False |
 | WB_AG.LND.AGRI.ZS | Agricultural land (% of land area) | sustainability_resilience | 9 | 5 | 0.0 | OUT | 100.0 | 0.07785467128027682 | 110.53546712802768 | core_formative | False |
 | WB_EG.CFT.ACCS.ZS | Access to clean fuels and technologies for cooking (% of population) | sustainability_resilience | 9 | 5 | 0.0 | OUT | 100.0 | 0.07785467128027682 | 110.53546712802768 | core_formative | False |
-| WB_SE.ADT.LITR.ZS | Literacy rate adult total (% of people ages 15 and above) | affordability_inclusion | 6 | 2 | 0.0 | SKL | 100.0 | 0.012110726643598616 | 102.91107266435986 | core_formative | False |
+| WB_SE.TER.ENRR | School enrollment tertiary (% gross) | affordability_inclusion | 10 | 5 | 0.0 | SKL | 100.0 | 0.07958477508650519 | 110.95847750865052 | core_formative | False |
+| WB_SE.SEC.ENRR | School enrollment secondary (% gross) | affordability_inclusion | 10 | 4 | 0.0 | SKL | 100.0 | 0.06055363321799308 | 108.95536332179931 | core_formative | False |
 | WTO_SERVICES_POSTAL_COURIER_EXPORTS | Services exports (postal and courier) | trust_governance | 11 | 47 | 0.0 | SRV | 100.0 | 0.8944636678200693 | 196.8963667820069 | core_formative | True |
 | WTO_SERVICES_TOTAL_EXPORTS | Services exports (total) | access_usage | 11 | 47 | 0.0 | SRV | 100.0 | 0.8944636678200693 | 196.8963667820069 | core_formative | True |
 | WTO_SERVICES_TRANSPORT_EXPORTS | Services exports (transport) | access_usage | 11 | 47 | 0.0 | SRV | 100.0 | 0.8944636678200693 | 196.8963667820069 | core_formative | True |
@@ -41,9 +42,7 @@ This file classifies indicators for country-year DCLO into `core_formative`, `co
 | WB_FB.BNK.CAPA.ZS | Bank capital to assets ratio | trust_governance | 9 | 5 | 0.0 | AGR | 100.0 | 0.07439446366782007 | 110.18944636678201 | exclude | False |
 | WB_NY.GNP.PCAP.CD | GNI per capita (current US$) | affordability_inclusion | 10 | 5 | 0.0 | ECO | 100.0 | 0.08650519031141868 | 111.65051903114187 | exclude | False |
 | WB_SP.URB.TOTL.IN.ZS | Urban population (% of total population) | affordability_inclusion | 10 | 5 | 0.0 | ECO | 100.0 | 0.08650519031141868 | 111.65051903114187 | exclude | False |
-| WB_SE.TER.ENRR | School enrollment tertiary (% gross) | affordability_inclusion | 10 | 5 | 0.0 | ECO | 100.0 | 0.07958477508650519 | 110.95847750865052 | exclude | False |
 | WB_SP.DYN.LE00.IN | Life expectancy at birth (years) | affordability_inclusion | 9 | 5 | 0.0 | ECO | 100.0 | 0.07785467128027682 | 110.53546712802768 | exclude | False |
-| WB_SE.SEC.ENRR | School enrollment secondary (% gross) | affordability_inclusion | 10 | 4 | 0.0 | ECO | 100.0 | 0.06055363321799308 | 108.95536332179931 | exclude | False |
 | WB_AG.LND.FRST.ZS | Forest area (% of land area) | sustainability_resilience | 9 | 5 | 0.0 | OUT | 100.0 | 0.07785467128027682 | 110.53546712802768 | exclude | False |
 | WB_EG.ELC.ACCS.ZS | Access to electricity (% of population) | sustainability_resilience | 9 | 5 | 0.0 | OUT | 100.0 | 0.07785467128027682 | 110.53546712802768 | exclude | False |
 | WB_EG.USE.ELEC.KH.PC | Electric power consumption (kWh per capita) | sustainability_resilience | 9 | 5 | 0.0 | OUT | 100.0 | 0.07785467128027682 | 110.53546712802768 | exclude | False |
@@ -57,6 +56,7 @@ This file classifies indicators for country-year DCLO into `core_formative`, `co
 | GHG_PROFILE_CO2_KTCO2E | CO2 emissions (kt CO2e, profile) | sustainability_resilience | 8 | 5 | 0.0 | OUT | 0.0 | 0.04498269896193772 | 6.998269896193772 | exclude | False |
 | GHG_PROFILE_N2O_KTCO2E | N2O emissions (kt CO2e, profile) | sustainability_resilience | 8 | 5 | 0.0 | OUT | 0.0 | 0.04498269896193772 | 6.998269896193772 | exclude | False |
 | GHG_PROFILE_TOTAL_NO_LULUCF_KTCO2E | GHG emissions without LULUCF (kt CO2e, profile) | sustainability_resilience | 8 | 5 | 0.0 | OUT | 0.0 | 0.04498269896193772 | 6.998269896193772 | exclude | False |
+| WB_SE.ADT.LITR.ZS | Literacy rate adult total (% of people ages 15 and above) | affordability_inclusion | 6 | 2 | 0.0 | SKL | 100.0 | 0.012110726643598616 | 102.91107266435986 | exclude | False |
 | GTMI_CGSI | GovTech Core Government Systems Index | access_usage | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | exclude | False |
 | GTMI_DCEI | GovTech Digital Citizen Engagement Index | trust_governance | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | exclude | False |
 | GTMI_GTEI | GovTech GovTech Enablers Index | trust_governance | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | exclude | False |

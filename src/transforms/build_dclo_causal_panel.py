@@ -141,6 +141,19 @@ def add_leadged_columns(df: pd.DataFrame, vars_to_lead: List[str], lead: int, en
     return out
 
 
+def permute_columns_within_time(df: pd.DataFrame, columns: List[str], time_col: str, seed: int) -> pd.DataFrame:
+    out = df.copy()
+    rng = np.random.default_rng(seed)
+    for year, idx in out.groupby(time_col).groups.items():
+        row_idx = np.array(list(idx))
+        for col in columns:
+            vals = out.loc[row_idx, col].to_numpy()
+            if len(vals) <= 1:
+                continue
+            out.loc[row_idx, col] = vals[rng.permutation(len(vals))]
+    return out
+
+
 def fit_spec(data: pd.DataFrame, spec: Dict[str, object], panel_cfg: Dict[str, object], spec_kind: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     entity_col = str(panel_cfg.get("entity_col", "economy"))
     time_col = str(panel_cfg.get("time_col", "year"))
@@ -153,6 +166,8 @@ def fit_spec(data: pd.DataFrame, spec: Dict[str, object], panel_cfg: Dict[str, o
     cluster_col = str(spec.get("cluster_col", entity_col))
     lag = int(spec.get("lag", 0))
     lead = int(spec.get("lead", 0))
+    permute_within_year = bool(spec.get("permute_within_year", False))
+    permute_seed = int(spec.get("permute_seed", 0))
 
     work = data.copy()
     regressors: List[str] = []
@@ -167,6 +182,9 @@ def fit_spec(data: pd.DataFrame, spec: Dict[str, object], panel_cfg: Dict[str, o
         regressors.extend([f"{c}_lead{lead}" for c in controls])
     else:
         regressors.extend(predictors + controls)
+
+    if permute_within_year and regressors:
+        work = permute_columns_within_time(work, regressors, time_col=time_col, seed=permute_seed)
 
     coef_df, fit_metrics, pred_df = fit_panel_ols(
         work,

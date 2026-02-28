@@ -56,13 +56,15 @@ robustness_specs:
     cluster_col: "economy"
 
 placebo_spec:
-  id: "placebo_future_predictor"
+  id: "placebo_permuted_l1"
   outcome: "SRV_score"
   predictors:
     - "DCLO_score"
   controls:
     - "model_trust_tier_numeric"
-  lead: 1
+  lag: 1
+  permute_within_year: true
+  permute_seed: 2026
   entity_fixed_effects: true
   time_fixed_effects: true
   cluster_col: "economy"
