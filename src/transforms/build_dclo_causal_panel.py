@@ -1,11 +1,23 @@
 import argparse
 import math
+import sys
 from pathlib import Path
 from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
 import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from quality.audit_logger import AuditLogger
+from quality.data_verification import (
+    VerificationResult,
+    verify_minimum_sample_size,
+    verify_no_nulls,
+    verify_panel_balance,
+    verify_required_columns,
+    verify_year_coverage,
+)
 
 
 def read_config(config_path: str) -> Dict[str, object]:
@@ -20,6 +32,12 @@ def normal_p_value(t_stat: float) -> float:
 
 
 def two_way_demean(df: pd.DataFrame, columns: List[str], entity_col: str, time_col: str) -> pd.DataFrame:
+    """Two-way demeaning for entity and time fixed effects.
+
+    Implements the within-transformation for two-way FE per
+    Wooldridge (2010, Ch. 10). Removes entity means and time means,
+    then adds back the grand mean to preserve scale.
+    """
     out = df[columns].copy()
     grand_mean = out.mean()
     entity_mean = df.groupby(entity_col)[columns].transform("mean")
@@ -28,6 +46,11 @@ def two_way_demean(df: pd.DataFrame, columns: List[str], entity_col: str, time_c
 
 
 def cluster_robust_covariance(X: np.ndarray, residuals: np.ndarray, clusters: np.ndarray) -> np.ndarray:
+    """Cluster-robust (sandwich) covariance estimator.
+
+    Implements the CRVE per Cameron & Miller (2015) with finite-sample
+    correction factor G/(G-1) * (N-1)/(N-K) where G = number of clusters.
+    """
     xtx_inv = np.linalg.pinv(X.T @ X)
     meat = np.zeros((X.shape[1], X.shape[1]))
     unique_clusters = pd.Series(clusters).dropna().unique().tolist()
@@ -60,6 +83,11 @@ def fit_panel_ols(
     use_time_fe: bool,
     cluster_col: str,
 ) -> Tuple[pd.DataFrame, Dict[str, float], pd.DataFrame]:
+    """Fit panel OLS with optional TWFE and cluster-robust inference.
+
+    Returns coefficient estimates, fit statistics (including degrees of
+    freedom and F-statistic per Wooldridge 2010), and prediction DataFrame.
+    """
     needed_cols = list(dict.fromkeys([entity_col, time_col, cluster_col, outcome] + regressors))
     use = df[needed_cols].copy()
     for col in [outcome] + regressors:
@@ -108,16 +136,62 @@ def fit_panel_ols(
         }
     )
 
+    # Compute fit statistics including degrees of freedom and F-statistic
+    n_obs = int(len(use))
+    n_entities = int(use[entity_col].nunique())
+    n_years = int(use[time_col].nunique())
+    n_clusters = int(use[cluster_col].nunique())
+    k_regressors = len(regressors)
+
+    # Degrees of freedom accounting for absorbed fixed effects
+    df_absorbed = 0
+    if use_entity_fe:
+        df_absorbed += n_entities - 1
+    if use_time_fe:
+        df_absorbed += n_years - 1
+    df_residual = max(n_obs - k_regressors - df_absorbed, 1)
+
     y_bar = float(np.mean(y))
     ss_tot = float(np.sum((y - y_bar) ** 2))
     ss_res = float(np.sum(residuals**2))
     r2_within = np.nan if ss_tot == 0 else 1.0 - (ss_res / ss_tot)
+
+    # F-statistic: joint significance of all regressors
+    # F = (R2 / k) / ((1 - R2) / (N - k - 1))
+    if pd.notna(r2_within) and r2_within < 1.0 and df_residual > 0 and k_regressors > 0:
+        f_stat = (r2_within / k_regressors) / ((1.0 - r2_within) / df_residual)
+    else:
+        f_stat = np.nan
+
+    # Adjusted R-squared
+    if pd.notna(r2_within) and (n_obs - k_regressors - 1) > 0:
+        r2_adj = 1.0 - (1.0 - r2_within) * (n_obs - 1) / (n_obs - k_regressors - 1)
+    else:
+        r2_adj = np.nan
+
+    # Durbin-Watson statistic for residual autocorrelation
+    if len(residuals) > 1:
+        dw_num = float(np.sum(np.diff(residuals) ** 2))
+        dw_den = float(np.sum(residuals**2))
+        durbin_watson = dw_num / dw_den if dw_den > 0 else np.nan
+    else:
+        durbin_watson = np.nan
+
     fit = {
-        "n_obs": int(len(use)),
-        "n_entities": int(use[entity_col].nunique()),
-        "n_years": int(use[time_col].nunique()),
+        "n_obs": n_obs,
+        "n_entities": n_entities,
+        "n_years": n_years,
+        "n_clusters": n_clusters,
+        "k_regressors": k_regressors,
+        "df_residual": df_residual,
+        "df_absorbed_fe": df_absorbed,
         "r2_within": float(r2_within) if not pd.isna(r2_within) else np.nan,
+        "r2_adjusted": float(r2_adj) if not pd.isna(r2_adj) else np.nan,
+        "f_statistic": float(f_stat) if not pd.isna(f_stat) else np.nan,
         "residual_std": float(np.std(residuals, ddof=1)) if len(residuals) > 1 else np.nan,
+        "durbin_watson": float(durbin_watson) if not pd.isna(durbin_watson) else np.nan,
+        "ss_residual": float(ss_res),
+        "ss_total": float(ss_tot),
     }
 
     pred_df = use[[entity_col, time_col]].copy()
@@ -154,7 +228,8 @@ def permute_columns_within_time(df: pd.DataFrame, columns: List[str], time_col: 
     return out
 
 
-def fit_spec(data: pd.DataFrame, spec: Dict[str, object], panel_cfg: Dict[str, object], spec_kind: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def fit_spec(data: pd.DataFrame, spec: Dict[str, object], panel_cfg: Dict[str, object], spec_kind: str,
+             audit: AuditLogger) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     entity_col = str(panel_cfg.get("entity_col", "economy"))
     time_col = str(panel_cfg.get("time_col", "year"))
     spec_id = str(spec.get("id", "spec"))
@@ -184,6 +259,7 @@ def fit_spec(data: pd.DataFrame, spec: Dict[str, object], panel_cfg: Dict[str, o
         regressors.extend(predictors + controls)
 
     if permute_within_year and regressors:
+        audit.record_random_seed(f"placebo_{spec_id}", permute_seed)
         work = permute_columns_within_time(work, regressors, time_col=time_col, seed=permute_seed)
 
     coef_df, fit_metrics, pred_df = fit_panel_ols(
@@ -220,13 +296,31 @@ def fit_spec(data: pd.DataFrame, spec: Dict[str, object], panel_cfg: Dict[str, o
         ]
     )
 
+    audit.record_stage(
+        f"fit_{spec_kind}_{spec_id}",
+        rows_in=len(work),
+        rows_out=fit_metrics.get("n_obs", 0),
+        rows_dropped=len(work) - fit_metrics.get("n_obs", 0),
+        notes=(
+            f"R2_within={fit_metrics.get('r2_within', 'n/a'):.4f}, "
+            f"F={fit_metrics.get('f_statistic', 'n/a')}, "
+            f"df_resid={fit_metrics.get('df_residual', 'n/a')}, "
+            f"DW={fit_metrics.get('durbin_watson', 'n/a')}"
+        ) if fit_metrics else "Empty model",
+    )
+
     if not pred_df.empty:
         pred_df = pred_df.rename(columns={entity_col: "entity", time_col: "year"})
         pred_df.insert(0, "spec_id", spec_id)
     return coef_df, fit_df, pred_df
 
 
-def build_rank_stability(country_df: pd.DataFrame, draws: int, top_k: int, seed: int) -> pd.DataFrame:
+def build_rank_stability(country_df: pd.DataFrame, draws: int, top_k: int, seed: int,
+                         audit: AuditLogger) -> pd.DataFrame:
+    audit.record_random_seed("rank_stability", seed)
+    audit.record_parameter("rank_stability_draws", draws)
+    audit.record_parameter("rank_stability_top_k", top_k)
+
     domain_cols = [col for col in ["ACC_score", "SKL_score", "SRV_score", "AGR_score", "ECO_score", "OUT_score"] if col in country_df.columns]
     use = country_df.dropna(subset=["economy", "year"]).copy()
     if not domain_cols or use.empty:
@@ -269,6 +363,9 @@ def build_rank_stability(country_df: pd.DataFrame, draws: int, top_k: int, seed:
         sd_rank=("rank", "std"),
         top_k_freq=("in_top_k", "mean"),
     )
+
+    audit.record_stage("build_rank_stability", rows_in=len(use), rows_out=len(stability), rows_dropped=0,
+                       notes=f"{draws} Dirichlet draws, top_k={top_k}, seed={seed}")
     return stability
 
 
@@ -309,7 +406,12 @@ def run(config_path: str) -> None:
     panel_cfg = cfg.get("panel", {})
     output_cfg = cfg.get("output", {})
 
+    audit = AuditLogger(pipeline_name="build_dclo_causal_panel")
+    audit.record_config(cfg)
+
     country_path = Path(str(inputs.get("country_scores_path", "./data/gold/dclo_country_year.csv")))
+    audit.record_input("country_scores", str(country_path))
+
     country_df = pd.read_csv(country_path)
     country_df["year"] = pd.to_numeric(country_df["year"], errors="coerce").astype("Int64")
 
@@ -318,7 +420,14 @@ def run(config_path: str) -> None:
     min_obs_per_entity = int(panel_cfg.get("min_obs_per_entity", 5))
     min_entities = int(panel_cfg.get("min_entities", 25))
 
+    # Verify input data
+    vr = VerificationResult("causal_input")
+    vr = verify_required_columns(country_df, [entity_col, time_col, "DCLO_score"], vr)
+    vr = verify_minimum_sample_size(country_df, min_rows=50, result=vr, context="country scores for causal panel")
+    vr = verify_no_nulls(country_df, [entity_col, time_col], vr)
+
     panel = country_df.copy()
+    rows_raw = len(panel)
     panel = panel.dropna(subset=[entity_col, time_col]).copy()
     if "model_trust_tier" in panel.columns and "model_trust_tier_numeric" not in panel.columns:
         panel["model_trust_tier_numeric"] = (
@@ -327,29 +436,46 @@ def run(config_path: str) -> None:
     counts = panel.groupby(entity_col)[time_col].nunique()
     keep_entities = counts[counts >= min_obs_per_entity].index.tolist()
     panel = panel[panel[entity_col].isin(keep_entities)].copy()
+
+    audit.record_stage("panel_filtering", rows_in=rows_raw, rows_out=len(panel),
+                       rows_dropped=rows_raw - len(panel),
+                       notes=f"Kept entities with >= {min_obs_per_entity} obs, {panel[entity_col].nunique()} entities remain")
+
     if panel[entity_col].nunique() < min_entities:
         raise ValueError(
             f"Insufficient panel coverage after filtering: found {panel[entity_col].nunique()} entities, require {min_entities}."
         )
+
+    # Panel balance verification
+    vr = verify_panel_balance(panel, entity_col, time_col, vr)
+    vr = verify_year_coverage(panel, time_col, 2000, 2030, vr)
+
+    audit.record_parameter("panel_entity_col", entity_col)
+    audit.record_parameter("panel_time_col", time_col)
+    audit.record_parameter("panel_min_obs_per_entity", min_obs_per_entity)
+    audit.record_parameter("panel_min_entities", min_entities)
+    audit.record_parameter("panel_n_entities", int(panel[entity_col].nunique()))
+    audit.record_parameter("panel_n_years", int(panel[time_col].nunique()))
+    audit.record_parameter("panel_n_obs", len(panel))
 
     all_coef: List[pd.DataFrame] = []
     all_fit: List[pd.DataFrame] = []
     all_pred: List[pd.DataFrame] = []
 
     baseline_spec = cfg.get("baseline_spec", {})
-    coef_df, fit_df, pred_df = fit_spec(panel, baseline_spec, panel_cfg=panel_cfg, spec_kind="baseline")
+    coef_df, fit_df, pred_df = fit_spec(panel, baseline_spec, panel_cfg=panel_cfg, spec_kind="baseline", audit=audit)
     all_coef.append(coef_df)
     all_fit.append(fit_df)
     all_pred.append(pred_df)
 
     for spec in cfg.get("robustness_specs", []):
-        coef_df, fit_df, pred_df = fit_spec(panel, spec, panel_cfg=panel_cfg, spec_kind="robustness")
+        coef_df, fit_df, pred_df = fit_spec(panel, spec, panel_cfg=panel_cfg, spec_kind="robustness", audit=audit)
         all_coef.append(coef_df)
         all_fit.append(fit_df)
         all_pred.append(pred_df)
 
     placebo_spec = cfg.get("placebo_spec", {})
-    coef_df, fit_df, pred_df = fit_spec(panel, placebo_spec, panel_cfg=panel_cfg, spec_kind="placebo")
+    coef_df, fit_df, pred_df = fit_spec(panel, placebo_spec, panel_cfg=panel_cfg, spec_kind="placebo", audit=audit)
     all_coef.append(coef_df)
     all_fit.append(fit_df)
     all_pred.append(pred_df)
@@ -371,6 +497,7 @@ def run(config_path: str) -> None:
             draws=int(stability_cfg.get("draws", 250)),
             top_k=int(stability_cfg.get("top_k", 20)),
             seed=int(stability_cfg.get("random_seed", 42)),
+            audit=audit,
         )
     else:
         rank_stability = pd.DataFrame()
@@ -392,10 +519,28 @@ def run(config_path: str) -> None:
     rank_stability.to_csv(stab_path, index=False)
     method_compare.to_csv(method_path, index=False)
 
+    for name, path in [("coefficients", coef_path), ("model_fit", fit_path),
+                       ("rank_stability", stab_path), ("method_comparison", method_path)]:
+        audit.record_output(name, str(path))
+
+    # Write verification report
+    import json
+    verification_path = gold_dir / "dclo_causal_panel_verification.json"
+    verification_path.write_text(json.dumps(vr.to_dict(), indent=2, default=str), encoding="utf-8")
+    audit.record_output("verification_report", str(verification_path))
+
+    # Write audit manifest
+    manifest_path = gold_dir / "dclo_causal_panel_audit_manifest.json"
+    audit.write_manifest(str(manifest_path))
+
     print(f"Wrote causal coefficients: {coef_path}")
     print(f"Wrote causal model fit: {fit_path}")
     print(f"Wrote rank stability: {stab_path}")
     print(f"Wrote method comparison: {method_path}")
+    print(f"Wrote verification report: {verification_path}")
+    print(f"Wrote audit manifest: {manifest_path}")
+    for line in audit.get_summary_lines():
+        print(f"  {line}")
 
 
 def main() -> None:

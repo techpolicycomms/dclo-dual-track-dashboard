@@ -16,6 +16,11 @@ CAUSAL_COEF_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo
 CAUSAL_FIT_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_causal_model_fit.csv"
 RANK_STABILITY_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_rank_stability.csv"
 METHOD_COMPARISON_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_method_comparison.csv"
+STATE_MANIFEST_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_state_year_audit_manifest.json"
+COUNTRY_MANIFEST_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_country_year_audit_manifest.json"
+CAUSAL_MANIFEST_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_causal_panel_audit_manifest.json"
+STATE_VERIFICATION_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_state_year_verification.json"
+COUNTRY_VERIFICATION_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_country_year_verification.json"
 STATE_DOMAIN_SCORE_COLUMNS = [
     "ACC_score",
     "SKL_score",
@@ -97,6 +102,133 @@ def load_optional_csv(path: Path) -> pd.DataFrame:
     if not path.exists():
         return pd.DataFrame()
     return pd.read_csv(path)
+
+
+@st.cache_data
+def load_audit_manifest(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+@st.cache_data
+def load_verification_report(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def render_provenance(manifest: dict, verification: dict, track_name: str) -> None:
+    """Render audit provenance and data verification details."""
+    if not manifest:
+        st.info(f"No audit manifest available for {track_name}.")
+        return
+
+    st.subheader("Pipeline Run Metadata")
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Pipeline", manifest.get("pipeline", "n/a"))
+    col2.metric("Run ID", manifest.get("run_id", "n/a"))
+    col3.metric("Status", manifest.get("status", "n/a"))
+
+    env = manifest.get("environment", {})
+    st.markdown(f"**Git Commit:** `{env.get('git_commit', 'not recorded')}`")
+    st.markdown(f"**Python:** `{env.get('python_version', 'n/a')[:60]}`")
+    st.markdown(f"**Platform:** `{env.get('platform', 'n/a')}`")
+
+    packages = env.get("packages", {})
+    if packages:
+        pkg_str = ", ".join(f"{k} {v}" for k, v in sorted(packages.items()))
+        st.markdown(f"**Key packages:** {pkg_str}")
+
+    # Input file checksums
+    inputs = manifest.get("inputs", {})
+    if inputs:
+        st.subheader("Input File Integrity (SHA-256)")
+        input_rows = []
+        for name, info in inputs.items():
+            input_rows.append({
+                "Source": name,
+                "Exists": info.get("exists", False),
+                "SHA-256": info.get("sha256", "n/a")[:16] + "..." if info.get("sha256") else "n/a",
+                "Size (bytes)": info.get("size_bytes", "n/a"),
+            })
+        st.dataframe(pd.DataFrame(input_rows), use_container_width=True)
+
+    # Pipeline stages
+    stages = manifest.get("stages", [])
+    if stages:
+        st.subheader("Pipeline Stage Accounting")
+        stage_rows = []
+        for s in stages:
+            stage_rows.append({
+                "Stage": s.get("stage", ""),
+                "Rows In": s.get("rows_in", ""),
+                "Rows Out": s.get("rows_out", ""),
+                "Dropped": s.get("rows_dropped", 0),
+                "Notes": s.get("notes", "")[:80],
+            })
+        st.dataframe(pd.DataFrame(stage_rows), use_container_width=True)
+
+        # Flag accounting warnings
+        warnings = [s for s in stages if "accounting_warning" in s]
+        if warnings:
+            st.warning(f"{len(warnings)} stage(s) have row-accounting discrepancies.")
+
+    # Output checksums
+    outputs = manifest.get("outputs", {})
+    if outputs:
+        st.subheader("Output File Integrity (SHA-256)")
+        out_rows = []
+        for name, info in outputs.items():
+            out_rows.append({
+                "Output": name,
+                "SHA-256": info.get("sha256", "n/a")[:16] + "..." if info.get("sha256") else "n/a",
+                "Size (bytes)": info.get("size_bytes", "n/a"),
+            })
+        st.dataframe(pd.DataFrame(out_rows), use_container_width=True)
+
+    # Analytical parameters
+    params = manifest.get("parameters", {})
+    if params:
+        st.subheader("Analytical Parameters")
+        for key, value in params.items():
+            if isinstance(value, (dict, list)):
+                st.markdown(f"**{key}:** `{json.dumps(value)[:100]}`")
+            else:
+                st.markdown(f"**{key}:** `{value}`")
+
+    # Random seeds
+    seeds = manifest.get("random_seeds", {})
+    if seeds:
+        st.subheader("Random Seeds (Reproducibility)")
+        for name, seed in seeds.items():
+            st.markdown(f"- **{name}:** `{seed}`")
+
+    # Verification report
+    if verification:
+        st.subheader("Data Verification Results")
+        for section_name, section in verification.items():
+            if isinstance(section, dict) and "checks_run" in section:
+                passed = section.get("passed", False)
+                icon = "PASS" if passed else "ISSUES"
+                st.markdown(
+                    f"**{section_name}:** {icon} "
+                    f"({section.get('checks_passed', 0)}/{section.get('checks_run', 0)} checks passed)"
+                )
+                issues = section.get("issues", [])
+                if issues:
+                    for issue in issues[:10]:
+                        severity = issue.get("severity", "info") if isinstance(issue, dict) else "info"
+                        msg = issue.get("message", str(issue)) if isinstance(issue, dict) else str(issue)
+                        st.markdown(f"  - [{severity}] {msg}")
 
 
 def render_kpis(df_year: pd.DataFrame, full_df: pd.DataFrame, selected_year: int, entity_col: str, score_col: str) -> None:
@@ -383,6 +515,11 @@ def main() -> None:
     causal_fit_df = load_optional_csv(CAUSAL_FIT_PATH)
     rank_stability_df = load_optional_csv(RANK_STABILITY_PATH)
     method_comparison_df = load_optional_csv(METHOD_COMPARISON_PATH)
+    state_manifest = load_audit_manifest(STATE_MANIFEST_PATH)
+    country_manifest = load_audit_manifest(COUNTRY_MANIFEST_PATH)
+    causal_manifest = load_audit_manifest(CAUSAL_MANIFEST_PATH)
+    state_verification = load_verification_report(STATE_VERIFICATION_PATH)
+    country_verification = load_verification_report(COUNTRY_VERIFICATION_PATH)
     required_columns = {"state_name", "year", "DCLO_score"}
     if not required_columns.issubset(state_df.columns):
         st.error("State dataset missing required columns: state_name, year, DCLO_score")
@@ -483,7 +620,7 @@ def main() -> None:
             "Use rankings with caution and review `data/gold/dclo_standard_checks_summary.md`."
         )
 
-    tab_measure, tab_causal, tab_robust = st.tabs(["Measurement", "Causal Evidence", "Robustness"])
+    tab_measure, tab_causal, tab_robust, tab_provenance = st.tabs(["Measurement", "Causal Evidence", "Robustness", "Data Provenance & Audit"])
 
     with tab_measure:
         render_kpis(df_year, working_df, selected_year, entity_col=entity_col, score_col=score_col)
@@ -551,6 +688,22 @@ def main() -> None:
                     ]
                 )
             )
+
+    with tab_provenance:
+        st.caption(
+            "Full audit trail for data verification and reproducibility. "
+            "Every pipeline run records input checksums (SHA-256), row-level accounting, "
+            "analytical parameters, random seeds, and output checksums. "
+            "This follows Christensen & Miguel (2018) transparency principles."
+        )
+        if track == "India State-Year":
+            render_provenance(state_manifest, state_verification, "India State-Year")
+        else:
+            render_provenance(country_manifest, country_verification, "Country-Year")
+            if causal_manifest:
+                st.divider()
+                st.header("Causal Panel Audit Trail")
+                render_provenance(causal_manifest, {}, "Causal Panel")
 
     with st.expander("About this dashboard", expanded=False):
         st.markdown(explainer_text)
