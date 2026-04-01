@@ -1,9 +1,32 @@
 import argparse
+import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
 import pandas as pd
 import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from quality.audit_logger import AuditLogger
+from quality.data_verification import (
+    VerificationResult,
+    verify_domain_coverage,
+    verify_minimum_sample_size,
+    verify_no_duplicates,
+    verify_no_nulls,
+    verify_numeric_coercion,
+    verify_outliers_iqr,
+    verify_required_columns,
+    verify_score_completeness,
+    verify_value_ranges,
+    verify_year_coverage,
+)
+
+
+DOMAIN_SCORE_COLUMNS = [
+    "ACC_score", "SKL_score", "SRV_score",
+    "AGR_score", "ECO_score", "OUT_score",
+]
 
 
 def read_config(config_path: str) -> Dict[str, object]:
@@ -29,13 +52,19 @@ def parse_year_from_period(value: object) -> Optional[int]:
 
 
 def zscore(series: pd.Series) -> pd.Series:
-    std = series.std(ddof=0)
+    """Z-score normalization using sample standard deviation (ddof=1).
+
+    Uses Bessel's correction (ddof=1) as standard for sample data per
+    Nunnally & Bernstein (1994). Falls back to zero vector when std is
+    zero or undefined (constant series).
+    """
+    std = series.std(ddof=1)
     if std == 0 or pd.isna(std):
         return pd.Series([0.0] * len(series), index=series.index)
     return (series - series.mean()) / std
 
 
-def apply_dpi_context(df: pd.DataFrame, config: Dict[str, object]) -> pd.DataFrame:
+def apply_dpi_context(df: pd.DataFrame, config: Dict[str, object], audit: AuditLogger) -> pd.DataFrame:
     context_cfg = config.get("dpi_context", {})
     if not context_cfg or not bool(context_cfg.get("enabled", False)):
         return df
@@ -48,6 +77,10 @@ def apply_dpi_context(df: pd.DataFrame, config: Dict[str, object]) -> pd.DataFra
     merge_fields = context_cfg.get("merge_fields", ["dpi_composite_v2", "dpi_confidence_score", "coverage_ratio"])
     include_context_adjusted = bool(context_cfg.get("include_context_adjusted_score", True))
     alpha = float(context_cfg.get("context_alpha", 0.15))
+
+    audit.record_input("dpi_context_source", source_path)
+    audit.record_parameter("dpi_context_alpha", alpha)
+    audit.record_parameter("dpi_context_economy", economy_name)
 
     ctx = pd.read_csv(source_path)
     if "economy" not in ctx.columns or "year" not in ctx.columns:
@@ -68,7 +101,10 @@ def apply_dpi_context(df: pd.DataFrame, config: Dict[str, object]) -> pd.DataFra
 
     out = df.copy()
     out["year"] = pd.to_numeric(out["year"], errors="coerce").astype("Int64")
+    rows_before = len(out)
     out = out.merge(ctx, on="year", how="left")
+    audit.record_stage("apply_dpi_context", rows_in=rows_before, rows_out=len(out), rows_dropped=0,
+                       notes=f"Left-joined DPI context for {economy_name}, alpha={alpha}")
 
     if "CTX_dpi_composite_v2" in out.columns:
         out["Z_CTX_dpi_composite_v2"] = zscore(out["CTX_dpi_composite_v2"])
@@ -105,20 +141,36 @@ def find_column_by_tokens(columns: List[str], include_tokens: List[str], exclude
     return None
 
 
-def aggregate_nfis(path: str) -> pd.DataFrame:
+def aggregate_nfis(path: str, audit: AuditLogger) -> pd.DataFrame:
+    audit.record_input("nafis", path)
     df = pd.read_csv(path)
+    rows_raw = len(df)
+
+    vr = VerificationResult("nafis")
     required = ["year", "state_name", "prop_hh_microfin", "hh_income_monthly", "prop_saving"]
-    for column in required:
-        if column not in df.columns:
-            raise ValueError(f"Missing expected NAFIS column: {column}")
+    vr = verify_required_columns(df, required, vr)
+    if not vr.passed:
+        raise ValueError(f"NAFIS verification failed: {vr.issues}")
 
     out = df[required].copy()
+
+    # Auditable numeric coercion
+    numeric_cols = ["prop_hh_microfin", "hh_income_monthly", "prop_saving"]
+    out, vr = verify_numeric_coercion(out, numeric_cols, vr)
+
     out["year"] = out["year"].map(parse_year_from_period)
+    rows_before_drop = len(out)
     out = out.dropna(subset=["state_name", "year"])
+    n_dropped_null_keys = rows_before_drop - len(out)
+
     out["state_name"] = out["state_name"].astype(str).str.strip()
-    out["ECO_prop_hh_microfin"] = pd.to_numeric(out["prop_hh_microfin"], errors="coerce")
-    out["OUT_hh_income_monthly"] = pd.to_numeric(out["hh_income_monthly"], errors="coerce")
-    out["OUT_prop_saving"] = pd.to_numeric(out["prop_saving"], errors="coerce")
+    out["ECO_prop_hh_microfin"] = out["prop_hh_microfin"]
+    out["OUT_hh_income_monthly"] = out["hh_income_monthly"]
+    out["OUT_prop_saving"] = out["prop_saving"]
+
+    # Range validation
+    out, vr = verify_value_ranges(out, vr)
+    vr = verify_outliers_iqr(out, ["ECO_prop_hh_microfin", "OUT_hh_income_monthly", "OUT_prop_saving"], vr)
 
     grouped = (
         out.groupby(["state_name", "year"], as_index=False)[
@@ -126,32 +178,47 @@ def aggregate_nfis(path: str) -> pd.DataFrame:
         ]
         .mean()
     )
+
+    audit.record_stage(
+        "aggregate_nafis",
+        rows_in=rows_raw,
+        rows_out=len(grouped),
+        rows_dropped=rows_raw - len(out),
+        drop_reasons={"null_keys": n_dropped_null_keys, **{d["reason"]: d["count"] for d in vr.dropped_records}},
+        notes=f"Verification: {vr.checks_passed}/{vr.checks_run} checks passed, {vr.n_issues} issues",
+    )
     return grouped
 
 
-def aggregate_nfhs(path: str) -> pd.DataFrame:
+def aggregate_nfhs(path: str, audit: AuditLogger) -> pd.DataFrame:
+    audit.record_input("nfhs", path)
     df = pd.read_csv(path)
-    required = [
-        "year",
-        "state_name",
-        "pop_hh_elec",
-        "fem_literacy",
-        "pop_hh_sf",
-        "fem_15_24_hyg_period",
-    ]
-    for column in required:
-        if column not in df.columns:
-            raise ValueError(f"Missing expected NFHS column: {column}")
+    rows_raw = len(df)
+
+    vr = VerificationResult("nfhs")
+    required = ["year", "state_name", "pop_hh_elec", "fem_literacy", "pop_hh_sf", "fem_15_24_hyg_period"]
+    vr = verify_required_columns(df, required, vr)
+    if not vr.passed:
+        raise ValueError(f"NFHS verification failed: {vr.issues}")
 
     out = df[required].copy()
-    out["year"] = out["year"].map(parse_year_from_period)
-    out = out.dropna(subset=["state_name", "year"])
-    out["state_name"] = out["state_name"].astype(str).str.strip()
+    numeric_cols = ["pop_hh_elec", "fem_literacy", "pop_hh_sf", "fem_15_24_hyg_period"]
+    out, vr = verify_numeric_coercion(out, numeric_cols, vr)
 
-    out["ACC_pop_hh_elec"] = pd.to_numeric(out["pop_hh_elec"], errors="coerce")
-    out["SKL_fem_literacy"] = pd.to_numeric(out["fem_literacy"], errors="coerce")
-    out["SRV_pop_hh_sf"] = pd.to_numeric(out["pop_hh_sf"], errors="coerce")
-    out["AGR_fem_15_24_hyg_period"] = pd.to_numeric(out["fem_15_24_hyg_period"], errors="coerce")
+    out["year"] = out["year"].map(parse_year_from_period)
+    rows_before_drop = len(out)
+    out = out.dropna(subset=["state_name", "year"])
+    n_dropped_null_keys = rows_before_drop - len(out)
+
+    out["state_name"] = out["state_name"].astype(str).str.strip()
+    out["ACC_pop_hh_elec"] = out["pop_hh_elec"]
+    out["SKL_fem_literacy"] = out["fem_literacy"]
+    out["SRV_pop_hh_sf"] = out["pop_hh_sf"]
+    out["AGR_fem_15_24_hyg_period"] = out["fem_15_24_hyg_period"]
+
+    # Range validation (percentage indicators)
+    out, vr = verify_value_ranges(out, vr)
+    vr = verify_outliers_iqr(out, ["ACC_pop_hh_elec", "SKL_fem_literacy", "SRV_pop_hh_sf", "AGR_fem_15_24_hyg_period"], vr)
 
     grouped = (
         out.groupby(["state_name", "year"], as_index=False)[
@@ -159,11 +226,22 @@ def aggregate_nfhs(path: str) -> pd.DataFrame:
         ]
         .mean()
     )
+
+    audit.record_stage(
+        "aggregate_nfhs",
+        rows_in=rows_raw,
+        rows_out=len(grouped),
+        rows_dropped=rows_raw - len(out),
+        drop_reasons={"null_keys": n_dropped_null_keys, **{d["reason"]: d["count"] for d in vr.dropped_records}},
+        notes=f"Verification: {vr.checks_passed}/{vr.checks_run} checks passed, {vr.n_issues} issues",
+    )
     return grouped
 
 
-def aggregate_shg_chunked(path: str, chunksize: int = 200000) -> pd.DataFrame:
+def aggregate_shg_chunked(path: str, audit: AuditLogger, chunksize: int = 200000) -> pd.DataFrame:
+    audit.record_input("shg_profile", path)
     aggregations: List[pd.DataFrame] = []
+    total_rows_read = 0
     header_df = pd.read_csv(path, nrows=0)
     normalized_to_original: Dict[str, str] = {
         normalize_column_name(col): col for col in header_df.columns
@@ -172,14 +250,7 @@ def aggregate_shg_chunked(path: str, chunksize: int = 200000) -> pd.DataFrame:
 
     state_col_norm = find_first_matching_column(
         normalized_cols,
-        [
-            "state_name",
-            "state",
-            "state_ut",
-            "state_ut_name",
-            "state_name_ut",
-            "state_or_ut",
-        ],
+        ["state_name", "state", "state_ut", "state_ut_name", "state_name_ut", "state_or_ut"],
     )
     year_col_norm = find_first_matching_column(
         normalized_cols,
@@ -189,6 +260,8 @@ def aggregate_shg_chunked(path: str, chunksize: int = 200000) -> pd.DataFrame:
     credit_col_norm = find_column_by_tokens(normalized_cols, ["loan", "credit", "saving", "finance", "amount"], ["id"])
 
     if state_col_norm is None:
+        audit.record_stage("aggregate_shg_chunked", rows_in=0, rows_out=0, rows_dropped=0,
+                           notes="No state column found in SHG file, skipping")
         return pd.DataFrame(columns=["state_name", "year", "AGR_shg_member_scale", "ECO_shg_credit_scale"])
 
     selected_norm_cols = [state_col_norm]
@@ -199,6 +272,7 @@ def aggregate_shg_chunked(path: str, chunksize: int = 200000) -> pd.DataFrame:
 
     for chunk in pd.read_csv(path, chunksize=chunksize, low_memory=False, usecols=usecols):
         chunk.columns = [normalize_column_name(col) for col in chunk.columns]
+        total_rows_read += len(chunk)
 
         work = pd.DataFrame()
         work["state_name"] = chunk[state_col_norm].astype(str).str.strip()
@@ -224,69 +298,96 @@ def aggregate_shg_chunked(path: str, chunksize: int = 200000) -> pd.DataFrame:
         aggregations.append(grouped)
 
     if not aggregations:
+        audit.record_stage("aggregate_shg_chunked", rows_in=total_rows_read, rows_out=0, rows_dropped=total_rows_read,
+                           notes="No metric columns found in SHG chunks")
         return pd.DataFrame(columns=["state_name", "year", "AGR_shg_member_scale", "ECO_shg_credit_scale"])
 
     out = pd.concat(aggregations, ignore_index=True)
     metric_cols = [col for col in ["AGR_shg_member_scale", "ECO_shg_credit_scale"] if col in out.columns]
     out = out.groupby(["state_name", "year"], dropna=False, as_index=False)[metric_cols].sum()
     out["year"] = out["year"].map(parse_year_from_period)
+
+    audit.record_stage(
+        "aggregate_shg_chunked",
+        rows_in=total_rows_read,
+        rows_out=len(out),
+        rows_dropped=total_rows_read - len(out),
+        notes=f"Processed in {chunksize}-row chunks",
+    )
     return out
 
 
-def aggregate_national_upi(path: str) -> pd.DataFrame:
+def aggregate_national_upi(path: str, audit: AuditLogger) -> pd.DataFrame:
+    audit.record_input("upi_transactions", path)
     df = pd.read_csv(path)
+    rows_raw = len(df)
+
+    vr = VerificationResult("upi_transactions")
     required = ["month", "total_vol", "total_val", "p2p_vol", "p2m_vol"]
-    for column in required:
-        if column not in df.columns:
-            raise ValueError(f"Missing expected UPI column: {column}")
+    vr = verify_required_columns(df, required, vr)
+    if not vr.passed:
+        raise ValueError(f"UPI verification failed: {vr.issues}")
 
     out = df[required].copy()
+    numeric_cols = ["total_vol", "total_val", "p2p_vol", "p2m_vol"]
+    out, vr = verify_numeric_coercion(out, numeric_cols, vr)
+
     out["year"] = out["month"].map(parse_year_from_period)
-    for col in ["total_vol", "total_val", "p2p_vol", "p2m_vol"]:
-        out[col] = pd.to_numeric(out[col], errors="coerce")
+    out, vr = verify_value_ranges(out, vr)
 
     grouped = (
-        out.groupby("year", as_index=False)[["total_vol", "total_val", "p2p_vol", "p2m_vol"]]
+        out.groupby("year", as_index=False)[numeric_cols]
         .sum()
-        .rename(
-            columns={
-                "total_vol": "NAT_upi_total_vol",
-                "total_val": "NAT_upi_total_val",
-                "p2p_vol": "NAT_upi_p2p_vol",
-                "p2m_vol": "NAT_upi_p2m_vol",
-            }
-        )
+        .rename(columns={
+            "total_vol": "NAT_upi_total_vol",
+            "total_val": "NAT_upi_total_val",
+            "p2p_vol": "NAT_upi_p2p_vol",
+            "p2m_vol": "NAT_upi_p2m_vol",
+        })
     )
+
+    audit.record_stage("aggregate_national_upi", rows_in=rows_raw, rows_out=len(grouped),
+                       rows_dropped=rows_raw - len(grouped),
+                       notes=f"Verification: {vr.checks_passed}/{vr.checks_run} checks passed")
     return grouped
 
 
-def aggregate_national_internet_banking(path: str) -> pd.DataFrame:
+def aggregate_national_internet_banking(path: str, audit: AuditLogger) -> pd.DataFrame:
+    audit.record_input("internet_banking", path)
     df = pd.read_csv(path)
+    rows_raw = len(df)
+
+    vr = VerificationResult("internet_banking")
     required = ["month", "no_of_transactions", "amt_of_transactions", "active_users"]
-    for column in required:
-        if column not in df.columns:
-            raise ValueError(f"Missing expected internet banking column: {column}")
+    vr = verify_required_columns(df, required, vr)
+    if not vr.passed:
+        raise ValueError(f"Internet banking verification failed: {vr.issues}")
 
     out = df[required].copy()
+    numeric_cols = ["no_of_transactions", "amt_of_transactions", "active_users"]
+    out, vr = verify_numeric_coercion(out, numeric_cols, vr)
+
     out["year"] = out["month"].map(parse_year_from_period)
-    for col in ["no_of_transactions", "amt_of_transactions", "active_users"]:
-        out[col] = pd.to_numeric(out[col], errors="coerce")
+    out, vr = verify_value_ranges(out, vr)
 
     grouped = (
-        out.groupby("year", as_index=False)[["no_of_transactions", "amt_of_transactions", "active_users"]]
+        out.groupby("year", as_index=False)[numeric_cols]
         .sum()
-        .rename(
-            columns={
-                "no_of_transactions": "NAT_ib_no_of_transactions",
-                "amt_of_transactions": "NAT_ib_amt_of_transactions",
-                "active_users": "NAT_ib_active_users",
-            }
-        )
+        .rename(columns={
+            "no_of_transactions": "NAT_ib_no_of_transactions",
+            "amt_of_transactions": "NAT_ib_amt_of_transactions",
+            "active_users": "NAT_ib_active_users",
+        })
     )
+
+    audit.record_stage("aggregate_national_internet_banking", rows_in=rows_raw, rows_out=len(grouped),
+                       rows_dropped=rows_raw - len(grouped),
+                       notes=f"Verification: {vr.checks_passed}/{vr.checks_run} checks passed")
     return grouped
 
 
-def compute_domain_scores(df: pd.DataFrame) -> pd.DataFrame:
+def compute_domain_scores(df: pd.DataFrame, audit: AuditLogger) -> pd.DataFrame:
+    rows_in = len(df)
     indicator_columns: List[str] = [
         "ACC_pop_hh_elec",
         "SKL_fem_literacy",
@@ -318,8 +419,19 @@ def compute_domain_scores(df: pd.DataFrame) -> pd.DataFrame:
             continue
         df[domain_score] = df[available].mean(axis=1, skipna=True)
 
-    domain_scores = [key for key in domain_map.keys()]
+    domain_scores = list(domain_map.keys())
     df["DCLO_score"] = df[domain_scores].mean(axis=1, skipna=True)
+
+    # Record which indicators actually contributed
+    indicators_used = [col for col in indicator_columns if col in df.columns]
+    audit.record_parameter("indicators_used_in_scoring", indicators_used)
+    audit.record_parameter("n_indicators_used", len(indicators_used))
+    audit.record_parameter("normalization_method", "z-score (ddof=1, Bessel corrected)")
+    audit.record_parameter("domain_aggregation", "equal-weighted mean of z-scored indicators")
+    audit.record_parameter("composite_aggregation", "equal-weighted mean of domain scores")
+
+    audit.record_stage("compute_domain_scores", rows_in=rows_in, rows_out=len(df), rows_dropped=0,
+                       notes=f"Used {len(indicators_used)}/{len(indicator_columns)} indicators across {len(domain_map)} domains")
     return df
 
 
@@ -327,28 +439,40 @@ def run(config_path: str) -> None:
     config = read_config(config_path)
     enabled_sources = get_enabled_sources(config)
 
+    audit = AuditLogger(pipeline_name="build_dclo_local")
+    audit.record_config(config)
+
     if "nafis" not in enabled_sources or "nfhs" not in enabled_sources:
         raise ValueError("Both 'nafis' and 'nfhs' sources must be enabled for baseline DCLO")
 
-    base = aggregate_nfis(enabled_sources["nafis"])
-    nfhs = aggregate_nfhs(enabled_sources["nfhs"])
+    base = aggregate_nfis(enabled_sources["nafis"], audit)
+    nfhs = aggregate_nfhs(enabled_sources["nfhs"], audit)
 
     merged = base.merge(nfhs, on=["state_name", "year"], how="outer")
+    audit.record_stage("merge_nafis_nfhs", rows_in=len(base) + len(nfhs), rows_out=len(merged), rows_dropped=0,
+                       notes="Outer join on (state_name, year)")
 
     if "upi_transactions" in enabled_sources:
-        upi = aggregate_national_upi(enabled_sources["upi_transactions"])
+        upi = aggregate_national_upi(enabled_sources["upi_transactions"], audit)
+        rows_before = len(merged)
         merged = merged.merge(upi, on="year", how="left")
+        audit.record_stage("merge_upi", rows_in=rows_before, rows_out=len(merged), rows_dropped=0,
+                           notes="Left join national UPI on year")
 
     if "internet_banking" in enabled_sources:
-        ib = aggregate_national_internet_banking(enabled_sources["internet_banking"])
+        ib = aggregate_national_internet_banking(enabled_sources["internet_banking"], audit)
+        rows_before = len(merged)
         merged = merged.merge(ib, on="year", how="left")
+        audit.record_stage("merge_internet_banking", rows_in=rows_before, rows_out=len(merged), rows_dropped=0,
+                           notes="Left join national internet banking on year")
 
     if "shg_profile" in enabled_sources:
-        shg = aggregate_shg_chunked(enabled_sources["shg_profile"])
+        shg = aggregate_shg_chunked(enabled_sources["shg_profile"], audit)
         shg = shg.dropna(subset=["state_name"])
         shg["state_name"] = shg["state_name"].astype(str).str.strip()
         shg["year"] = pd.to_numeric(shg["year"], errors="coerce").astype("Int64")
         merged["year"] = pd.to_numeric(merged["year"], errors="coerce").astype("Int64")
+        rows_before = len(merged)
         merged = merged.merge(shg, on=["state_name", "year"], how="left")
         shg_metric_cols = [col for col in ["AGR_shg_member_scale", "ECO_shg_credit_scale"] if col in shg.columns]
         if shg_metric_cols:
@@ -361,9 +485,25 @@ def run(config_path: str) -> None:
                 if fallback_col in merged.columns:
                     merged[col] = merged[col].fillna(merged[fallback_col])
                     merged = merged.drop(columns=[fallback_col])
+        audit.record_stage("merge_shg", rows_in=rows_before, rows_out=len(merged), rows_dropped=0,
+                           notes="Left join SHG with state-level fallback for missing years")
 
-    scored = compute_domain_scores(merged)
-    scored = apply_dpi_context(scored, config)
+    # Pre-scoring verification on merged data
+    vr = VerificationResult("merged_pre_scoring")
+    vr = verify_minimum_sample_size(merged, min_rows=10, result=vr, context="merged panel before scoring")
+    merged, vr = verify_no_duplicates(merged, ["state_name", "year"], vr)
+    vr = verify_year_coverage(merged, "year", expected_min=2000, expected_max=2030, result=vr)
+    vr = verify_no_nulls(merged, ["state_name", "year"], vr)
+
+    scored = compute_domain_scores(merged, audit)
+
+    # Post-scoring verification
+    vr_post = VerificationResult("post_scoring")
+    vr_post = verify_score_completeness(scored, "DCLO_score", "state_name", vr_post)
+    vr_post = verify_domain_coverage(scored, DOMAIN_SCORE_COLUMNS, vr_post, min_domains_available=3)
+    scored, vr_post = verify_value_ranges(scored, vr_post)
+
+    scored = apply_dpi_context(scored, config, audit)
     scored = scored.sort_values(["year", "state_name"]).reset_index(drop=True)
 
     output_cfg = config.get("output", {})
@@ -374,7 +514,27 @@ def run(config_path: str) -> None:
     gold_dir.mkdir(parents=True, exist_ok=True)
     out_path = gold_dir / output_name
     scored.to_csv(out_path, index=False)
+    audit.record_output("dclo_state_year", str(out_path))
+
+    # Write verification reports alongside output
+    verification_report = {
+        "pre_scoring": vr.to_dict(),
+        "post_scoring": vr_post.to_dict(),
+    }
+    verification_path = gold_dir / "dclo_state_year_verification.json"
+    import json
+    verification_path.write_text(json.dumps(verification_report, indent=2, default=str), encoding="utf-8")
+    audit.record_output("verification_report", str(verification_path))
+
+    # Write audit manifest
+    manifest_path = gold_dir / "dclo_state_year_audit_manifest.json"
+    audit.write_manifest(str(manifest_path))
+
     print(f"Wrote {len(scored)} rows to {out_path}")
+    print(f"Wrote verification report: {verification_path}")
+    print(f"Wrote audit manifest: {manifest_path}")
+    for line in audit.get_summary_lines():
+        print(f"  {line}")
 
 
 def main() -> None:

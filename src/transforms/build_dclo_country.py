@@ -1,11 +1,35 @@
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
 import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from quality.audit_logger import AuditLogger
+from quality.data_verification import (
+    VerificationResult,
+    verify_domain_coverage,
+    verify_minimum_sample_size,
+    verify_no_duplicates,
+    verify_no_nulls,
+    verify_numeric_coercion,
+    verify_outliers_iqr,
+    verify_panel_balance,
+    verify_required_columns,
+    verify_score_completeness,
+    verify_value_ranges,
+    verify_year_coverage,
+)
+
+
+DOMAIN_SCORE_COLUMNS = [
+    "ACC_score", "SKL_score", "SRV_score",
+    "AGR_score", "ECO_score", "OUT_score",
+]
 
 
 def read_config(config_path: str) -> Dict[str, object]:
@@ -14,7 +38,13 @@ def read_config(config_path: str) -> Dict[str, object]:
 
 
 def zscore(series: pd.Series) -> pd.Series:
-    std = series.std(ddof=0)
+    """Z-score normalization using sample standard deviation (ddof=1).
+
+    Uses Bessel's correction (ddof=1) as standard for sample data per
+    Nunnally & Bernstein (1994). Falls back to zero vector when std is
+    zero or undefined (constant series).
+    """
+    std = series.std(ddof=1)
     if std == 0 or pd.isna(std):
         return pd.Series([0.0] * len(series), index=series.index)
     return (series - series.mean()) / std
@@ -162,7 +192,7 @@ def prune_by_correlation_and_vif(
 
 
 def select_indicators_by_domain(
-    stats: pd.DataFrame, gating: Dict[str, object], wide_df: pd.DataFrame
+    stats: pd.DataFrame, gating: Dict[str, object], wide_df: pd.DataFrame, audit: AuditLogger,
 ) -> Tuple[pd.DataFrame, Dict[str, List[str]]]:
     min_pct_observed = float(gating.get("min_pct_observed", 70.0))
     max_imputation_share = float(gating.get("max_imputation_share", 0.35))
@@ -173,6 +203,16 @@ def select_indicators_by_domain(
     correlation_threshold = float(gating.get("correlation_prune_threshold", 0.90))
     max_vif = float(gating.get("max_vif", 10.0))
 
+    # Record all gating parameters for reproducibility
+    audit.record_parameter("gating_min_pct_observed", min_pct_observed)
+    audit.record_parameter("gating_max_imputation_share", max_imputation_share)
+    audit.record_parameter("gating_min_overlap_years", min_overlap_years)
+    audit.record_parameter("gating_min_panel_coverage", min_panel_coverage)
+    audit.record_parameter("gating_min_per_domain", min_per_domain)
+    audit.record_parameter("gating_max_per_domain", max_per_domain)
+    audit.record_parameter("gating_correlation_prune_threshold", correlation_threshold)
+    audit.record_parameter("gating_max_vif", max_vif)
+
     stats = stats.copy()
     stats["role"] = "exclude"
     stats["gate_pass"] = (
@@ -180,6 +220,16 @@ def select_indicators_by_domain(
         & (stats["imputation_share"] <= max_imputation_share)
         & (stats["years_covered"] >= min_overlap_years)
         & (stats["panel_coverage"] >= min_panel_coverage)
+    )
+
+    n_total = len(stats)
+    n_pass_gate = int(stats["gate_pass"].sum())
+    audit.record_stage(
+        "indicator_gating",
+        rows_in=n_total,
+        rows_out=n_pass_gate,
+        rows_dropped=n_total - n_pass_gate,
+        notes=f"{n_pass_gate}/{n_total} indicators pass quality gates",
     )
 
     selected: Dict[str, List[str]] = {}
@@ -212,11 +262,24 @@ def select_indicators_by_domain(
         if context_ids:
             stats.loc[stats["indicator_code"].isin(context_ids), "role"] = "context_only"
 
+    # Record indicator selection decisions
+    total_selected = sum(len(v) for v in selected.values())
+    audit.record_parameter("indicators_selected_by_domain", {k: len(v) for k, v in selected.items()})
+    audit.record_parameter("total_core_formative_indicators", total_selected)
+    audit.record_stage(
+        "indicator_selection",
+        rows_in=n_pass_gate,
+        rows_out=total_selected,
+        rows_dropped=n_pass_gate - total_selected,
+        notes=f"Selected {total_selected} core indicators after correlation/VIF pruning",
+    )
+
     return stats, selected
 
 
 def build_country_scores(
-    long_df: pd.DataFrame, selected: Dict[str, List[str]], stats_df: pd.DataFrame, scoring_cfg: Dict[str, object]
+    long_df: pd.DataFrame, selected: Dict[str, List[str]], stats_df: pd.DataFrame,
+    scoring_cfg: Dict[str, object], audit: AuditLogger,
 ) -> pd.DataFrame:
     selected_ids = sorted({indicator for indicators in selected.values() for indicator in indicators})
     if not selected_ids:
@@ -224,10 +287,20 @@ def build_country_scores(
 
     use = long_df[long_df["indicator_code"].isin(selected_ids)].copy()
     use["value"] = pd.to_numeric(use["norm_score"], errors="coerce")
+    rows_before = len(use)
     use = use.dropna(subset=["economy", "year", "indicator_code", "value"])
+    n_dropped = rows_before - len(use)
+
+    audit.record_stage("filter_selected_indicators", rows_in=rows_before, rows_out=len(use),
+                       rows_dropped=n_dropped, notes=f"Using {len(selected_ids)} selected indicators")
 
     pivot = use.pivot_table(index=["economy", "year"], columns="indicator_code", values="value", aggfunc="mean").reset_index()
     indicator_cols = [col for col in pivot.columns if col not in {"economy", "year"}]
+
+    # Record normalization approach
+    audit.record_parameter("normalization_method", "z-score (ddof=1, Bessel corrected)")
+    audit.record_parameter("scoring_aggregation", "equal-weighted domain means, confidence-weighted composite")
+
     for col in indicator_cols:
         pivot[f"Z_{col}"] = zscore(pd.to_numeric(pivot[col], errors="coerce"))
 
@@ -248,6 +321,8 @@ def build_country_scores(
         # Weight by coverage quality (0-1 scale), clipped away from zero.
         w = float(sub["panel_coverage"].mean())
         domain_weights[domain] = max(0.05, w)
+
+    audit.record_parameter("domain_weights", domain_weights)
 
     for domain, indicators in selected.items():
         z_cols = [f"Z_{code}" for code in indicators if f"Z_{code}" in pivot.columns]
@@ -291,6 +366,11 @@ def build_country_scores(
         ["High", "Medium"],
         default="Low",
     )
+
+    audit.record_parameter("trust_tier_thresholds", {"high": min_domains_high, "medium": min_domains_med})
+    audit.record_stage("build_country_scores", rows_in=len(pivot), rows_out=len(pivot), rows_dropped=0,
+                       notes=f"Scored {pivot['economy'].nunique()} economies across {pivot['year'].nunique()} years")
+
     return pivot.sort_values(["year", "economy"]).reset_index(drop=True)
 
 
@@ -327,15 +407,38 @@ def run(config_path: str) -> None:
     output_cfg = config.get("output", {})
     scoring_cfg = config.get("scoring", {})
 
+    audit = AuditLogger(pipeline_name="build_dclo_country")
+    audit.record_config(config)
+
+    # Record and verify all input files
+    for input_key in ["dpi_long_path", "indicator_mapping_path", "coverage_by_indicator_path"]:
+        if input_key in inputs:
+            audit.record_input(input_key, inputs[input_key])
+
     long_df = pd.read_csv(inputs["dpi_long_path"])
     mapping_df = pd.read_csv(inputs["indicator_mapping_path"])
     coverage_df = pd.read_csv(inputs["coverage_by_indicator_path"])
 
+    # Verify inputs
+    vr_long = VerificationResult("dpi_long_panel")
+    vr_long = verify_required_columns(long_df, ["indicator_code", "economy", "year", "norm_score"], vr_long)
+    vr_long = verify_minimum_sample_size(long_df, min_rows=100, result=vr_long, context="DPI long panel")
+    vr_long = verify_no_nulls(long_df, ["indicator_code", "economy", "year"], vr_long)
+
+    vr_mapping = VerificationResult("indicator_mapping")
+    vr_mapping = verify_required_columns(mapping_df, ["indicator_code"], vr_mapping)
+
+    vr_coverage = VerificationResult("coverage_by_indicator")
+    vr_coverage = verify_required_columns(coverage_df, ["indicator_code", "pct_observed"], vr_coverage)
+
+    rows_raw = len(long_df)
     long_df = long_df.rename(columns={"indicator_name.y": "indicator_name"})
     if "indicator_name" not in long_df.columns and "indicator_name.x" in long_df.columns:
         long_df = long_df.rename(columns={"indicator_name.x": "indicator_name"})
     if "include_v2" in long_df.columns:
         long_df = long_df[long_df["include_v2"].astype(str).str.lower().eq("yes")].copy()
+        audit.record_stage("filter_include_v2", rows_in=rows_raw, rows_out=len(long_df),
+                           rows_dropped=rows_raw - len(long_df), notes="Kept only include_v2='yes' rows")
 
     # fill missing indicator metadata from mapping
     mapping_use = mapping_df[["indicator_code", "indicator_name", "pillar"]].drop_duplicates("indicator_code")
@@ -349,13 +452,31 @@ def run(config_path: str) -> None:
 
     year_min = int(gating.get("year_min", 2014))
     year_max = int(gating.get("year_max", 2025))
+    rows_before_year = len(long_df)
     long_df = long_df[(long_df["year"] >= year_min) & (long_df["year"] <= year_max)].copy()
+    audit.record_stage("filter_year_range", rows_in=rows_before_year, rows_out=len(long_df),
+                       rows_dropped=rows_before_year - len(long_df),
+                       notes=f"Kept years [{year_min}, {year_max}]")
+
+    # Panel-level verification
+    vr_panel = VerificationResult("panel_pre_scoring")
+    vr_panel = verify_year_coverage(long_df, "year", year_min, year_max, vr_panel)
+    vr_panel = verify_panel_balance(long_df, "economy", "year", vr_panel)
 
     panel_wide = long_df.pivot_table(index=["economy", "year"], columns="indicator_code", values="norm_score", aggfunc="mean")
     panel_coverage = panel_wide.notna().mean(axis=0)
     stats = build_indicator_stats(long_df, coverage_df, panel_coverage=panel_coverage)
-    intake_df, selected = select_indicators_by_domain(stats, gating, wide_df=panel_wide.reset_index(drop=True))
-    country_scores = build_country_scores(long_df, selected, stats_df=stats, scoring_cfg=scoring_cfg)
+    intake_df, selected = select_indicators_by_domain(stats, gating, wide_df=panel_wide.reset_index(drop=True), audit=audit)
+    country_scores = build_country_scores(long_df, selected, stats_df=stats, scoring_cfg=scoring_cfg, audit=audit)
+
+    # Post-scoring verification
+    vr_post = VerificationResult("country_post_scoring")
+    vr_post = verify_score_completeness(country_scores, "DCLO_score", "economy", vr_post)
+    vr_post = verify_score_completeness(country_scores, "DCLO_score_confidence_weighted", "economy", vr_post)
+    vr_post = verify_domain_coverage(country_scores, DOMAIN_SCORE_COLUMNS, vr_post, min_domains_available=3)
+    country_scores, vr_post = verify_no_duplicates(country_scores, ["economy", "year"], vr_post)
+    vr_post = verify_no_nulls(country_scores, ["economy", "year", "DCLO_score"], vr_post)
+    vr_post = verify_outliers_iqr(country_scores, ["DCLO_score", "DCLO_score_confidence_weighted"], vr_post)
 
     data_dir = Path(output_cfg.get("data_dir", "./data"))
     gold_dir = data_dir / "gold"
@@ -372,10 +493,36 @@ def run(config_path: str) -> None:
     )
     selected_out_json.write_text(json.dumps(selected, indent=2), encoding="utf-8")
     write_intake_markdown(intake_df, intake_out_md)
+
+    # Record all outputs with checksums
+    for name, path in [("country_scores", country_out), ("intake_csv", intake_out_csv),
+                       ("selected_json", selected_out_json), ("intake_md", intake_out_md)]:
+        audit.record_output(name, str(path))
+
+    # Write verification reports
+    verification_report = {
+        "input_long_panel": vr_long.to_dict(),
+        "input_mapping": vr_mapping.to_dict(),
+        "input_coverage": vr_coverage.to_dict(),
+        "panel_pre_scoring": vr_panel.to_dict(),
+        "post_scoring": vr_post.to_dict(),
+    }
+    verification_path = gold_dir / "dclo_country_year_verification.json"
+    verification_path.write_text(json.dumps(verification_report, indent=2, default=str), encoding="utf-8")
+    audit.record_output("verification_report", str(verification_path))
+
+    # Write audit manifest
+    manifest_path = gold_dir / "dclo_country_year_audit_manifest.json"
+    audit.write_manifest(str(manifest_path))
+
     print(f"Wrote country scores: {country_out}")
     print(f"Wrote intake csv: {intake_out_csv}")
     print(f"Wrote selected indicators json: {selected_out_json}")
     print(f"Wrote intake markdown: {intake_out_md}")
+    print(f"Wrote verification report: {verification_path}")
+    print(f"Wrote audit manifest: {manifest_path}")
+    for line in audit.get_summary_lines():
+        print(f"  {line}")
 
 
 def main() -> None:
