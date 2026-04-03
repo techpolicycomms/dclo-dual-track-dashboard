@@ -1,0 +1,96 @@
+# Dclo Causal Model
+
+> **Summary**: inputs:
+  country_scores_path: "./data/gold/dclo_country_year.csv"
+
+- **Source**: project:config/dclo_causal_model.yml
+- **Ingested**: 20260403T102018Z
+- **Tags**: dclo, config
+- **Category**: configuration
+
+---
+
+inputs:
+  country_scores_path: "./data/gold/dclo_country_year.csv"
+
+panel:
+  entity_col: "economy"
+  time_col: "year"
+  min_obs_per_entity: 5
+  min_entities: 25
+  lag_periods:
+    - 1
+    - 2
+
+baseline_spec:
+  id: "twfe_l1_srv"
+  outcome: "SRV_score"
+  predictors:
+    - "DCLO_score"
+  controls:
+    - "model_trust_tier_numeric"
+  lag: 1
+  entity_fixed_effects: true
+  time_fixed_effects: true
+  cluster_col: "economy"
+
+robustness_specs:
+  - id: "twfe_l2_outcome"
+    outcome: "SRV_score"
+    predictors:
+      - "DCLO_score"
+    controls:
+      - "model_trust_tier_numeric"
+    lag: 2
+    entity_fixed_effects: true
+    time_fixed_effects: true
+    cluster_col: "economy"
+
+  - id: "twfe_l1_srv_no_control"
+    outcome: "SRV_score"
+    predictors:
+      - "DCLO_score"
+    controls: []
+    lag: 1
+    entity_fixed_effects: true
+    time_fixed_effects: true
+    cluster_col: "economy"
+
+  - id: "pooled_l1"
+    outcome: "SRV_score"
+    predictors:
+      - "DCLO_score"
+    controls:
+      - "model_trust_tier_numeric"
+    lag: 1
+    entity_fixed_effects: false
+    time_fixed_effects: false
+    cluster_col: "economy"
+
+placebo_spec:
+  id: "placebo_permuted_l1"
+  outcome: "SRV_score"
+  predictors:
+    - "DCLO_score"
+  controls:
+    - "model_trust_tier_numeric"
+  lag: 1
+  permute_within_year: true
+  permute_seed: 2026
+  entity_fixed_effects: true
+  time_fixed_effects: true
+  cluster_col: "economy"
+
+stability:
+  enabled: true
+  draws: 250
+  top_k: 20
+  random_seed: 42
+
+output:
+  data_dir: "./data"
+  coefficients_file: "dclo_causal_coefficients.csv"
+  model_fit_file: "dclo_causal_model_fit.csv"
+  rank_stability_file: "dclo_rank_stability.csv"
+  method_comparison_file: "dclo_method_comparison.csv"
+
