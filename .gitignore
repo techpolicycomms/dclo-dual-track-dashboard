@@ -10,3 +10,10 @@ __pycache__/
 # Keep gold outputs for dashboard, ignore heavy intermediates
 data/raw/
 data/curated/
+
+# Knowledge base: raw ingested docs and generated outputs are local-only
+# Wiki articles and index are tracked for portability
+kb/raw/*
+!kb/raw/.gitkeep
+kb/outputs/*
+!kb/outputs/.gitkeep

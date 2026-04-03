@@ -1,0 +1,76 @@
+# Dpi Selected Indicators By Domain
+
+> **Summary**: {
+  "ACC": [
+    "WB_BX.KLT.DINV.WD.GD.ZS",
+    "WB_IT.NET.SECR.P6",
+    "WB_IT.NET.USER.ZS",
+    "WB_IT.CEL.SETS.P2"
+  ],
+  "AGR": [
+    "WB_CC.PER.RNK",
+    "WB_PV.PER.RNK"
+  ],
+  "ECO": [
+    "WB_SL.TLF.CACT.ZS",
+    "WB_SL.UEM.TOTL.ZS",
+    "WB_NE.TRD.GNFS.ZS",
+    "WB_NY.GDP.PCAP.KD.ZG"
+  ],
+  "OUT": [
+    "WB_SP.POP.GROW",
+    "WB_AG.LND.AGRI.ZS",
+    "WB_EG.CFT.ACCS.ZS"
+  ],
+  "SKL": [
+    "WB_SE.TER.ENRR",
+    "WB_SE.SEC.ENRR"
+  ],
+  "SRV": [
+    "WTO_SERVICES_POSTAL_COURIER_EXPORTS",
+    "WTO_SERVICES_TOTAL_EXPORTS",
+    "WTO_SERVICES_TRANSPORT_EXPORTS",
+    "WTO_SERVICES_TRAVEL_EXPORTS"
+  ]
+}
+
+- **Source**: project:data/gold/dpi_selected_indicators_by_domain.json
+- **Ingested**: 20260403T102018Z
+- **Tags**: dclo, data, gold
+- **Category**: data
+
+---
+
+{
+  "ACC": [
+    "WB_BX.KLT.DINV.WD.GD.ZS",
+    "WB_IT.NET.SECR.P6",
+    "WB_IT.NET.USER.ZS",
+    "WB_IT.CEL.SETS.P2"
+  ],
+  "AGR": [
+    "WB_CC.PER.RNK",
+    "WB_PV.PER.RNK"
+  ],
+  "ECO": [
+    "WB_SL.TLF.CACT.ZS",
+    "WB_SL.UEM.TOTL.ZS",
+    "WB_NE.TRD.GNFS.ZS",
+    "WB_NY.GDP.PCAP.KD.ZG"
+  ],
+  "OUT": [
+    "WB_SP.POP.GROW",
+    "WB_AG.LND.AGRI.ZS",
+    "WB_EG.CFT.ACCS.ZS"
+  ],
+  "SKL": [
+    "WB_SE.TER.ENRR",
+    "WB_SE.SEC.ENRR"
+  ],
+  "SRV": [
+    "WTO_SERVICES_POSTAL_COURIER_EXPORTS",
+    "WTO_SERVICES_TOTAL_EXPORTS",
+    "WTO_SERVICES_TRANSPORT_EXPORTS",
+    "WTO_SERVICES_TRAVEL_EXPORTS"
+  ]
+}

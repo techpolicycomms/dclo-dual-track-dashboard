@@ -1,0 +1,22 @@
+# Dclo Causal Model Fit
+
+> **Summary**: spec_kind,spec_id,outcome,lag,lead,entity_fixed_effects,time_fixed_effects,n_obs,n_entities,n_years,r2_within,residual_std
+baseline,twfe_l1_srv,SRV_score,1,0,True,True,470,47,10,0.3810312962337483,0.11667395760652569
+robustness,twfe_l2_outcome,SRV_score,2,0,True,True,423,47,9,0.08903322599571273,0.1405728486412817
+robustness,twfe_l1_srv_no_control,SRV_score,1,0,True,True,470,47,10,0.28025935667842816,0.12581360249412557
+robustness,pooled_l1,SRV_score,1,0,False,False,470,47,10,0.9102603249438773,0.2646016263279411
+placebo,placebo_permuted_l1,SRV_score,1,0,True,True,468,47,10,0.008430009997862031,0.1474463002560584
+
+- **Source**: project:data/gold/dclo_causal_model_fit.csv
+- **Ingested**: 20260403T102018Z
+- **Tags**: dclo, data, gold
+- **Category**: data
+
+---
+
+spec_kind,spec_id,outcome,lag,lead,entity_fixed_effects,time_fixed_effects,n_obs,n_entities,n_years,r2_within,residual_std
+baseline,twfe_l1_srv,SRV_score,1,0,True,True,470,47,10,0.3810312962337483,0.11667395760652569
+robustness,twfe_l2_outcome,SRV_score,2,0,True,True,423,47,9,0.08903322599571273,0.1405728486412817
+robustness,twfe_l1_srv_no_control,SRV_score,1,0,True,True,470,47,10,0.28025935667842816,0.12581360249412557
+robustness,pooled_l1,SRV_score,1,0,False,False,470,47,10,0.9102603249438773,0.2646016263279411
+placebo,placebo_permuted_l1,SRV_score,1,0,True,True,468,47,10,0.008430009997862031,0.1474463002560584

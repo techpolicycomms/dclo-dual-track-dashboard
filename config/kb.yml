@@ -1,0 +1,49 @@
+# Knowledge Base configuration
+# ----------------------------
+
+paths:
+  raw: kb/raw            # Ingested source documents (articles, papers, clipped pages)
+  wiki: kb/wiki          # LLM-compiled wiki (.md articles with backlinks)
+  outputs: kb/outputs    # Generated outputs (slides, charts, reports)
+
+wiki:
+  index_file: _index.md           # Master index (auto-maintained)
+  catalog_file: _catalog.md       # Source document catalog
+  max_summary_words: 150          # Per-article summary length
+  concept_threshold: 3            # Min references before a concept gets its own article
+
+ingest:
+  supported_extensions:
+    - .md
+    - .txt
+    - .csv
+    - .json
+    - .html
+    - .pdf
+    - .yml
+    - .yaml
+  auto_summarize: true            # Generate summary on ingest
+  preserve_images: true           # Copy referenced images to kb/raw/images/
+
+compile:
+  backlinks: true                 # Generate backlink sections
+  cross_references: true          # Auto-detect and link related articles
+  category_dirs: true             # Organize wiki into category subdirectories
+  rebuild_index: true             # Rebuild master index on each compile
+
+lint:
+  checks:
+    - orphan_detection            # Articles with no inbound links
+    - broken_links                # References to non-existent articles
+    - duplicate_content           # Near-duplicate articles
+    - missing_summaries           # Articles lacking a summary section
+    - stale_sources               # Raw docs not reflected in wiki
+    - category_balance            # Categories with too few/many articles
+  similarity_threshold: 0.85      # Cosine similarity threshold for duplicate detection
+
+search:
+  index_type: tfidf               # tfidf | bm25
+  snippet_length: 200             # Characters per search result snippet
+  max_results: 20
+  boost_title: 2.0                # Title match weight boost
+  boost_summary: 1.5              # Summary match weight boost

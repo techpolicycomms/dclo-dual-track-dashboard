@@ -1,0 +1,1184 @@
+{
+  "articles_checked": 32,
+  "errors": 161,
+  "warnings": 32,
+  "infos": 3,
+  "findings": [
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "configuration/dclo-causal-model.md",
+      "message": "Orphan article: 'Dclo Causal Model' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "configuration/dpi-country-sources.md",
+      "message": "Orphan article: 'Dpi Country Sources' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "configuration/local-sources.md",
+      "message": "Orphan article: 'Local Sources' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "configuration/rbi-dbie-sources.md",
+      "message": "Orphan article: 'Rbi Dbie Sources' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Orphan article: 'DCLO Dashboard Explainer' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "dashboard/power-bi-dashboard-spec-india-open-data.md",
+      "message": "Orphan article: 'Power BI Dashboard Spec (India Open Data)' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-causal-coefficients.md",
+      "message": "Orphan article: 'Dclo Causal Coefficients' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-causal-model-fit.md",
+      "message": "Orphan article: 'Dclo Causal Model Fit' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-country-year.md",
+      "message": "Orphan article: 'Dclo Country Year' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-data-catalog-local-downloads---phase-1.md",
+      "message": "Orphan article: 'DCLO Data Catalog (Local Downloads - Phase 1)' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Orphan article: 'DCLO Data Plan from India Data Portal (Granular India Coverage)' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-dataset-intake-template-for-idp-browsing.md",
+      "message": "Orphan article: 'DCLO Dataset Intake Template (for IDP browsing)' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-indicator-correlation-report.md",
+      "message": "Orphan article: 'Dclo Indicator Correlation Report' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Orphan article: 'DCLO Indicator Mapping (India Open Data Starter)' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-indicator-missingness-report.md",
+      "message": "Orphan article: 'Dclo Indicator Missingness Report' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-indicator-vif-report.md",
+      "message": "Orphan article: 'Dclo Indicator Vif Report' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-method-comparison.md",
+      "message": "Orphan article: 'Dclo Method Comparison' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-rank-stability.md",
+      "message": "Orphan article: 'Dclo Rank Stability' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-standard-checks-summary.md",
+      "message": "Orphan article: 'Dclo Standard Checks Summary' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dclo-state-year.md",
+      "message": "Orphan article: 'Dclo State Year' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dpi-indicator-intake.md",
+      "message": "Orphan article: 'Dpi Indicator Intake' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "data/dpi-selected-indicators-by-domain.md",
+      "message": "Orphan article: 'Dpi Selected Indicators By Domain' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "findings/dclo-results-brief-current-release.md",
+      "message": "Orphan article: 'DCLO Results Brief (Current Release)' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "governance/data-contract-india-open-data-portal.md",
+      "message": "Orphan article: 'Data Contract (India Open Data Portal)' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "governance/dclo-model-governance.md",
+      "message": "Orphan article: 'DCLO Model Governance' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "methodology/dclo-causal-methodology.md",
+      "message": "Orphan article: 'DCLO Causal Methodology' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "methodology/dclo-identification-strategy.md",
+      "message": "Orphan article: 'DCLO Identification Strategy' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Orphan article: 'Methodology: Formative Multidimensional Construct for Digital Inclusion' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "operations/hosting-guide-dclo-dashboard.md",
+      "message": "Orphan article: 'Hosting Guide (DCLO Dashboard)' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "operations/runbook-ingestion-transformation.md",
+      "message": "Orphan article: 'Runbook (Ingestion + Transformation)' has no inbound links"
+    },
+    {
+      "check": "orphan_detection",
+      "severity": "warning",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Orphan article: 'India Open Data Pipeline + Power BI' has no inbound links"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[Causal Evidence]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[Country-year comparative track]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[Data sources in this build]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[Digital Capability for Life Outcomes (DCLO)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[Domain structure used]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[How to read the score]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[Important caveats]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[India state-year track]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[Measurement]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[Method summary]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[Recommended use]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[Robustness]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[Tab-by-tab guide]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[What this dashboard shows]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[comparative composite]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/dclo-dashboard-explainer.md",
+      "message": "Broken link: [[relative]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/power-bi-dashboard-spec-india-open-data.md",
+      "message": "Broken link: [[DAX Design Notes]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/power-bi-dashboard-spec-india-open-data.md",
+      "message": "Broken link: [[KPI-to-Measure Mapping]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/power-bi-dashboard-spec-india-open-data.md",
+      "message": "Broken link: [[Page Layout Plan]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/power-bi-dashboard-spec-india-open-data.md",
+      "message": "Broken link: [[Performance and Governance Plan]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "dashboard/power-bi-dashboard-spec-india-open-data.md",
+      "message": "Broken link: [[Semantic Model Design]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-catalog-local-downloads---phase-1.md",
+      "message": "Broken link: [[Dual-Track Extension (DPI Comparative)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-catalog-local-downloads---phase-1.md",
+      "message": "Broken link: [[Exclusions (Current)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-catalog-local-downloads---phase-1.md",
+      "message": "Broken link: [[Included Sources]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-catalog-local-downloads---phase-1.md",
+      "message": "Broken link: [[Indicator Mapping in Use (Phase 1)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-catalog-local-downloads---phase-1.md",
+      "message": "Broken link: [[Next Catalog Upgrade]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-catalog-local-downloads---phase-1.md",
+      "message": "Broken link: [[Unit of Analysis (Phase 1)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-catalog-local-downloads---phase-1.md",
+      "message": "Broken link: [[state-year]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[1) Digital Access and Connectivity]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[2) Digital Skills and Literacy]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[3) Economic Participation and Opportunity]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[4) Service Enablement]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[5) Agency, Safety, and Rights]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[6) Outcome Realization]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[DCLO-Relevant Collections to Prioritize]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[Data Selection Filters]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[Deliverables to Create Next]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[Domain-to-Collection Mapping (DCLO)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[Execution Sequence]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[Granularity Rules (Critical)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[Ingestion Metadata to Capture per Dataset]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[Quality Controls Before Modeling]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-data-plan-from-india-data-portal-granular-india-coverage.md",
+      "message": "Broken link: [[What the Documentation Confirms]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-dataset-intake-template-for-idp-browsing.md",
+      "message": "Broken link: [[CSV Version (easy to import)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-dataset-intake-template-for-idp-browsing.md",
+      "message": "Broken link: [[Copy-Paste Table (Markdown)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-dataset-intake-template-for-idp-browsing.md",
+      "message": "Broken link: [[Domain code guide]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-dataset-intake-template-for-idp-browsing.md",
+      "message": "Broken link: [[Minimum filters (must be YES)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-dataset-intake-template-for-idp-browsing.md",
+      "message": "Broken link: [[Selection priorities (rank each candidate 1-5)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-dataset-intake-template-for-idp-browsing.md",
+      "message": "Broken link: [[What to send back]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Collinearity guardrail]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Data Engineering Link to Pipeline]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Digital Capability for Life Outcomes (DCLO)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Domain balance]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Domain-Indicator Dictionary (Starter)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Dual-Track Note (Country Comparative)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Formative by construction]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Measurement Design Decisions]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Missing Data Rules]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Next File to Build]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Normalization and Sign Rules]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Outlier and Quality Rules]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Policy relevance filter]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[SEM/PLS-SEM Readiness Checklist]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Unit of Analysis]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[Weighting and Aggregation (Initial)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dclo-indicator-mapping-india-open-data-starter.md",
+      "message": "Broken link: [[higher = better capability/outcome]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dpi-indicator-intake-auto-generated.md",
+      "message": "Broken link: [[Gating Columns]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "data/dpi-indicator-intake-auto-generated.md",
+      "message": "Broken link: [[Intake Table (Top 120 rows)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "findings/dclo-results-brief-current-release.md",
+      "message": "Broken link: [[Causal Evidence]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "findings/dclo-results-brief-current-release.md",
+      "message": "Broken link: [[Executive Summary]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "findings/dclo-results-brief-current-release.md",
+      "message": "Broken link: [[Falsification and Robustness]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "findings/dclo-results-brief-current-release.md",
+      "message": "Broken link: [[How to Communicate Results]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "findings/dclo-results-brief-current-release.md",
+      "message": "Broken link: [[Main Empirical Finding]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "findings/dclo-results-brief-current-release.md",
+      "message": "Broken link: [[Measurement]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "findings/dclo-results-brief-current-release.md",
+      "message": "Broken link: [[Quality Gate Status]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "findings/dclo-results-brief-current-release.md",
+      "message": "Broken link: [[Robustness]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "findings/dclo-results-brief-current-release.md",
+      "message": "Broken link: [[Suggested Public Narrative]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "findings/dclo-results-brief-current-release.md",
+      "message": "Broken link: [[What Changed in This Release]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "governance/data-contract-india-open-data-portal.md",
+      "message": "Broken link: [[Breaking Change Policy]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "governance/data-contract-india-open-data-portal.md",
+      "message": "Broken link: [[Contract Metadata]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "governance/data-contract-india-open-data-portal.md",
+      "message": "Broken link: [[Guarantees]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "governance/data-contract-india-open-data-portal.md",
+      "message": "Broken link: [[Scope]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "governance/dclo-model-governance.md",
+      "message": "Broken link: [[Change Management]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "governance/dclo-model-governance.md",
+      "message": "Broken link: [[Current Revision Notes]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "governance/dclo-model-governance.md",
+      "message": "Broken link: [[Indicator Acceptance Policy (Balanced)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "governance/dclo-model-governance.md",
+      "message": "Broken link: [[Indicator Role Definitions]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "governance/dclo-model-governance.md",
+      "message": "Broken link: [[Purpose]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "governance/dclo-model-governance.md",
+      "message": "Broken link: [[Validation Pack (Required per update)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "governance/dclo-model-governance.md",
+      "message": "Broken link: [[Weighting Policy]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-causal-methodology.md",
+      "message": "Broken link: [[Baseline Specification]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-causal-methodology.md",
+      "message": "Broken link: [[Causal layer]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-causal-methodology.md",
+      "message": "Broken link: [[Data Inputs]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-causal-methodology.md",
+      "message": "Broken link: [[Estimation Steps]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-causal-methodology.md",
+      "message": "Broken link: [[Interpretation Guidance]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-causal-methodology.md",
+      "message": "Broken link: [[Measurement layer]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-causal-methodology.md",
+      "message": "Broken link: [[Purpose]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-causal-methodology.md",
+      "message": "Broken link: [[Reproducibility]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-causal-methodology.md",
+      "message": "Broken link: [[Robustness Battery]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-causal-methodology.md",
+      "message": "Broken link: [[Uncertainty and Stability]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-causal-methodology.md",
+      "message": "Broken link: [[not]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-identification-strategy.md",
+      "message": "Broken link: [[Core Strategy]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-identification-strategy.md",
+      "message": "Broken link: [[Identification Goal]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-identification-strategy.md",
+      "message": "Broken link: [[Interpretation Rule Set]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-identification-strategy.md",
+      "message": "Broken link: [[Measurement error]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-identification-strategy.md",
+      "message": "Broken link: [[Mitigations Implemented]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-identification-strategy.md",
+      "message": "Broken link: [[Model dependence]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-identification-strategy.md",
+      "message": "Broken link: [[Reporting Standard]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-identification-strategy.md",
+      "message": "Broken link: [[Reverse causality]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-identification-strategy.md",
+      "message": "Broken link: [[Threats to Validity]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-identification-strategy.md",
+      "message": "Broken link: [[Time-varying confounding]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/dclo-identification-strategy.md",
+      "message": "Broken link: [[causal-evidence oriented]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Choice:]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Construct Name and Definition]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Dashboard label:]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Decision 1: Reflective vs Formative Measurement]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Decision 2: First-Order and Higher-Order Structure]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Decision 3: Estimation Framework (PLS-SEM vs CB-SEM)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Decision 4: Validation Strategy]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Decision 5: Scoring and Interpretation]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Decision Process for Method Choice]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Definition:]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Estimation and Diagnostics Protocol]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Evidence base:]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Formal research label:]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Guardrail:]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Key References (High-Quality Journals)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Naming Recommendation]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Primary construct name:]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Reasoning:]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Required checks:]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[SDG-Aligned Domain Architecture]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Sensitivity analysis:]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Why This Method Supports High-Quality Inference]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[Why This is a Formative Construct]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "methodology/methodology-formative-multidimensional-construct-for-digital-inclusion.md",
+      "message": "Broken link: [[formative]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "operations/hosting-guide-dclo-dashboard.md",
+      "message": "Broken link: [[Current Local Access]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "operations/hosting-guide-dclo-dashboard.md",
+      "message": "Broken link: [[Environment]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "operations/hosting-guide-dclo-dashboard.md",
+      "message": "Broken link: [[Minimal start command]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "operations/hosting-guide-dclo-dashboard.md",
+      "message": "Broken link: [[Notes]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "operations/hosting-guide-dclo-dashboard.md",
+      "message": "Broken link: [[Option A: Streamlit Community Cloud (Recommended)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "operations/hosting-guide-dclo-dashboard.md",
+      "message": "Broken link: [[Option B: Container Host (Render/Railway/Fly)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "operations/hosting-guide-dclo-dashboard.md",
+      "message": "Broken link: [[Steps]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "operations/runbook-ingestion-transformation.md",
+      "message": "Broken link: [[Backfill]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "operations/runbook-ingestion-transformation.md",
+      "message": "Broken link: [[Failure Handling]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "operations/runbook-ingestion-transformation.md",
+      "message": "Broken link: [[Operational Checklist]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "operations/runbook-ingestion-transformation.md",
+      "message": "Broken link: [[Pipeline Flow]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[Architecture Outline]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[Curate]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[DCLO Dashboard (Local App)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[DPI Country-Year Pipeline]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[Data Contract Notes]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[Hosting]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[Ingest]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[Initial Power BI Focus]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[Project Structure]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[Quick Start]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[RBI DBIE Pipeline]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[Serve (gold)]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[Store raw]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[Validation Pack]] (target not found)"
+    },
+    {
+      "check": "broken_links",
+      "severity": "error",
+      "path": "overview/india-open-data-pipeline-power-bi.md",
+      "message": "Broken link: [[Visualize]] (target not found)"
+    },
+    {
+      "check": "duplicate_content",
+      "severity": "warning",
+      "path": "data/dpi-indicator-intake-auto-generated.md",
+      "message": "Near-duplicate (93% similar) with data/dpi-indicator-intake.md"
+    },
+    {
+      "check": "category_balance",
+      "severity": "info",
+      "path": "data",
+      "message": "Category 'data' has 17 articles \u2014 consider splitting"
+    },
+    {
+      "check": "category_balance",
+      "severity": "info",
+      "path": "findings",
+      "message": "Category 'findings' has only 1 article (avg: 4)"
+    },
+    {
+      "check": "category_balance",
+      "severity": "info",
+      "path": "overview",
+      "message": "Category 'overview' has only 1 article (avg: 4)"
+    }
+  ]
+}
