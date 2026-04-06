@@ -11,7 +11,8 @@ aligned to academic publication standards:
 References:
 - OECD (2008), Handbook on Constructing Composite Indicators
 - Wooldridge (2010), Econometric Analysis of Cross Section and Panel Data
-- Cameron & Miller (2015), A Practitioner's Guide to Cluster-Robust Inference
+- Cameron, A. C., & Miller, D. L. (2015). A practitioner's guide to cluster-robust
+  inference. Journal of Human Resources, 50(2), 317-372.
 """
 
 import argparse

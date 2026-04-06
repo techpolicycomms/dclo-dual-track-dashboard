@@ -48,8 +48,9 @@ def two_way_demean(df: pd.DataFrame, columns: List[str], entity_col: str, time_c
 def cluster_robust_covariance(X: np.ndarray, residuals: np.ndarray, clusters: np.ndarray) -> np.ndarray:
     """Cluster-robust (sandwich) covariance estimator.
 
-    Implements the CRVE per Cameron & Miller (2015) with finite-sample
-    correction factor G/(G-1) * (N-1)/(N-K) where G = number of clusters.
+    Implements the CRVE per Cameron and Miller (2015), Journal of Human
+    Resources 50(2), 317-372, with the finite-sample correction factor
+    G/(G-1) * (N-1)/(N-K) where G = number of clusters.
     """
     xtx_inv = np.linalg.pinv(X.T @ X)
     meat = np.zeros((X.shape[1], X.shape[1]))

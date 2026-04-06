@@ -1,9 +1,28 @@
+import sys
 from pathlib import Path
 
 import json
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+
+# Ensure the dashboard directory is on the import path so the insight engine
+# resolves whether the app is launched via `streamlit run` or as a module.
+_HERE = Path(__file__).resolve().parent
+if str(_HERE) not in sys.path:
+    sys.path.insert(0, str(_HERE))
+
+from insight_engine import (
+    causal_insight,
+    coverage_warning,
+    cross_section_overview,
+    domain_profile_insight,
+    heatmap_insight,
+    map_insight,
+    stability_insight,
+    trend_insight,
+    trust_tier_insight,
+)
 
 
 st.set_page_config(page_title="DCLO Dashboard", page_icon="📊", layout="wide")
@@ -495,9 +514,105 @@ def render_method_comparison(method_df: pd.DataFrame) -> None:
     st.plotly_chart(fig, use_container_width=True)
 
 
+def render_animated_country_map(full_df: pd.DataFrame, score_col: str) -> None:
+    """Choropleth animated across years to show DCLO evolution."""
+    use = full_df.dropna(subset=["economy", score_col, "year"]).copy()
+    if use.empty:
+        return
+    use["year"] = use["year"].astype(int)
+    use = use.sort_values("year")
+    fig = px.choropleth(
+        use,
+        locations="economy",
+        locationmode="country names",
+        color=score_col,
+        animation_frame="year",
+        color_continuous_scale="Viridis",
+        range_color=(use[score_col].min(), use[score_col].max()),
+        title="DCLO Evolution Across Years (Animated)",
+    )
+    fig.update_layout(height=600)
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def render_bump_chart(full_df: pd.DataFrame, entity_col: str, score_col: str, top_k: int = 10) -> None:
+    """Bump chart of rank changes over time for the top-K entities in the latest year."""
+    use = full_df.dropna(subset=[entity_col, score_col, "year"]).copy()
+    if use.empty:
+        return
+    use["year"] = use["year"].astype(int)
+    latest = int(use["year"].max())
+    top_entities = (
+        use[use["year"] == latest]
+        .sort_values(score_col, ascending=False)
+        .head(top_k)[entity_col]
+        .tolist()
+    )
+    sub = use[use[entity_col].isin(top_entities)].copy()
+    sub["rank"] = sub.groupby("year")[score_col].rank(method="min", ascending=False)
+    fig = px.line(
+        sub,
+        x="year",
+        y="rank",
+        color=entity_col,
+        markers=True,
+        title=f"Rank Trajectory of Top {top_k} ({latest}) Across Time",
+        labels={"rank": "Rank (1 = best)", "year": "Year"},
+    )
+    fig.update_yaxes(autorange="reversed")
+    fig.update_layout(height=520)
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def render_domain_radar(df_year: pd.DataFrame, entities: list[str], entity_col: str, domain_cols: list[str]) -> None:
+    """Radar/spider chart comparing the domain profile of selected entities."""
+    available = [c for c in domain_cols if c in df_year.columns]
+    if not available or not entities:
+        return
+    rows = []
+    for ent in entities[:5]:
+        sub = df_year[df_year[entity_col] == ent]
+        if sub.empty:
+            continue
+        rec = sub.iloc[0]
+        for col in available:
+            val = rec.get(col)
+            if pd.notna(val):
+                rows.append({"entity": ent, "domain": col.replace("_score", ""), "score": float(val)})
+    if not rows:
+        return
+    radar_df = pd.DataFrame(rows)
+    fig = px.line_polar(
+        radar_df,
+        r="score",
+        theta="domain",
+        color="entity",
+        line_close=True,
+        title="Domain Profile Comparison (Radar)",
+    )
+    fig.update_traces(fill="toself", opacity=0.35)
+    fig.update_layout(height=520)
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def render_score_distribution(df_year: pd.DataFrame, score_col: str) -> None:
+    """Box + strip plot of the score distribution for the current year."""
+    if df_year.empty:
+        return
+    fig = px.box(
+        df_year,
+        y=score_col,
+        points="all",
+        title="Score Distribution (Box + All Points)",
+        labels={score_col: "DCLO Score"},
+    )
+    fig.update_layout(height=420)
+    st.plotly_chart(fig, use_container_width=True)
+
+
 def main() -> None:
     st.title("DCLO Dashboard")
-    st.caption("Digital Capability for Life Outcomes (Dual-Track: India State-Year + Country-Year)")
+    st.caption("Digital Capability for Life Outcomes (Dual-Track: Country-Year Comparative + India State-Year)")
 
     try:
         state_df = load_data(STATE_DATA_PATH)
@@ -526,7 +641,12 @@ def main() -> None:
         st.stop()
 
     with st.sidebar:
-        track = st.selectbox("Track", ["India State-Year", "Country-Year Comparative"])
+        track = st.selectbox(
+            "Track",
+            ["Country-Year Comparative", "India State-Year"],
+            index=0,
+            help="Country-Year Comparative is the default global view; switch to India State-Year for the sub-national track.",
+        )
         st.header("Filters")
         if track == "India State-Year":
             years = sorted([int(year) for year in state_df["year"].dropna().unique().tolist()])
@@ -624,12 +744,34 @@ def main() -> None:
 
     with tab_measure:
         render_kpis(df_year, working_df, selected_year, entity_col=entity_col, score_col=score_col)
+
+        # Live, citation-dense overview that responds to every selection.
+        st.markdown("### Insight: Cross-Sectional Overview")
+        st.markdown(
+            cross_section_overview(
+                df_year, working_df, selected_year, entity_col=entity_col, score_col=score_col
+            )
+        )
+        cov_warn = coverage_warning(df_year, domain_cols)
+        if cov_warn:
+            st.warning(cov_warn)
+        if track != "India State-Year":
+            tt = trust_tier_insight(df_year)
+            if tt:
+                st.info(tt)
+
         col1, col2 = st.columns([1.25, 1])
         with col1:
             rank_title = "State Ranking by DCLO Score" if track == "India State-Year" else "Country Ranking by DCLO Score"
             render_ranking(df_year, entity_col=entity_col, score_col=score_col, title=rank_title)
         with col2:
             render_domain_profile(df_year, selected_profile_entity, entity_col=entity_col, domain_cols=domain_cols)
+            st.markdown("### Insight: Domain Profile")
+            st.markdown(
+                domain_profile_insight(
+                    df_year, selected_profile_entity, entity_col=entity_col, domain_cols=domain_cols
+                )
+            )
 
         if track == "India State-Year":
             render_state_map(df_year)
@@ -640,10 +782,33 @@ def main() -> None:
                 score_col=score_col,
                 title="DCLO Trend Over Time (Selected States)",
             )
+            st.markdown("### Insight: Trend")
+            st.markdown(
+                trend_insight(working_df, selected_entities, entity_col=entity_col, score_col=score_col)
+            )
             render_domain_heatmap(df_year, entity_col=entity_col, domain_cols=domain_cols, title="Domain Score Heatmap by State")
+            st.markdown(heatmap_insight(df_year, domain_cols))
             render_downloads(df_year, score_col=score_col, entity_col=entity_col, suffix="state_year")
         else:
             render_country_map(df_year, score_col=score_col)
+            st.markdown(map_insight(df_year, score_col, selected_year))
+
+            st.markdown("#### Animated Choropleth")
+            render_animated_country_map(working_df, score_col=score_col)
+
+            colA, colB = st.columns(2)
+            with colA:
+                render_score_distribution(df_year, score_col=score_col)
+            with colB:
+                render_domain_radar(df_year, selected_entities, entity_col=entity_col, domain_cols=domain_cols)
+
+            render_bump_chart(working_df, entity_col=entity_col, score_col=score_col, top_k=10)
+            st.caption(
+                "Bump chart shows how the *current* top 10 cohort moved through "
+                "the global ranking over time. Crossings indicate compositional "
+                "shifts in the digital-capability frontier."
+            )
+
             render_trends(
                 working_df,
                 selected_entities,
@@ -651,7 +816,12 @@ def main() -> None:
                 score_col=score_col,
                 title="DCLO Trend Over Time (Selected Countries)",
             )
+            st.markdown("### Insight: Trend")
+            st.markdown(
+                trend_insight(working_df, selected_entities, entity_col=entity_col, score_col=score_col)
+            )
             render_domain_heatmap(df_year, entity_col=entity_col, domain_cols=domain_cols, title="Domain Score Heatmap by Country")
+            st.markdown(heatmap_insight(df_year, domain_cols))
             render_downloads(df_year, score_col=score_col, entity_col=entity_col, suffix="country_year")
 
     with tab_causal:
@@ -665,6 +835,8 @@ def main() -> None:
             render_causal_forest(causal_coef_df)
             st.subheader("Specification Fit")
             render_model_fit_table(causal_fit_df)
+            st.markdown("### Insight: Causal Evidence")
+            st.markdown(causal_insight(causal_coef_df, causal_fit_df))
             if not causal_coef_df.empty:
                 pvals = pd.to_numeric(causal_coef_df["p_value_norm_approx"], errors="coerce")
                 sig = causal_coef_df[pvals < 0.05].copy()
@@ -677,6 +849,8 @@ def main() -> None:
         else:
             render_method_comparison(method_comparison_df)
             render_rank_stability(rank_stability_df, selected_year=selected_year)
+            st.markdown("### Insight: Rank Stability")
+            st.markdown(stability_insight(rank_stability_df, selected_year))
             st.subheader("Caveats and Identification Notes")
             st.markdown(
                 "\n".join(
