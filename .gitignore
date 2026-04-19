@@ -17,3 +17,4 @@ kb/raw/*
 !kb/raw/.gitkeep
 kb/outputs/*
 !kb/outputs/.gitkeep
+graphify-out/
