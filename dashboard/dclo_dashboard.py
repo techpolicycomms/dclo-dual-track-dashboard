@@ -345,16 +345,24 @@ def render_domain_profile(df_year: pd.DataFrame, selected_entity: str, entity_co
 
 
 def render_state_map(df_year: pd.DataFrame) -> None:
-    map_df = df_year.copy()
-    map_df["lat"] = map_df["state_name"].map(lambda x: STATE_CENTROIDS.get(x, (None, None))[0])
-    map_df["lon"] = map_df["state_name"].map(lambda x: STATE_CENTROIDS.get(x, (None, None))[1])
-    map_df = map_df.dropna(subset=["lat", "lon", "DCLO_score"])
-    if map_df.empty:
+    # Build a clean, type-pure mini-DataFrame with only the columns plotly needs.
+    # Avoids a plotly>=6.6 + narwhals issue where heterogeneous source DataFrames
+    # cause narwhals to coerce float columns to object dtype, which the size validator rejects.
+    rows = []
+    for _, src in df_year.iterrows():
+        state = src.get("state_name")
+        score = src.get("DCLO_score")
+        centroid = STATE_CENTROIDS.get(state)
+        if state is None or centroid is None or pd.isna(score):
+            continue
+        rows.append({"state_name": str(state), "lat": float(centroid[0]),
+                     "lon": float(centroid[1]), "DCLO_score": float(score)})
+    if not rows:
         st.info("Map not available: no centroid mapping found for current states.")
         return
-    # Plotly marker size must be non-negative; shift scores into a positive range.
-    min_score = map_df["DCLO_score"].min()
-    map_df["map_size"] = (map_df["DCLO_score"] - min_score) + 0.05
+    map_df = pd.DataFrame(rows)
+    min_score = float(map_df["DCLO_score"].min())
+    map_df["map_size"] = (map_df["DCLO_score"] - min_score + 0.05).astype(float)
 
     fig = px.scatter_geo(
         map_df,
@@ -374,6 +382,11 @@ def render_state_map(df_year: pd.DataFrame) -> None:
 
 def render_country_map(df_year: pd.DataFrame, score_col: str) -> None:
     map_df = df_year.dropna(subset=["economy", score_col]).copy()
+    if not map_df.empty:
+        map_df = pd.DataFrame({
+            "economy": map_df["economy"].astype(str),
+            score_col: pd.to_numeric(map_df[score_col], errors="coerce").astype(float),
+        }).dropna(subset=[score_col])
     if map_df.empty:
         st.info("No country data available for map.")
         return
