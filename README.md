@@ -1,7 +1,41 @@
-# India Open Data Pipeline + Power BI
+# DCLO — Digital Capability for Life Outcomes
 
-This project ingests datasets from India's National Open Data Portal (`data.gov.in`), builds analytics-ready tables, and prepares outputs for Power BI dashboards.
-It also supports RBI DBIE dataset ingestion from direct download URLs or local DBIE exports.
+[![License: CC-BY-4.0](https://img.shields.io/badge/License-CC--BY--4.0-blue.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Version](https://img.shields.io/badge/version-0.4.0-informational.svg)](CHANGELOG.md)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](runtime.txt)
+[![Streamlit](https://img.shields.io/badge/built%20with-Streamlit-red.svg)](https://streamlit.io)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/techpolicycomms/dclo-dual-track-dashboard/HEAD?urlpath=%2F)
+[![Docker pulls](https://img.shields.io/badge/docker-Dockerfile-blue.svg)](Dockerfile)
+[![Cite this](https://img.shields.io/badge/cite-CITATION.cff-yellow.svg)](CITATION.cff)
+[![Academic track](https://img.shields.io/badge/academic-paper%20draft-success.svg)](academic/README.md)
+
+DCLO is a capability-grounded composite indicator and an interactive critical instrument for reading the standard digital-development indicator family (ITU IDI, WEF NRI, UN EGDI, World Bank GovTech Maturity Index). The dashboard is published as a **research artefact alongside a companion paper draft** ([`academic/09_paper_draft.md`](academic/09_paper_draft.md)), an indicator-validity audit, a revised identification strategy, a robustness protocol, and a pre-registered analysis plan. It is designed to surface, rather than disguise, the construct-validity gaps in the standard family.
+
+## Reproducibility — three paths
+
+| Path | One-liner | Best for |
+|---|---|---|
+| **Local Streamlit** | `pip install -r requirements.txt && streamlit run dashboard/dclo_dashboard.py` | Hacking. |
+| **Docker** | `docker build -t dclo:0.4.0 . && docker run --rm -p 8501:8501 dclo:0.4.0` | Pinned environment. |
+| **Binder (no install)** | Click the Binder badge above. | Reviewers, students, demo. |
+
+Versioned releases follow [`CHANGELOG.md`](CHANGELOG.md). Provenance for every gold-table cell is recorded by the audit logger (`src/quality/audit_logger.py`) and surfaced in the dashboard's **Data Provenance & Audit** tab.
+
+## Cite
+
+If you use this dashboard or its outputs, cite per [`CITATION.cff`](CITATION.cff). A BibTeX block is also available inside the dashboard sidebar (Cite this dashboard).
+
+## Academic track
+
+A capability-grounded critique and publishable-paper scaffold lives in [`academic/`](academic/README.md). Start with [`academic/00_response_to_sarkar.md`](academic/00_response_to_sarkar.md) and [`academic/01_gap_analysis.md`](academic/01_gap_analysis.md). The dashboard surfaces the construct-validity caveats produced by that audit through a top banner, a sidebar QA split, a method-comparison stability flag, a CTX-toggle warning, and a Causal-Evidence tab disclosure. Eight tabs render: **Measurement**, **Causal Evidence**, **Robustness**, **Standard-Family Comparison**, **Methods**, **Inclusion & Reflexivity**, **Data Provenance & Audit**, **Releases**.
+
+The companion paper draft ([`academic/09_paper_draft.md`](academic/09_paper_draft.md), 10,086 words) targets *Information, Communication & Society* (Q1, Routledge); a JOSS-style short paper ([`paper.md`](paper.md)) targets the *Journal of Open Source Software* in parallel for the artefact itself.
+
+---
+
+## Pipeline (legacy — being subsumed by the academic-track build)
+
+This project also ingests datasets from India's National Open Data Portal (`data.gov.in`), builds analytics-ready tables, and prepares outputs for Power BI dashboards. It supports RBI DBIE dataset ingestion from direct download URLs or local DBIE exports.
 
 ## Architecture Outline
 

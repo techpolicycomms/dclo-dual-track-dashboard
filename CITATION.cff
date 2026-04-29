@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+title: "DCLO — Digital Capability for Life Outcomes: Dashboard and Critical Instrument"
+message: "If you use this dashboard or its outputs, please cite as below. The accompanying paper draft lives in academic/09_paper_draft.md."
+type: software
+authors:
+  - given-names: Rahul
+    family-names: Jha
+    affiliation: "Jindal School of Government and Public Policy (JSGP), O. P. Jindal Global University"
+    email: "rjha11@jgu.edu.in"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+identifiers:
+  - description: "Source repository"
+    type: url
+    value: "https://github.com/techpolicycomms/dclo-dual-track-dashboard"
+repository-code: "https://github.com/techpolicycomms/dclo-dual-track-dashboard"
+license: CC-BY-4.0
+version: 0.4.0
+date-released: "2026-04-29"
+keywords:
+  - capability approach
+  - digital public infrastructure
+  - critical data studies
+  - composite indicators
+  - digital divide
+  - India
+  - reproducibility
+abstract: >-
+  DCLO is a capability-grounded composite indicator and an interactive critical
+  instrument for reading the standard digital-development indicator family
+  (ITU IDI, WEF NRI, UN EGDI, World Bank GovTech Maturity Index). The dashboard
+  is published as a research artefact alongside a companion paper draft, an
+  indicator-validity audit, a revised identification strategy, a robustness
+  protocol, and a pre-registered analysis plan. It is designed to surface,
+  rather than disguise, the construct-validity gaps in the standard family.
+preferred-citation:
+  type: article
+  title: "Digital Capability for Life Outcomes: A Critical Instrument for Reading the Standard Indicator Family"
+  authors:
+    - given-names: Rahul
+      family-names: Jha
+      affiliation: "JSGP, O. P. Jindal Global University"
+  year: 2026
+  status: working-paper
+  notes: "Working paper accompanying the DCLO dashboard. See academic/09_paper_draft.md."

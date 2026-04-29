@@ -9,6 +9,11 @@ gating:
   min_pct_observed: 70.0
   max_imputation_share: 0.35
   min_overlap_years: 5
+  # Joint entity-year panel coverage required for an indicator to clear the gate.
+  # Current build: most retained indicators have panel_coverage ~0.08, so the
+  # silent fallback in select_indicators_by_domain() is what is actually picking
+  # them. See academic/12_known_issues.md KI-006. Next release tightens or
+  # removes the silent fallback.
   min_panel_coverage: 0.40
   min_per_domain: 4
   max_per_domain: 8
