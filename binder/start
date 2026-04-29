@@ -1,0 +1,13 @@
+#!/bin/bash
+# Binder start hook — exec's into Streamlit instead of Jupyter.
+# When a reader clicks the Binder badge, they land on the dashboard, not a notebook.
+
+set -euo pipefail
+
+exec streamlit run dashboard/dclo_dashboard.py \
+    --server.port=${PORT:-8888} \
+    --server.address=0.0.0.0 \
+    --server.headless=true \
+    --browser.gatherUsageStats=false \
+    --server.enableCORS=false \
+    --server.enableXsrfProtection=false

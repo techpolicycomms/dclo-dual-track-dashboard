@@ -1,0 +1,19 @@
+#!/bin/bash
+# Binder post-build hook.
+# Binder reads the project root requirements.txt and runtime.txt to build the environment.
+# This script seeds anything Streamlit needs that pip alone does not provide.
+
+set -euo pipefail
+
+mkdir -p ~/.streamlit
+cat > ~/.streamlit/config.toml <<'EOF'
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = false
+
+[browser]
+gatherUsageStats = false
+EOF
+
+echo "DCLO Binder post-build complete."

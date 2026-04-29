@@ -1,0 +1,407 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-04-29",
+  "layers": {
+    "resources": {
+      "label": "Resources",
+      "description": "Infrastructure, devices, services, data flows that exist in a setting.",
+      "color": "#7E57C2"
+    },
+    "conversion_factors": {
+      "label": "Conversion factors",
+      "description": "Personal, social, and environmental conditions allowing conversion of resources to capability.",
+      "color": "#42A5F5"
+    },
+    "capabilities": {
+      "label": "Capabilities",
+      "description": "Substantive freedoms a person has to do or be online.",
+      "color": "#26A69A"
+    },
+    "functionings": {
+      "label": "Functionings",
+      "description": "Achieved doings or beings.",
+      "color": "#66BB6A"
+    },
+    "macro_context": {
+      "label": "Macro context (not capability)",
+      "description": "Macroeconomic / structural indicator that does not target any layer.",
+      "color": "#EF5350"
+    }
+  },
+  "indicators": {
+    "WB_BX.KLT.DINV.WD.GD.ZS": {
+      "name": "FDI net inflows (% of GDP)",
+      "domain": "ACC",
+      "layer": "macro_context",
+      "source_agency": "World Bank WDI",
+      "source_url": "https://data.worldbank.org/indicator/BX.KLT.DINV.WD.GD.ZS",
+      "license": "CC-BY-4.0",
+      "mechanism": "Capital-account indicator. Has no plausible mechanism by which it captures digital connectivity, capability, or functioning. Currently retained by gating thresholds; flagged for removal in next release.",
+      "construct_validity": "fail",
+      "replacement": "Drop. No substitute needed within ACC."
+    },
+    "WB_IT.NET.SECR.P6": {
+      "name": "Secure Internet servers per million",
+      "domain": "ACC",
+      "layer": "resources",
+      "source_agency": "World Bank / Netcraft",
+      "source_url": "https://data.worldbank.org/indicator/IT.NET.SECR.P6",
+      "license": "CC-BY-4.0",
+      "mechanism": "Supply-side resource indicator. Skewed by hosting-industry concentration (small economies hosting major data centres rank disproportionately).",
+      "construct_validity": "weak",
+      "replacement": "Keep with hosting-concentration caveat; supplement with ITU 4G+ population coverage."
+    },
+    "WB_IT.NET.USER.ZS": {
+      "name": "Individuals using the Internet (% of population)",
+      "domain": "ACC",
+      "layer": "resources",
+      "source_agency": "World Bank / ITU",
+      "source_url": "https://data.worldbank.org/indicator/IT.NET.USER.ZS",
+      "license": "CC-BY-4.0",
+      "mechanism": "Use-coverage resource indicator. Strongest of the ACC indicators currently in scope.",
+      "construct_validity": "ok",
+      "replacement": "Keep. Triangulate with ITU IDI sub-indicator."
+    },
+    "WB_IT.CEL.SETS.P2": {
+      "name": "Mobile cellular subscriptions per 100",
+      "domain": "ACC",
+      "layer": "resources",
+      "source_agency": "World Bank / ITU",
+      "source_url": "https://data.worldbank.org/indicator/IT.CEL.SETS.P2",
+      "license": "CC-BY-4.0",
+      "mechanism": "Device-penetration resource indicator. Inflated by multi-SIM markets; does not distinguish smartphone from feature-phone.",
+      "construct_validity": "weak",
+      "replacement": "Replace with ITU mobile-broadband subscriptions per 100, or keep with double-count caveat."
+    },
+    "WB_CC.PER.RNK": {
+      "name": "Control of Corruption percentile",
+      "domain": "AGR",
+      "layer": "macro_context",
+      "source_agency": "World Bank Worldwide Governance Indicators",
+      "source_url": "https://info.worldbank.org/governance/wgi/",
+      "license": "CC-BY-4.0",
+      "mechanism": "Macro-political institutional-quality composite. Does not target digital agency. Contested in the political-science literature (Apaza 2009; Thomas 2010; Langbein and Knack 2010).",
+      "construct_validity": "fail",
+      "replacement": "Drop. Replace AGR with Freedom House Freedom on the Net sub-scores; GSMA Mobile Gender Gap; Findex female-controlled account; SDG 16.10.2."
+    },
+    "WB_PV.PER.RNK": {
+      "name": "Political Stability and Absence of Violence percentile",
+      "domain": "AGR",
+      "layer": "macro_context",
+      "source_agency": "World Bank Worldwide Governance Indicators",
+      "source_url": "https://info.worldbank.org/governance/wgi/",
+      "license": "CC-BY-4.0",
+      "mechanism": "Macro-political indicator. Same critique as CC.PER.RNK.",
+      "construct_validity": "fail",
+      "replacement": "Drop. See AGR replacement set."
+    },
+    "WB_SL.TLF.CACT.ZS": {
+      "name": "Labour force participation rate (% pop 15+)",
+      "domain": "ECO",
+      "layer": "macro_context",
+      "source_agency": "World Bank / ILO",
+      "source_url": "https://data.worldbank.org/indicator/SL.TLF.CACT.ZS",
+      "license": "CC-BY-4.0",
+      "mechanism": "General labour-market stock. Not digital-economy-specific.",
+      "construct_validity": "fail",
+      "replacement": "Drop from ECO. Use as a control. Replace with Findex digital-payment use; ILOSTAT ICT-occupation share."
+    },
+    "WB_SL.UEM.TOTL.ZS": {
+      "name": "Unemployment (% labour force)",
+      "domain": "ECO",
+      "layer": "macro_context",
+      "source_agency": "World Bank / ILO",
+      "source_url": "https://data.worldbank.org/indicator/SL.UEM.TOTL.ZS",
+      "license": "CC-BY-4.0",
+      "mechanism": "General labour-market stock.",
+      "construct_validity": "fail",
+      "replacement": "Drop from ECO. Use as a control."
+    },
+    "WB_NE.TRD.GNFS.ZS": {
+      "name": "Trade (% GDP)",
+      "domain": "ECO",
+      "layer": "macro_context",
+      "source_agency": "World Bank",
+      "source_url": "https://data.worldbank.org/indicator/NE.TRD.GNFS.ZS",
+      "license": "CC-BY-4.0",
+      "mechanism": "Macro-economic openness; not digital-economy-specific.",
+      "construct_validity": "fail",
+      "replacement": "Drop."
+    },
+    "WB_NY.GDP.PCAP.KD.ZG": {
+      "name": "GDP per capita growth (annual %)",
+      "domain": "ECO",
+      "layer": "macro_context",
+      "source_agency": "World Bank",
+      "source_url": "https://data.worldbank.org/indicator/NY.GDP.PCAP.KD.ZG",
+      "license": "CC-BY-4.0",
+      "mechanism": "Macro-economic stock. Should be a control, not an ECO indicator.",
+      "construct_validity": "fail",
+      "replacement": "Move to controls X."
+    },
+    "WB_SP.POP.GROW": {
+      "name": "Population growth (annual %)",
+      "domain": "OUT",
+      "layer": "macro_context",
+      "source_agency": "World Bank",
+      "source_url": "https://data.worldbank.org/indicator/SP.POP.GROW",
+      "license": "CC-BY-4.0",
+      "mechanism": "Demographic indicator with no plausible mechanism from digital capability. Suitable as a placebo outcome.",
+      "construct_validity": "fail",
+      "replacement": "Drop from OUT. Use as placebo P3 in the robustness protocol."
+    },
+    "WB_AG.LND.AGRI.ZS": {
+      "name": "Agricultural land share (% land area)",
+      "domain": "OUT",
+      "layer": "macro_context",
+      "source_agency": "World Bank / FAO",
+      "source_url": "https://data.worldbank.org/indicator/AG.LND.AGRI.ZS",
+      "license": "CC-BY-4.0",
+      "mechanism": "Land-use indicator. Suitable as a placebo outcome.",
+      "construct_validity": "fail",
+      "replacement": "Drop from OUT. Use as placebo P3."
+    },
+    "WB_EG.CFT.ACCS.ZS": {
+      "name": "Access to clean cooking fuels (% pop)",
+      "domain": "OUT",
+      "layer": "functionings",
+      "source_agency": "World Bank / WHO",
+      "source_url": "https://data.worldbank.org/indicator/EG.CFT.ACCS.ZS",
+      "license": "CC-BY-4.0",
+      "mechanism": "Energy-access functioning. Weakly tied to digital capability through grid-electrification correlation. Demote to context covariate.",
+      "construct_validity": "weak",
+      "replacement": "Demote to context. Replace with Findex digital-channel account use; WHO digital-health uptake."
+    },
+    "WB_SE.TER.ENRR": {
+      "name": "Tertiary gross enrolment (% relevant age)",
+      "domain": "SKL",
+      "layer": "macro_context",
+      "source_agency": "World Bank / UNESCO",
+      "source_url": "https://data.worldbank.org/indicator/SE.TER.ENRR",
+      "license": "CC-BY-4.0",
+      "mechanism": "General education stock. Does not target digital skills.",
+      "construct_validity": "fail",
+      "replacement": "Drop. Replace with SDG 4.4.1 (ITU/UNESCO)."
+    },
+    "WB_SE.SEC.ENRR": {
+      "name": "Secondary gross enrolment (% relevant age)",
+      "domain": "SKL",
+      "layer": "macro_context",
+      "source_agency": "World Bank / UNESCO",
+      "source_url": "https://data.worldbank.org/indicator/SE.SEC.ENRR",
+      "license": "CC-BY-4.0",
+      "mechanism": "General education stock.",
+      "construct_validity": "fail",
+      "replacement": "Drop. See SKL replacement."
+    },
+    "WTO_SERVICES_TOTAL_EXPORTS": {
+      "name": "Services exports, total",
+      "domain": "SRV",
+      "layer": "macro_context",
+      "source_agency": "World Trade Organization",
+      "source_url": "https://stats.wto.org/",
+      "license": "see WTO terms of use",
+      "mechanism": "Macro-economic services-trade. Has no mechanism by which it captures digital service-uptake by households.",
+      "construct_validity": "fail",
+      "replacement": "Drop. Replace SRV with WB GovTech Maturity Index, UN EGDI, Findex digital-payment use, WHO digital-health monitoring."
+    },
+    "WTO_SERVICES_TRANSPORT_EXPORTS": {
+      "name": "Services exports, transport",
+      "domain": "SRV",
+      "layer": "macro_context",
+      "source_agency": "World Trade Organization",
+      "source_url": "https://stats.wto.org/",
+      "license": "see WTO terms of use",
+      "mechanism": "Macro-economic.",
+      "construct_validity": "fail",
+      "replacement": "Drop."
+    },
+    "WTO_SERVICES_TRAVEL_EXPORTS": {
+      "name": "Services exports, travel",
+      "domain": "SRV",
+      "layer": "macro_context",
+      "source_agency": "World Trade Organization",
+      "source_url": "https://stats.wto.org/",
+      "license": "see WTO terms of use",
+      "mechanism": "Macro-economic.",
+      "construct_validity": "fail",
+      "replacement": "Drop."
+    },
+    "WTO_SERVICES_POSTAL_COURIER_EXPORTS": {
+      "name": "Services exports, postal and courier",
+      "domain": "SRV",
+      "layer": "macro_context",
+      "source_agency": "World Trade Organization",
+      "source_url": "https://stats.wto.org/",
+      "license": "see WTO terms of use",
+      "mechanism": "Macro-economic.",
+      "construct_validity": "fail",
+      "replacement": "Drop."
+    },
+    "ACC_pop_hh_elec": {
+      "name": "Households with electricity (%)",
+      "domain": "ACC",
+      "layer": "conversion_factors",
+      "source_agency": "NFHS (India)",
+      "source_url": "http://rchiips.org/nfhs/",
+      "license": "Government of India open data",
+      "mechanism": "Electricity is a conversion factor for digital access; it is not digital connectivity itself.",
+      "construct_validity": "weak",
+      "replacement": "Demote to conversion factor. Add NFHS internet-use indicator."
+    },
+    "SKL_fem_literacy": {
+      "name": "Female literacy rate",
+      "domain": "SKL",
+      "layer": "conversion_factors",
+      "source_agency": "NFHS (India)",
+      "source_url": "http://rchiips.org/nfhs/",
+      "license": "Government of India open data",
+      "mechanism": "General literacy is a conversion factor for digital literacy; not digital skill itself.",
+      "construct_validity": "weak",
+      "replacement": "Keep as conversion factor; add SDG 4.4.1-style ICT skill from NSS-PLFS."
+    },
+    "SRV_pop_hh_sf": {
+      "name": "Population with sanitation facility (%)",
+      "domain": "SRV",
+      "layer": "macro_context",
+      "source_agency": "NFHS (India)",
+      "source_url": "http://rchiips.org/nfhs/",
+      "license": "Government of India open data",
+      "mechanism": "Sanitation is not a digital service.",
+      "construct_validity": "fail",
+      "replacement": "Drop or move to context. Replace with PMJAY digital-claims share, eSanjeevani teleconsults per capita."
+    },
+    "AGR_fem_15_24_hyg_period": {
+      "name": "Females 15-24 using hygienic period products (%)",
+      "domain": "AGR",
+      "layer": "macro_context",
+      "source_agency": "NFHS (India)",
+      "source_url": "http://rchiips.org/nfhs/",
+      "license": "Government of India open data",
+      "mechanism": "Menstrual-hygiene functioning. Not digital agency.",
+      "construct_validity": "fail",
+      "replacement": "Drop or move to context. Replace with female mobile ownership (NFHS); female bank-account control."
+    },
+    "AGR_shg_member_scale": {
+      "name": "Self-help-group members per state",
+      "domain": "AGR",
+      "layer": "conversion_factors",
+      "source_agency": "NABARD SHG (India)",
+      "source_url": "https://www.nabard.org/",
+      "license": "Government of India open data",
+      "mechanism": "Group-financial-inclusion conversion factor.",
+      "construct_validity": "weak",
+      "replacement": "Keep with caveat."
+    },
+    "ECO_prop_hh_microfin": {
+      "name": "Households with microfinance access (%)",
+      "domain": "ECO",
+      "layer": "conversion_factors",
+      "source_agency": "NAFIS (India)",
+      "source_url": "https://www.nabard.org/",
+      "license": "Government of India open data",
+      "mechanism": "Financial-inclusion conversion factor.",
+      "construct_validity": "weak",
+      "replacement": "Keep; supplement with UPI per-capita usage."
+    },
+    "OUT_hh_income_monthly": {
+      "name": "Household monthly income",
+      "domain": "OUT",
+      "layer": "functionings",
+      "source_agency": "NAFIS (India)",
+      "source_url": "https://www.nabard.org/",
+      "license": "Government of India open data",
+      "mechanism": "General income functioning. Weakly digital.",
+      "construct_validity": "weak",
+      "replacement": "Keep with caveat."
+    },
+    "OUT_prop_saving": {
+      "name": "Households with positive savings (%)",
+      "domain": "OUT",
+      "layer": "functionings",
+      "source_agency": "NAFIS (India)",
+      "source_url": "https://www.nabard.org/",
+      "license": "Government of India open data",
+      "mechanism": "Saving functioning. Weakly digital.",
+      "construct_validity": "weak",
+      "replacement": "Keep with caveat."
+    },
+    "NAT_upi_total_vol": {
+      "name": "UPI transactions, total volume (national)",
+      "domain": "ECO",
+      "layer": "functionings",
+      "source_agency": "NPCI (India)",
+      "source_url": "https://www.npci.org.in/what-we-do/upi/product-statistics",
+      "license": "Government of India open data",
+      "mechanism": "National-level digital-payment functioning. Currently applied uniformly across all states; contributes nothing to within-year state variation.",
+      "construct_validity": "fail",
+      "replacement": "Move to year-context. Replace with state-level UPI from NPCI state dashboards."
+    },
+    "NAT_upi_total_val": {
+      "name": "UPI transactions, total value (national)",
+      "domain": "ECO",
+      "layer": "functionings",
+      "source_agency": "NPCI (India)",
+      "source_url": "https://www.npci.org.in/what-we-do/upi/product-statistics",
+      "license": "Government of India open data",
+      "mechanism": "National-level value. Same caveat.",
+      "construct_validity": "fail",
+      "replacement": "Move to year-context."
+    },
+    "NAT_upi_p2p_vol": {
+      "name": "UPI P2P volume (national)",
+      "domain": "ECO",
+      "layer": "functionings",
+      "source_agency": "NPCI (India)",
+      "source_url": "https://www.npci.org.in/what-we-do/upi/product-statistics",
+      "license": "Government of India open data",
+      "mechanism": "National-level. Same caveat.",
+      "construct_validity": "fail",
+      "replacement": "Move to year-context."
+    },
+    "NAT_upi_p2m_vol": {
+      "name": "UPI P2M volume (national)",
+      "domain": "ECO",
+      "layer": "functionings",
+      "source_agency": "NPCI (India)",
+      "source_url": "https://www.npci.org.in/what-we-do/upi/product-statistics",
+      "license": "Government of India open data",
+      "mechanism": "National-level. Same caveat.",
+      "construct_validity": "fail",
+      "replacement": "Move to year-context."
+    },
+    "NAT_ib_no_of_transactions": {
+      "name": "Internet-banking transactions (national)",
+      "domain": "ECO",
+      "layer": "functionings",
+      "source_agency": "RBI DBIE (India)",
+      "source_url": "https://data.rbi.org.in/",
+      "license": "Government of India open data",
+      "mechanism": "National-level. Same caveat.",
+      "construct_validity": "fail",
+      "replacement": "Move to year-context."
+    },
+    "NAT_ib_amt_of_transactions": {
+      "name": "Internet-banking amount (national)",
+      "domain": "ECO",
+      "layer": "functionings",
+      "source_agency": "RBI DBIE (India)",
+      "source_url": "https://data.rbi.org.in/",
+      "license": "Government of India open data",
+      "mechanism": "National-level. Same caveat.",
+      "construct_validity": "fail",
+      "replacement": "Move to year-context."
+    },
+    "NAT_ib_active_users": {
+      "name": "Internet-banking active users (national)",
+      "domain": "ECO",
+      "layer": "functionings",
+      "source_agency": "RBI DBIE (India)",
+      "source_url": "https://data.rbi.org.in/",
+      "license": "Government of India open data",
+      "mechanism": "National-level. Same caveat.",
+      "construct_validity": "fail",
+      "replacement": "Move to year-context."
+    }
+  }
+}
