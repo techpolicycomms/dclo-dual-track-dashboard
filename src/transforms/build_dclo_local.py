@@ -52,16 +52,20 @@ def parse_year_from_period(value: object) -> Optional[int]:
 
 
 def zscore(series: pd.Series) -> pd.Series:
-    """Z-score normalization using sample standard deviation (ddof=1).
+    """Z-score normalization using sample standard deviation (ddof=1) with 5%-95% winsorisation.
 
     Uses Bessel's correction (ddof=1) as standard for sample data per
-    Nunnally & Bernstein (1994). Falls back to zero vector when std is
-    zero or undefined (constant series).
+    Nunnally & Bernstein (1994). Winsorises raw indicators at 5th and 95th
+    percentiles before standardisation to follow OECD Constructing Composite
+    Indicators handbook guidelines.
     """
-    std = series.std(ddof=1)
+    lower_bound = series.quantile(0.05)
+    upper_bound = series.quantile(0.95)
+    series_winsorised = series.clip(lower_bound, upper_bound)
+    std = series_winsorised.std(ddof=1)
     if std == 0 or pd.isna(std):
         return pd.Series([0.0] * len(series), index=series.index)
-    return (series - series.mean()) / std
+    return (series_winsorised - series_winsorised.mean()) / std
 
 
 def apply_dpi_context(df: pd.DataFrame, config: Dict[str, object], audit: AuditLogger) -> pd.DataFrame:
@@ -164,6 +168,11 @@ def aggregate_nfis(path: str, audit: AuditLogger) -> pd.DataFrame:
     n_dropped_null_keys = rows_before_drop - len(out)
 
     out["state_name"] = out["state_name"].astype(str).str.strip()
+    state_mapping = {
+        "Dadra And Nagar Haveli": "The Dadra And Nagar Haveli And Daman And Diu",
+        "Daman And Diu": "The Dadra And Nagar Haveli And Daman And Diu",
+    }
+    out["state_name"] = out["state_name"].replace(state_mapping)
     out["ECO_prop_hh_microfin"] = out["prop_hh_microfin"]
     out["OUT_hh_income_monthly"] = out["hh_income_monthly"]
     out["OUT_prop_saving"] = out["prop_saving"]
@@ -183,7 +192,7 @@ def aggregate_nfis(path: str, audit: AuditLogger) -> pd.DataFrame:
         "aggregate_nafis",
         rows_in=rows_raw,
         rows_out=len(grouped),
-        rows_dropped=rows_raw - len(out),
+        rows_dropped=rows_raw - len(grouped),
         drop_reasons={"null_keys": n_dropped_null_keys, **{d["reason"]: d["count"] for d in vr.dropped_records}},
         notes=f"Verification: {vr.checks_passed}/{vr.checks_run} checks passed, {vr.n_issues} issues",
     )
@@ -211,6 +220,11 @@ def aggregate_nfhs(path: str, audit: AuditLogger) -> pd.DataFrame:
     n_dropped_null_keys = rows_before_drop - len(out)
 
     out["state_name"] = out["state_name"].astype(str).str.strip()
+    state_mapping = {
+        "Dadra And Nagar Haveli": "The Dadra And Nagar Haveli And Daman And Diu",
+        "Daman And Diu": "The Dadra And Nagar Haveli And Daman And Diu",
+    }
+    out["state_name"] = out["state_name"].replace(state_mapping)
     out["ACC_pop_hh_elec"] = out["pop_hh_elec"]
     out["SKL_fem_literacy"] = out["fem_literacy"]
     out["SRV_pop_hh_sf"] = out["pop_hh_sf"]
@@ -231,7 +245,7 @@ def aggregate_nfhs(path: str, audit: AuditLogger) -> pd.DataFrame:
         "aggregate_nfhs",
         rows_in=rows_raw,
         rows_out=len(grouped),
-        rows_dropped=rows_raw - len(out),
+        rows_dropped=rows_raw - len(grouped),
         drop_reasons={"null_keys": n_dropped_null_keys, **{d["reason"]: d["count"] for d in vr.dropped_records}},
         notes=f"Verification: {vr.checks_passed}/{vr.checks_run} checks passed, {vr.n_issues} issues",
     )
@@ -435,6 +449,26 @@ def compute_domain_scores(df: pd.DataFrame, audit: AuditLogger) -> pd.DataFrame:
     return df
 
 
+def merge_national_fallback(merged_df: pd.DataFrame, national_df: pd.DataFrame, prefix_cols: list[str]) -> pd.DataFrame:
+    # national_df has a 'year' column and some value columns
+    # For each year in merged_df, we find the closest year in national_df
+    out = merged_df.copy()
+    closest_rows = []
+    for _, row in out.iterrows():
+        y = row["year"]
+        if pd.isna(y):
+            closest_rows.append({col: pd.NA for col in prefix_cols})
+            continue
+        diffs = (national_df["year"] - y).abs()
+        idx = diffs.idxmin()
+        closest_rows.append(national_df.loc[idx, prefix_cols].to_dict())
+    
+    closest_df = pd.DataFrame(closest_rows, index=out.index)
+    for col in prefix_cols:
+        out[col] = closest_df[col]
+    return out
+
+
 def run(config_path: str) -> None:
     config = read_config(config_path)
     enabled_sources = get_enabled_sources(config)
@@ -449,22 +483,36 @@ def run(config_path: str) -> None:
     nfhs = aggregate_nfhs(enabled_sources["nfhs"], audit)
 
     merged = base.merge(nfhs, on=["state_name", "year"], how="outer")
+    state_mapping = {
+        "Dadra And Nagar Haveli": "The Dadra And Nagar Haveli And Daman And Diu",
+        "Daman And Diu": "The Dadra And Nagar Haveli And Daman And Diu",
+    }
+    merged["state_name"] = merged["state_name"].replace(state_mapping)
+    import numpy as np
+    numeric_cols = merged.select_dtypes(include=[np.number]).columns.tolist()
+    if "year" in numeric_cols:
+        numeric_cols.remove("year")
+    merged = merged.groupby(["state_name", "year"], as_index=False)[numeric_cols].mean()
+
     audit.record_stage("merge_nafis_nfhs", rows_in=len(base) + len(nfhs), rows_out=len(merged), rows_dropped=0,
-                       notes="Outer join on (state_name, year)")
+                       notes="Outer join on (state_name, year) and standardized Union Territories")
 
     if "upi_transactions" in enabled_sources:
         upi = aggregate_national_upi(enabled_sources["upi_transactions"], audit)
         rows_before = len(merged)
-        merged = merged.merge(upi, on="year", how="left")
+        upi_cols = [c for c in upi.columns if c != "year"]
+        merged = merge_national_fallback(merged, upi, upi_cols)
         audit.record_stage("merge_upi", rows_in=rows_before, rows_out=len(merged), rows_dropped=0,
-                           notes="Left join national UPI on year")
+                           notes="Nearest-year fallback join national UPI")
 
     if "internet_banking" in enabled_sources:
         ib = aggregate_national_internet_banking(enabled_sources["internet_banking"], audit)
         rows_before = len(merged)
-        merged = merged.merge(ib, on="year", how="left")
+        ib_cols = [c for c in ib.columns if c != "year"]
+        merged = merge_national_fallback(merged, ib, ib_cols)
         audit.record_stage("merge_internet_banking", rows_in=rows_before, rows_out=len(merged), rows_dropped=0,
-                           notes="Left join national internet banking on year")
+                           notes="Nearest-year fallback join national internet banking")
+
 
     if "shg_profile" in enabled_sources:
         shg = aggregate_shg_chunked(enabled_sources["shg_profile"], audit)
@@ -487,6 +535,33 @@ def run(config_path: str) -> None:
                     merged = merged.drop(columns=[fallback_col])
         audit.record_stage("merge_shg", rows_in=rows_before, rows_out=len(merged), rows_dropped=0,
                            notes="Left join SHG with state-level fallback for missing years")
+
+    # Apply robust state-level survey interpolation and median fallback per approved implementation plan
+    cols_to_fill = [
+        "ECO_prop_hh_microfin", "OUT_hh_income_monthly", "OUT_prop_saving",
+        "ACC_pop_hh_elec", "SKL_fem_literacy", "SRV_pop_hh_sf", "AGR_fem_15_24_hyg_period"
+    ]
+    def fill_missing(group):
+        group = group.sort_values("year")
+        group[cols_to_fill] = group[cols_to_fill].interpolate(method="linear", limit_direction="both")
+        group[cols_to_fill] = group[cols_to_fill].ffill().bfill()
+        return group
+
+    merged = merged.groupby("state_name", group_keys=False).apply(fill_missing)
+
+    for col in cols_to_fill:
+        merged[col] = merged.groupby("year")[col].transform(lambda s: s.fillna(s.median() if not s.isna().all() else pd.NA))
+        merged[col] = merged[col].fillna(merged[col].median() if not merged[col].isna().all() else 0.0)
+
+    # Impute SHG columns if present
+    shg_cols = ["AGR_shg_member_scale", "ECO_shg_credit_scale"]
+    for col in shg_cols:
+        if col in merged.columns:
+            merged[col] = merged.groupby("year")[col].transform(lambda s: s.fillna(s.median() if not s.isna().all() else pd.NA))
+            merged[col] = merged[col].fillna(merged[col].median() if not merged[col].isna().all() else 0.0)
+
+    audit.record_stage("state_survey_imputation", rows_in=len(merged), rows_out=len(merged), rows_dropped=0,
+                       notes="Applied state-level survey interpolation/extrapolation and year-median fallback")
 
     # Pre-scoring verification on merged data
     vr = VerificationResult("merged_pre_scoring")

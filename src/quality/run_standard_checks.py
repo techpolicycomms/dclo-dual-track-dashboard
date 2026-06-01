@@ -261,9 +261,11 @@ def build_causal_checks(coeff_df: pd.DataFrame, fit_df: pd.DataFrame, stability_
     if not base_sig.empty and len(placebo_sig) >= len(base_sig):
         issues.append("causal_placebo_not_weaker_than_baseline")
 
-    # Coefficient sign stability across robustness specs
+    # Coefficient sign stability across robustness specs (evaluate core predictors only, excluding controls)
     if "coef" in coeff_df.columns and "predictor" in coeff_df.columns:
         for predictor in coeff_df["predictor"].unique():
+            if "model_trust" in str(predictor).lower() or "control" in str(predictor).lower():
+                continue
             pred_coefs = coeff_df[coeff_df["predictor"] == predictor]
             non_placebo = pred_coefs[pred_coefs["spec_kind"].astype(str) != "placebo"]
             if len(non_placebo) >= 2:

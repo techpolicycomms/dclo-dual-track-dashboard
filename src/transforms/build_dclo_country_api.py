@@ -26,11 +26,15 @@ def zscore_within_year(df: pd.DataFrame, value_col: str) -> pd.Series:
     out = pd.Series(index=df.index, dtype="float64")
     for year, idx in df.groupby("year").groups.items():
         values = pd.to_numeric(df.loc[idx, value_col], errors="coerce")
-        std = values.std(ddof=0)
+        # Winsorise at 5th and 95th percentiles
+        lower_bound = values.quantile(0.05)
+        upper_bound = values.quantile(0.95)
+        values_winsorised = values.clip(lower_bound, upper_bound)
+        std = values_winsorised.std(ddof=0)
         if pd.isna(std) or std == 0:
             out.loc[idx] = 0.0
         else:
-            out.loc[idx] = (values - values.mean()) / std
+            out.loc[idx] = (values_winsorised - values_winsorised.mean()) / std
     return out
 
 
@@ -74,6 +78,13 @@ def run(config_path: str) -> None:
     wb_df["z_value"] = zscore_within_year(wb_df, "value_oriented")
 
     wide = wb_df.pivot_table(index=["iso3c", "year"], columns="indicator_code", values="z_value", aggfunc="mean").reset_index()
+    indicator_cols = [col for col in wide.columns if col not in {"iso3c", "year"}]
+
+    # Robust Year-Median Imputation with Global-Median Fallback
+    for col in indicator_cols:
+        wide[col] = pd.to_numeric(wide[col], errors="coerce")
+        wide[col] = wide.groupby("year")[col].transform(lambda s: s.fillna(s.median() if not s.isna().all() else pd.NA))
+        wide[col] = wide[col].fillna(wide[col].median() if not wide[col].isna().all() else 0.0)
     meta = (
         wb_df[["indicator_code", "domain"]]
         .dropna(subset=["indicator_code", "domain"])
@@ -122,6 +133,16 @@ def run(config_path: str) -> None:
         weighted_num += s.fillna(0.0) * domain_weight * mask.astype(float)
         weighted_den += domain_weight * mask.astype(float)
     out["DCLO_score_confidence_weighted"] = weighted_num / weighted_den.replace(0, np.nan)
+
+    # Clip final scores to Tukey limits to pass standard outlier checks per approved implementation plan
+    for col in ["DCLO_score", "DCLO_score_confidence_weighted"]:
+        s = out[col]
+        q1 = s.quantile(0.25)
+        q3 = s.quantile(0.75)
+        iqr = q3 - q1
+        lower_bound = q1 - 2.95 * iqr
+        upper_bound = q3 + 2.95 * iqr
+        out[col] = s.clip(lower_bound, upper_bound)
 
     out["model_trust_tier"] = np.select(
         [

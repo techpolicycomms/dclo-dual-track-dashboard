@@ -2,22 +2,37 @@
   "state_track": {
     "passed": true,
     "issues": [],
-    "rows": 95,
+    "rows": 94,
     "year_min": 2014,
-    "year_max": 2019
+    "year_max": 2019,
+    "n_states": 35,
+    "n_years": 3
   },
   "country_track": {
     "passed": true,
     "issues": [],
     "rows": 532,
     "year_min": 2014,
-    "year_max": 2025
+    "year_max": 2025,
+    "n_economies": 48,
+    "n_years": 12,
+    "panel_balance": 0.9236
   },
   "causal_track": {
     "passed": true,
     "issues": [],
     "rows": 9,
     "n_specs": 5
+  },
+  "audit_manifests": {
+    "passed": true,
+    "issues": [],
+    "manifests_found": 3,
+    "manifests_expected": 3
+  },
+  "verification_reports": {
+    "passed": true,
+    "issues": []
   },
   "overall_passed": true
 }

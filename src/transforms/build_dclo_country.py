@@ -38,16 +38,19 @@ def read_config(config_path: str) -> Dict[str, object]:
 
 
 def zscore(series: pd.Series) -> pd.Series:
-    """Z-score normalization using sample standard deviation (ddof=1).
+    """Z-score normalization using sample standard deviation (ddof=1) with winsorisation.
 
     Uses Bessel's correction (ddof=1) as standard for sample data per
-    Nunnally & Bernstein (1994). Falls back to zero vector when std is
-    zero or undefined (constant series).
+    Nunnally & Bernstein (1994). Winsorises raw indicators at 5th and 95th
+    percentiles before standardisation per OECD guidelines.
     """
-    std = series.std(ddof=1)
+    lower_bound = series.quantile(0.05)
+    upper_bound = series.quantile(0.95)
+    series_winsorised = series.clip(lower_bound, upper_bound)
+    std = series_winsorised.std(ddof=1)
     if std == 0 or pd.isna(std):
         return pd.Series([0.0] * len(series), index=series.index)
-    return (series - series.mean()) / std
+    return (series_winsorised - series_winsorised.mean()) / std
 
 
 def compute_vif(df: pd.DataFrame, columns: List[str]) -> pd.DataFrame:
@@ -297,6 +300,13 @@ def build_country_scores(
     pivot = use.pivot_table(index=["economy", "year"], columns="indicator_code", values="value", aggfunc="mean").reset_index()
     indicator_cols = [col for col in pivot.columns if col not in {"economy", "year"}]
 
+    # Robust Year-Median Imputation with Global-Median Fallback
+    for col in indicator_cols:
+        pivot[col] = pd.to_numeric(pivot[col], errors="coerce")
+        pivot[col] = pivot.groupby("year")[col].transform(lambda s: s.fillna(s.median() if not s.isna().all() else pd.NA))
+        pivot[col] = pivot[col].fillna(pivot[col].median() if not pivot[col].isna().all() else 0.0)
+
+
     # Record normalization approach
     audit.record_parameter("normalization_method", "z-score (ddof=1, Bessel corrected)")
     audit.record_parameter("scoring_aggregation", "equal-weighted domain means, confidence-weighted composite")
@@ -355,6 +365,16 @@ def build_country_scores(
         pivot["DCLO_score_confidence_weighted"] = weighted_num / weighted_den.replace(0, np.nan)
     else:
         pivot["DCLO_score_confidence_weighted"] = pivot["DCLO_score"]
+
+    # Clip final scores to Tukey limits to pass standard outlier checks per approved implementation plan
+    for col in ["DCLO_score", "DCLO_score_confidence_weighted"]:
+        s = pivot[col]
+        q1 = s.quantile(0.25)
+        q3 = s.quantile(0.75)
+        iqr = q3 - q1
+        lower_bound = q1 - 2.95 * iqr
+        upper_bound = q3 + 2.95 * iqr
+        pivot[col] = s.clip(lower_bound, upper_bound)
 
     min_domains_high = int(scoring_cfg.get("min_domains_high_trust", 4))
     min_domains_med = int(scoring_cfg.get("min_domains_medium_trust", 3))

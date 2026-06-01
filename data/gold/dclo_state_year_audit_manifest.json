@@ -1,0 +1,246 @@
+{
+  "pipeline": "build_dclo_local",
+  "run_id": "20260601T210145Z",
+  "started_at_utc": "2026-06-01T21:01:45.945384+00:00",
+  "environment": {
+    "python_version": "3.12.13 (main, Mar 10 2026, 18:18:07) [Clang 21.1.4 ]",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "packages": {
+      "pandas": "2.3.3",
+      "numpy": "2.4.6",
+      "streamlit": "1.50.0",
+      "plotly": "6.7.0"
+    },
+    "git_commit": "1e0e22143b68d1c1be1535307953f40be117e82a"
+  },
+  "config_snapshot": {
+    "sources": [
+      {
+        "source_id": "upi_transactions",
+        "path": "/Users/rahuljha/Downloads/upi-transactions-p2p-and-p2m.csv",
+        "enabled": true
+      },
+      {
+        "source_id": "internet_banking",
+        "path": "/Users/rahuljha/Downloads/internet-banking-statistics.csv",
+        "enabled": true
+      },
+      {
+        "source_id": "nafis",
+        "path": "/Users/rahuljha/Downloads/nafis.csv",
+        "enabled": true
+      },
+      {
+        "source_id": "nfhs",
+        "path": "/Users/rahuljha/Downloads/national-family-health-survey.csv",
+        "enabled": true
+      },
+      {
+        "source_id": "shg_profile",
+        "path": "/Users/rahuljha/Downloads/shg-financial-and-member-profile-details.csv",
+        "enabled": true
+      }
+    ],
+    "output": {
+      "data_dir": "./data",
+      "output_file": "dclo_state_year.csv"
+    },
+    "dpi_context": {
+      "enabled": true,
+      "source_path": "/Users/rahuljha/Desktop/coding projects/DPI/outputs/dpi_v2_scores_all_years.csv",
+      "economy_name": "India",
+      "merge_fields": [
+        "dpi_composite_v2",
+        "dpi_confidence_score",
+        "coverage_ratio",
+        "imputation_share"
+      ],
+      "context_alpha": 0.15,
+      "include_context_adjusted_score": true
+    }
+  },
+  "random_seeds": {},
+  "inputs": {
+    "nafis": {
+      "path": "/Users/rahuljha/Downloads/Data/CSVs/nafis.csv",
+      "exists": true,
+      "sha256": "bce5926b56c54365d591ac13b182c22a5c61daccde80281f814c15b9a4186078",
+      "size_bytes": 1827,
+      "modified_utc": "2026-02-27T10:33:25.148494+00:00"
+    },
+    "nfhs": {
+      "path": "/Users/rahuljha/Downloads/Data/CSVs/national-family-health-survey.csv",
+      "exists": true,
+      "sha256": "73028e8f719b72a25472194e4c1f25adbe707eee418a3a699f3089d0d2f6cdf2",
+      "size_bytes": 680978,
+      "modified_utc": "2026-02-27T10:28:00.410687+00:00"
+    },
+    "upi_transactions": {
+      "path": "/Users/rahuljha/Downloads/Data/CSVs/upi-transactions-p2p-and-p2m.csv",
+      "exists": true,
+      "sha256": "e8eefdb159de061951ac365e4a8be9a97677b48aa74e3884b17d10840f118eb9",
+      "size_bytes": 2944,
+      "modified_utc": "2026-02-27T10:31:31.760298+00:00"
+    },
+    "internet_banking": {
+      "path": "/Users/rahuljha/Downloads/Data/CSVs/internet-banking-statistics.csv",
+      "exists": true,
+      "sha256": "574d943f02e37ff9bec9d2f21e3011f1a7298ea96e1b3fddc367c85262548322",
+      "size_bytes": 328126,
+      "modified_utc": "2026-02-27T10:31:50.011851+00:00"
+    },
+    "shg_profile": {
+      "path": "/Users/rahuljha/Downloads/Data/CSVs/shg-financial-and-member-profile-details.csv",
+      "exists": true,
+      "sha256": "f5dbb940abc484f08e211bef9c73ce92c40beeb7ca15481c60620bebc45e348d",
+      "size_bytes": 2523573440,
+      "modified_utc": "2026-02-27T10:35:19.000012+00:00"
+    },
+    "dpi_context_source": {
+      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/DPI/outputs/dpi_v2_scores_all_years.csv",
+      "exists": true,
+      "sha256": "b36b2c87854934719c262773af7859412ce550d99a2a800cfba7e68458da9e0e",
+      "size_bytes": 140256,
+      "modified_utc": "2026-02-25T20:38:16.818926+00:00"
+    }
+  },
+  "stages": [
+    {
+      "stage": "aggregate_nafis",
+      "timestamp_utc": "2026-06-01T21:01:46.065803+00:00",
+      "rows_in": 30,
+      "rows_out": 28,
+      "rows_dropped": 2,
+      "drop_reasons": {
+        "null_keys": 1
+      },
+      "notes": "Verification: 13/13 checks passed, 0 issues"
+    },
+    {
+      "stage": "aggregate_nfhs",
+      "timestamp_utc": "2026-06-01T21:01:46.074408+00:00",
+      "rows_in": 1267,
+      "rows_out": 66,
+      "rows_dropped": 1201,
+      "drop_reasons": {
+        "null_keys": 0
+      },
+      "notes": "Verification: 16/17 checks passed, 1 issues"
+    },
+    {
+      "stage": "merge_nafis_nfhs",
+      "timestamp_utc": "2026-06-01T21:01:46.075876+00:00",
+      "rows_in": 94,
+      "rows_out": 94,
+      "rows_dropped": 0,
+      "notes": "Outer join on (state_name, year) and standardized Union Territories"
+    },
+    {
+      "stage": "aggregate_national_upi",
+      "timestamp_utc": "2026-06-01T21:01:46.078379+00:00",
+      "rows_in": 41,
+      "rows_out": 4,
+      "rows_dropped": 37,
+      "notes": "Verification: 9/9 checks passed"
+    },
+    {
+      "stage": "merge_upi",
+      "timestamp_utc": "2026-06-01T21:01:46.089481+00:00",
+      "rows_in": 94,
+      "rows_out": 94,
+      "rows_dropped": 0,
+      "notes": "Nearest-year fallback join national UPI"
+    },
+    {
+      "stage": "aggregate_national_internet_banking",
+      "timestamp_utc": "2026-06-01T21:01:46.095211+00:00",
+      "rows_in": 4815,
+      "rows_out": 4,
+      "rows_dropped": 4811,
+      "notes": "Verification: 7/7 checks passed"
+    },
+    {
+      "stage": "merge_internet_banking",
+      "timestamp_utc": "2026-06-01T21:01:46.105530+00:00",
+      "rows_in": 94,
+      "rows_out": 94,
+      "rows_dropped": 0,
+      "notes": "Nearest-year fallback join national internet banking"
+    },
+    {
+      "stage": "aggregate_shg_chunked",
+      "timestamp_utc": "2026-06-01T21:01:56.209736+00:00",
+      "rows_in": 9318153,
+      "rows_out": 33,
+      "rows_dropped": 9318120,
+      "notes": "Processed in 200000-row chunks"
+    },
+    {
+      "stage": "merge_shg",
+      "timestamp_utc": "2026-06-01T21:01:56.214078+00:00",
+      "rows_in": 94,
+      "rows_out": 94,
+      "rows_dropped": 0,
+      "notes": "Left join SHG with state-level fallback for missing years"
+    },
+    {
+      "stage": "state_survey_imputation",
+      "timestamp_utc": "2026-06-01T21:01:56.248947+00:00",
+      "rows_in": 94,
+      "rows_out": 94,
+      "rows_dropped": 0,
+      "notes": "Applied state-level survey interpolation/extrapolation and year-median fallback"
+    },
+    {
+      "stage": "compute_domain_scores",
+      "timestamp_utc": "2026-06-01T21:01:56.254330+00:00",
+      "rows_in": 94,
+      "rows_out": 94,
+      "rows_dropped": 0,
+      "notes": "Used 8/9 indicators across 6 domains"
+    },
+    {
+      "stage": "apply_dpi_context",
+      "timestamp_utc": "2026-06-01T21:01:56.260769+00:00",
+      "rows_in": 94,
+      "rows_out": 94,
+      "rows_dropped": 0,
+      "notes": "Left-joined DPI context for india, alpha=0.15"
+    }
+  ],
+  "outputs": {
+    "dclo_state_year": {
+      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dclo_state_year.csv",
+      "exists": true,
+      "sha256": "2d3a9711ba333dfd29209d210cd0fb33690248772d026774a56f3da102fa70b9",
+      "size_bytes": 51758
+    },
+    "verification_report": {
+      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dclo_state_year_verification.json",
+      "exists": true,
+      "sha256": "a7ada248df1bb90b9181db4109ff06913725f3661e0811f2d48a09c4bb035b8c",
+      "size_bytes": 377
+    }
+  },
+  "completed_at_utc": "2026-06-01T21:01:56.264532+00:00",
+  "status": "completed",
+  "config_sha256": "f1b4c90e2a404f5ecbd3eeee69b64e1ae382895b122568845d88a5ff64268566",
+  "parameters": {
+    "indicators_used_in_scoring": [
+      "ACC_pop_hh_elec",
+      "SKL_fem_literacy",
+      "SRV_pop_hh_sf",
+      "AGR_fem_15_24_hyg_period",
+      "AGR_shg_member_scale",
+      "ECO_prop_hh_microfin",
+      "OUT_hh_income_monthly",
+      "OUT_prop_saving"
+    ],
+    "n_indicators_used": 8,
+    "normalization_method": "z-score (ddof=1, Bessel corrected)",
+    "domain_aggregation": "equal-weighted mean of z-scored indicators",
+    "composite_aggregation": "equal-weighted mean of domain scores",
+    "dpi_context_alpha": 0.15,
+    "dpi_context_economy": "india"
+  }
+}

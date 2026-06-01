@@ -1,0 +1,188 @@
+{
+  "pipeline": "build_dclo_country",
+  "run_id": "20260601T210200Z",
+  "started_at_utc": "2026-06-01T21:02:00.184407+00:00",
+  "environment": {
+    "python_version": "3.12.13 (main, Mar 10 2026, 18:18:07) [Clang 21.1.4 ]",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "packages": {
+      "pandas": "2.3.3",
+      "numpy": "2.4.6",
+      "streamlit": "1.50.0",
+      "plotly": "6.7.0"
+    },
+    "git_commit": "1e0e22143b68d1c1be1535307953f40be117e82a"
+  },
+  "config_snapshot": {
+    "inputs": {
+      "dpi_long_path": "/Users/rahuljha/Desktop/coding projects/DPI/outputs/dpi_ready_long_with_imputation.csv",
+      "indicator_mapping_path": "/Users/rahuljha/Desktop/coding projects/DPI/data/indicator_mapping.csv",
+      "coverage_by_indicator_path": "/Users/rahuljha/Desktop/coding projects/DPI/outputs/coverage_by_indicator.csv"
+    },
+    "gating": {
+      "year_min": 2014,
+      "year_max": 2025,
+      "min_pct_observed": 70.0,
+      "max_imputation_share": 0.35,
+      "min_overlap_years": 5,
+      "min_panel_coverage": 0.4,
+      "min_per_domain": 4,
+      "max_per_domain": 8,
+      "correlation_prune_threshold": 0.9,
+      "max_vif": 10.0
+    },
+    "output": {
+      "data_dir": "./data",
+      "country_output_file": "dclo_country_year.csv",
+      "intake_csv_file": "dpi_indicator_intake.csv",
+      "selected_json_file": "dpi_selected_indicators_by_domain.json"
+    },
+    "scoring": {
+      "use_confidence_weighting": true,
+      "min_domains_high_trust": 4,
+      "min_domains_medium_trust": 3
+    }
+  },
+  "random_seeds": {},
+  "inputs": {
+    "dpi_long_path": {
+      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/DPI/outputs/dpi_ready_long_with_imputation.csv",
+      "exists": true,
+      "sha256": "399a560f622c1c7dcea04c16d375bef3c5240c650028c8a9eebdac799fe60c76",
+      "size_bytes": 1724703,
+      "modified_utc": "2026-02-25T20:38:16.390788+00:00"
+    },
+    "indicator_mapping_path": {
+      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/DPI/data/indicator_mapping.csv",
+      "exists": true,
+      "sha256": "b67c5075faeb2eec43ac7327b1cf7e635dae063efaceab14ba75e61a7934be5c",
+      "size_bytes": 12071,
+      "modified_utc": "2026-02-25T16:53:33.457275+00:00"
+    },
+    "coverage_by_indicator_path": {
+      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/DPI/outputs/coverage_by_indicator.csv",
+      "exists": true,
+      "sha256": "209c895c9281be4b5633706d85cdac384dcb7027d0aefcb77b4962792c785366",
+      "size_bytes": 8689,
+      "modified_utc": "2026-02-25T12:45:33.467286+00:00"
+    }
+  },
+  "stages": [
+    {
+      "stage": "filter_include_v2",
+      "timestamp_utc": "2026-06-01T21:02:00.384055+00:00",
+      "rows_in": 5402,
+      "rows_out": 5402,
+      "rows_dropped": 0,
+      "notes": "Kept only include_v2='yes' rows"
+    },
+    {
+      "stage": "filter_year_range",
+      "timestamp_utc": "2026-06-01T21:02:00.389365+00:00",
+      "rows_in": 5402,
+      "rows_out": 4866,
+      "rows_dropped": 536,
+      "notes": "Kept years [2014, 2025]"
+    },
+    {
+      "stage": "indicator_gating",
+      "timestamp_utc": "2026-06-01T21:02:00.399113+00:00",
+      "rows_in": 52,
+      "rows_out": 5,
+      "rows_dropped": 47,
+      "notes": "5/52 indicators pass quality gates"
+    },
+    {
+      "stage": "indicator_selection",
+      "timestamp_utc": "2026-06-01T21:02:00.410513+00:00",
+      "rows_in": 5,
+      "rows_out": 19,
+      "rows_dropped": -14,
+      "notes": "Selected 19 core indicators after correlation/VIF pruning"
+    },
+    {
+      "stage": "filter_selected_indicators",
+      "timestamp_utc": "2026-06-01T21:02:00.411601+00:00",
+      "rows_in": 2779,
+      "rows_out": 2779,
+      "rows_dropped": 0,
+      "notes": "Using 19 selected indicators"
+    },
+    {
+      "stage": "build_country_scores",
+      "timestamp_utc": "2026-06-01T21:02:00.446411+00:00",
+      "rows_in": 532,
+      "rows_out": 532,
+      "rows_dropped": 0,
+      "notes": "Scored 48 economies across 12 years"
+    }
+  ],
+  "outputs": {
+    "country_scores": {
+      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dclo_country_year.csv",
+      "exists": true,
+      "sha256": "78e568e8ba15a14c61a2bf5da4cd0f79f2a7446f56d8a18f2625ed515fa1663c",
+      "size_bytes": 513467
+    },
+    "intake_csv": {
+      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dpi_indicator_intake.csv",
+      "exists": true,
+      "sha256": "da308c5aff71dcc6140d56e9b93765a16943cb6d135431fb4e95715465ad6b90",
+      "size_bytes": 8096
+    },
+    "selected_json": {
+      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dpi_selected_indicators_by_domain.json",
+      "exists": true,
+      "sha256": "65b344f1d97d917fde04daf6926c915b287772212550a8bf31ea0fa7fd49363c",
+      "size_bytes": 609
+    },
+    "intake_md": {
+      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/docs/dpi-indicator-intake.md",
+      "exists": true,
+      "sha256": "4221f38572845752bd9a876c67d16e9c066b08b0eb5a5170c2babdafd4b616d8",
+      "size_bytes": 9818
+    },
+    "verification_report": {
+      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dclo_country_year_verification.json",
+      "exists": true,
+      "sha256": "ae6ae2593b9a82bc18c8f3eff9cf22aec0711ba5340408632e6093332214b534",
+      "size_bytes": 963
+    }
+  },
+  "completed_at_utc": "2026-06-01T21:02:00.463588+00:00",
+  "status": "completed",
+  "config_sha256": "92b6724eecd87cf22d3c165fb902fc0d5907664d8294aa0b3c3e70af45c11ac4",
+  "parameters": {
+    "gating_min_pct_observed": 70.0,
+    "gating_max_imputation_share": 0.35,
+    "gating_min_overlap_years": 5,
+    "gating_min_panel_coverage": 0.4,
+    "gating_min_per_domain": 4,
+    "gating_max_per_domain": 8,
+    "gating_correlation_prune_threshold": 0.9,
+    "gating_max_vif": 10.0,
+    "indicators_selected_by_domain": {
+      "ACC": 4,
+      "AGR": 2,
+      "ECO": 4,
+      "OUT": 3,
+      "SKL": 2,
+      "SRV": 4
+    },
+    "total_core_formative_indicators": 19,
+    "normalization_method": "z-score (ddof=1, Bessel corrected)",
+    "scoring_aggregation": "equal-weighted domain means, confidence-weighted composite",
+    "domain_weights": {
+      "ACC": 0.08217993079584773,
+      "AGR": 0.07785467128027682,
+      "ECO": 0.09083044982698962,
+      "OUT": 0.08073817762399077,
+      "SKL": 0.07006920415224913,
+      "SRV": 0.8944636678200693
+    },
+    "trust_tier_thresholds": {
+      "high": 4,
+      "medium": 3
+    }
+  }
+}

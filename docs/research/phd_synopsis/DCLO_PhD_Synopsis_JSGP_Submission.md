@@ -46,6 +46,27 @@ For this dissertation, digital capability means more than device access or basic
 
 The key DCLO dimensions are: access and infrastructure readiness; information and data literacy; digital communication and participation; problem-solving and adaptive agency; safety, trust, and wellbeing; service enablement; and outcome realisation. The construct also integrates a Doughnut boundary: digital development should help people reach minimum social-foundation thresholds without pushing communities beyond ecological ceilings or intensifying surveillance burden, extractive dependence, wasteful device/data practices, or unequal exposure to platform risks.
 
+Figure 1 illustrates the theoretical conversion mapping of the DCLO framework.
+
+**Figure 1: Conceptual Model of Digital Capabilities for Life Outcomes (DCLO) Conversion Pathways**
+
+```mermaid
+graph TD
+    Resource[DPI & DPG Systems: Identity, Payments, Data Exchange]
+    Conversion[Individual & Social Conversion Factors: Skills, Trust, Language, Agency]
+    Capability[DCLO Core Sub-Indices: Access, Skills, Systems, Agency, Economy, Outcomes]
+    Functioning[Positive Life Outcomes: Health, Learning, Livelihood, Voice, Dignity]
+    Boundary[Safe & Just Operating Space: Social Foundation vs. Ecological Ceiling]
+    
+    Resource -->|Mediated by| Conversion
+    Conversion -->|Produces| Capability
+    Capability -->|Enables| Functioning
+    Functioning -->|Evaluated within| Boundary
+```
+
+*Source: Author's elaboration based on Sen's (1999) Capability Approach and Raworth's (2017) Doughnut Economics.*
+
+
 ### 1.5 Doughnut Economics Definition Of Positive Outcomes
 
 Doughnut Economics is treated as a load-bearing framework for the meaning of "life outcomes" in DCLO. The inner ring of the Doughnut is the **social foundation**: the minimum conditions of a dignified life, including health, learning, livelihood, service access, safety, voice, dignity, care, belonging, and participation. The outer ring is the **ecological ceiling**, grounded in the planetary-boundaries literature: climate stability, biosphere integrity, freshwater use, land-system change, biogeochemical flows, ocean acidification, atmospheric aerosols, stratospheric ozone, and novel entities.
@@ -400,7 +421,10 @@ A carefully separated practice arm can be built around the problem identified by
 
 ## Seed Evidence Map
 
-The full machine-readable evidence map is in `included_seed_records.csv`. The table below lists priority records and artefacts that currently anchor the review.
+The full machine-readable evidence map is in `included_seed_records.csv`. Table 1 lists the priority empirical records and conceptual anchors that form the initial scoping base for the DCLO construct.
+
+**Table 1: DCLO Scoping Review Selected Seed Evidence Map and Analytical Anchors**
+
 
 | ID | Authors/year | Title | Strand | Status |
 |---|---|---|---|---|
@@ -434,6 +458,9 @@ The full machine-readable evidence map is in `included_seed_records.csv`. The ta
 | L01 | Local DCLO project (2026) | India open-data / PowerBI DCLO indicator mapping, governance notes, and secondary-data causal panel work | Local PhD evidence base | Use as local empirical backbone; needs leakage-safe re-estimation before thesis chapter |
 | L02 | Local podcast-discourse-lab (2026) | ADHD podcast discourse corpus: 704 shows, 96,306 episodes, 448 transcripts, 7,367 segments, 284 coded segments, 852 codings | Platform-mediated self-understanding | Use as podcast-first empirical chapter; add transcript-stratum sensitivity and human co-coding |
 | L03 | Local UN80/ITU mandate-overlap project (2026) | Top-30 YouTube video transcript work across UN agency channels and mandate-overlap analysis for digital language-conferencing and Action 61/62 governance evidence | DPI/DPG governance and institutional coordination | Use as Paper 3 governance evidence; recover or rebuild the all-agency top-30 YouTube transcript dataset if missing |
+
+*Note: Core seeds are categorized by outcome domains and methodological contribution. Full tabular dataset available at docs/research/systematic_literature_review/included_seed_records.csv.*
+
 
 ---
 
@@ -596,7 +623,20 @@ The thesis will follow a three-paper model with an integrative introduction and 
 
 ### 7.1 Overall Design
 
-The dissertation uses a mixed-methods, multi-paper design. It combines secondary-data measurement, systematic literature review, computational discourse analysis, primary survey research, and governance case analysis. The design is sequential and cumulative: Paper 1 builds the construct; Paper 2 tests a platform-health case; Paper 3 synthesises governance implications and adds a field-facing DPI/language case.
+The dissertation uses a mixed-methods, multi-paper design. It combines secondary-data measurement, systematic literature review, computational discourse analysis, primary survey research, and governance case analysis. The design is sequential and cumulative: Paper 1 builds the construct; Paper 2 tests a platform-health case; Paper 3 synthesises governance implications and adds a field-facing DPI/language case. The sequential, cumulative empirical design of this multi-paper dissertation is schematized in Figure 2.
+
+**Figure 2: Empirical Research Design and Cumulative Three-Paper Architecture**
+
+```mermaid
+flowchart LR
+    Paper1[Paper 1: Construct & Measurement<br/>Secondary Panel Index & PLS-SEM] -->|DCLO Score Input| Paper2[Paper 2: Bounded Case Study<br/>ADHD Podcast Discourse & Self-Understanding]
+    Paper2 -->|Primary Verification| Paper3[Paper 3: Institutional Governance<br/>Linguistic Justice Fieldwork & Policy Framework]
+    
+    QA[Automated Quality Gates:<br/>LSDO Robustness & Human Validation] --> Paper1 & Paper2 & Paper3
+```
+
+*Source: Author's elaboration of doctoral research plan.*
+
 
 ### 7.2 Systematic Literature Review
 
@@ -744,7 +784,10 @@ The dissertation will generate:
 
 The thesis will not attempt to study all digital platforms, all health conditions, all Indian languages, or all DPI systems. It will use a focused architecture: DCLO measurement, ADHD/podcast discourse, and Maithili/DPI governance.
 
-Key risks and mitigations:
+The operational success of this multi-method inquiry depends on identifying boundary limits and methodological hazards. Table 2 details the risk register and explicit mitigation mechanisms for each academic strand.
+
+**Table 2: Empirical Project Risk Register and Delimitation Safeguards**
+
 
 | Risk | Mitigation |
 |---|---|
@@ -760,7 +803,10 @@ Key risks and mitigations:
 
 ## 13. Work Plan And Timeline
 
-The target is thesis submission by **31 December 2027**, subject to supervisor approval, SDC requirements, ethics timelines, and publication requirements.
+The target is thesis submission by **31 December 2027**, subject to supervisor approval, SDC requirements, ethics timelines, and publication requirements. The sequential research milestones are structured in Table 3.
+
+**Table 3: Academic Work Plan and Doctoral Milestones (Target Submission: December 2027)**
+
 
 | Period | Milestone |
 |---|---|

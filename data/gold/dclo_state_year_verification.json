@@ -1,0 +1,20 @@
+{
+  "pre_scoring": {
+    "dataset": "merged_pre_scoring",
+    "checks_run": 5,
+    "checks_passed": 5,
+    "n_issues": 0,
+    "passed": true,
+    "issues": [],
+    "dropped_records": []
+  },
+  "post_scoring": {
+    "dataset": "post_scoring",
+    "checks_run": 25,
+    "checks_passed": 25,
+    "n_issues": 0,
+    "passed": true,
+    "issues": [],
+    "dropped_records": []
+  }
+}

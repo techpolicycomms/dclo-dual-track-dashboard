@@ -1,0 +1,47 @@
+{
+  "input_long_panel": {
+    "dataset": "dpi_long_panel",
+    "checks_run": 5,
+    "checks_passed": 5,
+    "n_issues": 0,
+    "passed": true,
+    "issues": [],
+    "dropped_records": []
+  },
+  "input_mapping": {
+    "dataset": "indicator_mapping",
+    "checks_run": 1,
+    "checks_passed": 1,
+    "n_issues": 0,
+    "passed": true,
+    "issues": [],
+    "dropped_records": []
+  },
+  "input_coverage": {
+    "dataset": "coverage_by_indicator",
+    "checks_run": 1,
+    "checks_passed": 1,
+    "n_issues": 0,
+    "passed": true,
+    "issues": [],
+    "dropped_records": []
+  },
+  "panel_pre_scoring": {
+    "dataset": "panel_pre_scoring",
+    "checks_run": 2,
+    "checks_passed": 2,
+    "n_issues": 0,
+    "passed": true,
+    "issues": [],
+    "dropped_records": []
+  },
+  "post_scoring": {
+    "dataset": "country_post_scoring",
+    "checks_run": 9,
+    "checks_passed": 9,
+    "n_issues": 0,
+    "passed": true,
+    "issues": [],
+    "dropped_records": []
+  }
+}

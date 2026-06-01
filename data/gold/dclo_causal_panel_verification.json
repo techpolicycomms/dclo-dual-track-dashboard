@@ -1,0 +1,9 @@
+{
+  "dataset": "causal_input",
+  "checks_run": 6,
+  "checks_passed": 6,
+  "n_issues": 0,
+  "passed": true,
+  "issues": [],
+  "dropped_records": []
+}
