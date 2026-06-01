@@ -1,0 +1,101 @@
+restcountries:
+  url: "https://restcountries.com/v3.1/all?fields=cca3,name,region,subregion,population,independent,capital,latlng"
+  timeout_seconds: 30
+  output_file: "country_master_restcountries.csv"
+
+world_bank:
+  base_url: "https://api.worldbank.org/v2/country/all/indicator"
+  format: "json"
+  per_page: 20000
+  timeout_seconds: 30
+  indicators:
+    - code: "IT.NET.USER.ZS"
+      domain: "ACC"
+      direction: "positive"
+      name: "Individuals using the Internet (% of population)"
+    - code: "IT.CEL.SETS.P2"
+      domain: "ACC"
+      direction: "positive"
+      name: "Mobile cellular subscriptions (per 100 people)"
+    - code: "IT.NET.BBND.P2"
+      domain: "ACC"
+      direction: "positive"
+      name: "Fixed broadband subscriptions (per 100 people)"
+
+    - code: "SE.ADT.LITR.ZS"
+      domain: "SKL"
+      direction: "positive"
+      name: "Adult literacy rate"
+    - code: "SE.SEC.ENRR"
+      domain: "SKL"
+      direction: "positive"
+      name: "Secondary school enrollment (% gross)"
+    - code: "SE.TER.ENRR"
+      domain: "SKL"
+      direction: "positive"
+      name: "Tertiary school enrollment (% gross)"
+
+    - code: "EG.CFT.ACCS.ZS"
+      domain: "SRV"
+      direction: "positive"
+      name: "Access to clean fuels and technologies for cooking"
+    - code: "SP.DYN.LE00.IN"
+      domain: "SRV"
+      direction: "positive"
+      name: "Life expectancy at birth"
+    - code: "SH.STA.MMRT"
+      domain: "SRV"
+      direction: "negative"
+      name: "Maternal mortality ratio"
+
+    - code: "CC.PER.RNK"
+      domain: "AGR"
+      direction: "positive"
+      name: "Control of Corruption percentile rank"
+    - code: "PV.PER.RNK"
+      domain: "AGR"
+      direction: "positive"
+      name: "Political stability percentile rank"
+    - code: "RL.PER.RNK"
+      domain: "AGR"
+      direction: "positive"
+      name: "Rule of law percentile rank"
+
+    - code: "SL.UEM.TOTL.ZS"
+      domain: "ECO"
+      direction: "negative"
+      name: "Unemployment (% of labor force)"
+    - code: "NY.GDP.PCAP.KD.ZG"
+      domain: "ECO"
+      direction: "positive"
+      name: "GDP per capita growth (annual %)"
+    - code: "NE.TRD.GNFS.ZS"
+      domain: "ECO"
+      direction: "positive"
+      name: "Trade (% of GDP)"
+
+    - code: "SI.POV.DDAY"
+      domain: "OUT"
+      direction: "negative"
+      name: "Poverty headcount ratio at $2.15/day"
+    - code: "SP.POP.GROW"
+      domain: "OUT"
+      direction: "negative"
+      name: "Population growth (annual %)"
+    - code: "EN.ATM.PM25.MC.M3"
+      domain: "OUT"
+      direction: "negative"
+      name: "PM2.5 air pollution mean annual exposure"
+  output_file: "wb_indicator_long_api.csv"
+
+scoring:
+  year_min: 2014
+  year_max: 2024
+  min_indicators_per_domain: 2
+  min_overall_coverage_ratio: 0.55
+  high_trust_coverage_ratio: 0.80
+  medium_trust_coverage_ratio: 0.60
+
+output:
+  data_dir: "./data"
+  country_output_file: "dclo_country_year_api.csv"

@@ -1,0 +1,91 @@
+{
+  "version": "v0.2-conversational",
+  "description": "Conversational mixed-input survey flow for DPI validation and DCLO capability outcomes",
+  "questions": [
+    {
+      "id": "consent",
+      "type": "binary",
+      "prompt": "Before we begin, do you consent to participate? You can say yes or no, or press 1 for yes and 2 for no."
+    },
+    {
+      "id": "participant_role",
+      "type": "single_select_or_speech",
+      "prompt": "What best describes your role? For example policy maker, researcher, NGO manager, entrepreneur, or student. You can say it in your own words, or press 1 policy, 2 research, 3 program, 4 other."
+    },
+    {
+      "id": "organization_type",
+      "type": "single_select_or_speech",
+      "prompt": "What kind of organization are you closest to? For example government, academia, NGO, private company, or independent. You can say it directly, or press 1 government, 2 academia, 3 NGO, 4 private, 5 other."
+    },
+    {
+      "id": "country",
+      "type": "speech_or_keypad",
+      "prompt": "Which country are you responding from today? You can simply say the country name."
+    },
+    {
+      "id": "task_completed",
+      "type": "binary",
+      "prompt": "Were you able to complete your dashboard task today? You can say yes, partly, or no. Or press 1 yes, 2 partly, 3 no."
+    },
+    {
+      "id": "usefulness_score_1to5",
+      "type": "likert_or_speech",
+      "prompt": "How useful was this survey and dashboard context for your real work? You can say a quick reason like very useful because it helps compare countries, or press a score from 1 to 5."
+    },
+    {
+      "id": "ease_of_use_score_1to5",
+      "type": "likert_or_speech",
+      "prompt": "How easy was this experience? You can say something like smooth and clear or confusing and slow, or press 1 to 5."
+    },
+    {
+      "id": "interpretability_score_1to5",
+      "type": "likert_or_speech",
+      "prompt": "How easy was it to interpret the output? You can describe briefly in your own words, or press 1 to 5."
+    },
+    {
+      "id": "trust_in_results_score_1to5",
+      "type": "likert_or_speech",
+      "prompt": "How much do you trust these results for decision making? You can say a reason, for example data feels reliable or unclear, or press 1 to 5."
+    },
+    {
+      "id": "policy_actionability_score_1to5",
+      "type": "likert_or_speech",
+      "prompt": "How actionable are these insights for policy decisions? For example can this support budget choices, targeting, or program design? You can speak freely or press 1 to 5."
+    },
+    {
+      "id": "would_recommend_1to5",
+      "type": "likert_or_speech",
+      "prompt": "Would you recommend this approach to colleagues? You can say yes strongly, maybe, or no and why, or press 1 to 5."
+    },
+    {
+      "id": "acc_connectivity_reliability",
+      "type": "likert_or_speech",
+      "prompt": "In your day to day life, how reliable is mobile internet when you need it for important tasks? You can give an example like payments, classes, or health services, or press 1 to 5."
+    },
+    {
+      "id": "skl_self_efficacy_digital_tasks",
+      "type": "likert_or_speech",
+      "prompt": "How confident are you in completing digital tasks yourself, such as filling forms or using government apps? You can answer in words, or press 1 to 5."
+    },
+    {
+      "id": "eco_digital_payments_use",
+      "type": "likert_or_speech",
+      "prompt": "How often do you use digital payments in daily life, like UPI, cards, or wallet apps? You can describe your pattern or press 1 to 5."
+    },
+    {
+      "id": "srv_gov_service_completion_digital",
+      "type": "likert_or_speech",
+      "prompt": "How often do you complete public service tasks digitally, for example certificates, registrations, or support requests? You can respond in words or press 1 to 5."
+    },
+    {
+      "id": "agr_control_over_phone_account",
+      "type": "likert_or_speech",
+      "prompt": "Do you feel in control of your own phone and digital accounts, including passwords and OTPs? You can explain briefly or press 1 to 5."
+    },
+    {
+      "id": "out_perceived_welfare_change",
+      "type": "likert_or_speech",
+      "prompt": "Overall, has digital access improved your quality of life in the last year, for example by saving time, money, or stress? You can answer freely or press 1 to 5."
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+response_id,timestamp_utc,phone_hash,incentive_amount_inr,eligibility_reason
+a8926a94-0bcc-4556-9587-b73e1dae664a,2026-03-02T18:44:35.876210+00:00,784389f359a14cbe2cc2a9305e86291ddcfbafe66517a9295a2ff19770ec16d3,200,eligible_full_completion
+CA80eb43edcf48eef241f1db10b6f4058a,2026-03-02T19:32:56.732504+00:00,,200,eligible_full_completion

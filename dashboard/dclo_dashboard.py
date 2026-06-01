@@ -10,6 +10,7 @@ st.set_page_config(page_title="DCLO Dashboard", page_icon="📊", layout="wide")
 
 STATE_DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_state_year.csv"
 COUNTRY_DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_country_year.csv"
+COUNTRY_API_DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_country_year_api.csv"
 EXPLAINER_PATH = Path(__file__).resolve().parents[1] / "docs" / "dashboard-explainer.md"
 STANDARD_CHECKS_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_standard_checks_summary.json"
 CAUSAL_COEF_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_causal_coefficients.csv"
@@ -508,6 +509,12 @@ def main() -> None:
         country_df = load_data(COUNTRY_DATA_PATH)
     except Exception:
         country_df = pd.DataFrame()
+    country_api_df = load_optional_csv(COUNTRY_API_DATA_PATH)
+    if not country_api_df.empty and "year" in country_api_df.columns:
+        country_api_df["year"] = pd.to_numeric(country_api_df["year"], errors="coerce").astype("Int64")
+        for col in ["DCLO_score", "DCLO_score_confidence_weighted"] + COUNTRY_DOMAIN_SCORE_COLUMNS:
+            if col in country_api_df.columns:
+                country_api_df[col] = pd.to_numeric(country_api_df[col], errors="coerce")
 
     explainer_text = load_explainer(EXPLAINER_PATH)
     checks = load_standard_checks(STANDARD_CHECKS_PATH)
@@ -543,18 +550,20 @@ def main() -> None:
             entity_col = "state_name"
             domain_cols = STATE_DOMAIN_SCORE_COLUMNS
         else:
-            if country_df.empty or not {"economy", "year", "DCLO_score"}.issubset(country_df.columns):
+            country_source = st.selectbox("Country data source", ["DPI Comparative", "API (RestCountries + World Bank)"])
+            source_df = country_api_df if country_source.startswith("API") else country_df
+            if source_df.empty or not {"economy", "year", "DCLO_score"}.issubset(source_df.columns):
                 st.error("Country-year dataset not available or missing required columns.")
                 st.stop()
-            years = sorted([int(year) for year in country_df["year"].dropna().unique().tolist()])
-            economies = sorted(country_df["economy"].dropna().astype(str).unique().tolist())
+            years = sorted([int(year) for year in source_df["year"].dropna().unique().tolist()])
+            economies = sorted(source_df["economy"].dropna().astype(str).unique().tolist())
             selected_year = st.selectbox("Year", years, index=len(years) - 1)
             selected_entities = st.multiselect("Countries for trend chart", economies, default=["India"] if "India" in economies else economies[:5])
             selected_profile_entity = st.selectbox("Country for domain profile", economies, index=economies.index("India") if "India" in economies else 0)
             score_mode = st.selectbox("Score mode", ["Baseline", "Confidence-weighted"])
             score_col = (
                 "DCLO_score_confidence_weighted"
-                if score_mode == "Confidence-weighted" and "DCLO_score_confidence_weighted" in country_df.columns
+                if score_mode == "Confidence-weighted" and "DCLO_score_confidence_weighted" in source_df.columns
                 else "DCLO_score"
             )
             trust_filter = st.multiselect(
@@ -562,7 +571,7 @@ def main() -> None:
                 options=["High", "Medium", "Low"],
                 default=["High", "Medium", "Low"],
             )
-            working_df = country_df.copy()
+            working_df = source_df.copy()
             if "model_trust_tier" in working_df.columns:
                 working_df = working_df[working_df["model_trust_tier"].isin(trust_filter)].copy()
             entity_col = "economy"

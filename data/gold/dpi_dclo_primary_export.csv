@@ -1,0 +1,3 @@
+response_id,timestamp_utc,campaign_mode,survey_mode,country,participant_role,organization_type,dpi_validation_score,ACC_score,SKL_score,ECO_score,SRV_score,AGR_score,OUT_score,DCLO_primary_score,completion_status,incentive_eligible,incentive_amount_inr
+a8926a94-0bcc-4556-9587-b73e1dae664a,2026-03-02T18:44:35.876210+00:00,prototype,voice,Switzerland,researcher,academia,4.333333333333333,4,4,5,4,5,4,4.333333333333333,complete,True,200
+7f86dd2d-9c93-4181-bb0f-b8ec0cf13031,2026-03-02T18:45:25.925669+00:00,prototype,voice,Switzerland,researcher,academia,4.333333333333333,4,4,5,4,5,4,4.333333333333333,invalid,False,0

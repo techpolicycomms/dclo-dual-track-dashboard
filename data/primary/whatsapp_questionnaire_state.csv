@@ -1,0 +1,2 @@
+respondent_id,name,phone,campaign_mode,question_index,status,last_prompt_id,last_sent_at_utc,last_response_text,completed_at_utc
+prototype_001,Prototype User,+41788186778,prototype,1,awaiting_reply,wa_consent,2026-03-02T22:11:14.185069+00:00,,

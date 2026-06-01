@@ -1,0 +1,72 @@
+env:
+  required:
+    - TWILIO_ACCOUNT_SID
+    - TWILIO_AUTH_TOKEN
+    - TWILIO_FROM_NUMBER
+    - TWILIO_STATUS_CALLBACK_URL
+    - SURVEY_PHONE_HASH_SALT
+
+survey:
+  estimated_duration_minutes: 8
+  prototype_allowlist:
+    - "+41788186778"
+  max_recipients_per_run:
+    prototype: 1
+    cohort1: 10
+    cohort2: 50
+    full: 500
+  expected_duration_sec:
+    min: 180
+    max: 1200
+  required_fields:
+    - consent
+    - participant_role
+    - organization_type
+    - country
+    - task_completed
+    - usefulness_score_1to5
+    - ease_of_use_score_1to5
+    - interpretability_score_1to5
+    - trust_in_results_score_1to5
+    - policy_actionability_score_1to5
+    - would_recommend_1to5
+    - acc_connectivity_reliability
+    - skl_self_efficacy_digital_tasks
+    - eco_digital_payments_use
+    - srv_gov_service_completion_digital
+    - agr_control_over_phone_account
+    - out_perceived_welfare_change
+
+paths:
+  data_root: data
+  survey_events_jsonl: data/primary/survey_events.jsonl
+  responses_jsonl: data/primary/survey_responses.jsonl
+  outreach_queue_csv: data/primary/outreach_queue.csv
+  whatsapp_questionnaire_state_csv: data/primary/whatsapp_questionnaire_state.csv
+  eligibility_csv: data/gold/survey_incentive_eligibility.csv
+  payout_review_csv: data/gold/survey_payout_review.csv
+  ux_report_md: data/gold/prototype_ux_report.md
+  dpi_dclo_export_csv: data/gold/dpi_dclo_primary_export.csv
+  dpi_primary_long_csv: data/gold/dpi_primary_validation_long.csv
+
+twilio:
+  voice_webhook_url: "https://late-rockets-shop.loca.lt/voice/start"
+  status_callback_method: "POST"
+  timeout_seconds: 40
+  machine_detection: "DetectMessageEnd"
+  voice_name: "Polly.Aditi"
+  language: "en-IN"
+  max_words_per_utterance: 9
+  dry_run: false
+
+incentive:
+  amount_inr: 200
+  completion_rule: full_complete_only
+
+whatsapp:
+  pilot_mode: whatsapp_web
+  business_api:
+    enabled: false
+    api_version: "v20.0"
+    phone_number_id_env: WHATSAPP_PHONE_NUMBER_ID
+    token_env: WHATSAPP_PERMANENT_TOKEN

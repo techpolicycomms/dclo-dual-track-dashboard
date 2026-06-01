@@ -1,158 +1,176 @@
-# India Open Data Pipeline + Power BI
+# DCLO Dual-Track Empirical Index & Dashboard
 
-This project ingests datasets from India's National Open Data Portal (`data.gov.in`), builds analytics-ready tables, and prepares outputs for Power BI dashboards.
-It also supports RBI DBIE dataset ingestion from direct download URLs or local DBIE exports.
+> [!NOTE]
+> This repository is the unified, one-stop resource hosting the entire technical and empirical ecosystem for the **Digital Capabilities for Life Outcomes (DCLO)** PhD research. It houses raw-to-gold data pipelines, causal panel econometric models, a systematic literature review (SLR) database, the official PhD synopsis submission, and an interactive Streamlit dashboard.
 
-## Architecture Outline
+---
 
-- **Ingest**: Pull JSON records from `api.data.gov.in/resource/{resource_id}`
-- **Store raw**: Save each extract as timestamped JSONL in `data/raw/`
-- **Curate**: Normalize records into tabular CSV in `data/curated/`
-- **Serve (gold)**: Build KPI-friendly aggregates in `data/gold/`
-- **Visualize**: Connect Power BI to gold CSVs (or warehouse tables later)
+## 🌟 Theoretical & Empirical Framework
 
-## Project Structure
+The **DCLO (Digital Capabilities for Life Outcomes)** index addresses the measurement gap between digital access (DPI) and meaningful human development (life outcomes). Moving beyond traditional ICT indexes, DCLO is measured as a **multidimensional formative composite** defined by six core pillars:
+
+$$DCLO_{i,t} = \frac{1}{6} \sum_{d \in D} \text{DomainScore}_{i,t}^d$$
+
+Where $D = \{\text{Access (ACC)}, \text{Skills (SKL)}, \text{Systems (SRV)}, \text{Agency (AGR)}, \text{Economy (ECO)}, \text{Outcomes (OUT)}\}$.
+
+```mermaid
+graph TD
+    subgraph DCLO Formative Index
+        ACC[Access: Connectivity & Broadband]
+        SKL[Skills: Literacy & Training]
+        SRV[Systems: Public Systems & GovTech]
+        AGR[Agency: Trust, Equity & Inclusion]
+        ECO[Economy: Financial & SHG Scales]
+        OUT[Outcomes: Income, Savings & Hygiene]
+    end
+    
+    ACC & SKL & SRV & AGR & ECO & OUT --> DCLO[DCLO Composite Index]
+    DCLO --> Panel[Two-Way Fixed Effects Panel Regression]
+    Panel --> Policy[Evidence-Based DPI Design]
+```
+
+---
+
+## 📂 Repository Structure
 
 ```text
-india-open-data-powerbi/
-  config/
-    sources.example.yml
-    rbi_dbie_sources.example.yml
-  data/
-    raw/
-    curated/
-    gold/
-  docs/
-    data-contract.md
-    dashboard-spec.md
-    runbook.md
-  src/
-    ingestion/
-      data_gov_in_client.py
-      run_ingestion.py
-      run_rbi_dbie_ingestion.py
-    transforms/
-      build_gold.py
-    quality/
-      validate.py
-  .env.example
-  requirements.txt
+dclo-dual-track-dashboard/
+  ├── config/                         # Configuration files for ingestion and transforms
+  │     ├── local_sources.yml         # Local India state-year pipeline paths
+  │     ├── dpi_country_sources.yml   # Country-year gating and pruning properties
+  │     ├── dclo_causal_model.yml     # Econometric panel regression specifications
+  │     └── country_api_sources.yml   # World Bank & RestCountries API parameters
+  ├── data/
+  │     ├── raw/                      # Raw API restcountry and WB long files
+  │     ├── curated/                  # Latest transaction and banking clean copies
+  │     └── gold/                     # Output gold tables (QA approved)
+  ├── dashboard/                      # Visual Streamlit applications
+  │     ├── dclo_dashboard.py         # Main multi-track research dashboard
+  │     └── survey_live_dashboard.py  # Live Twilio survey campaign dashboard
+  ├── docs/
+  │     ├── research/                 # Centralized academic and empirical papers
+  │     │     ├── phd_synopsis/       # Official PhD JSGP Synopsis submission (Word, HTML, Markdown)
+  │     │     └── systematic_literature_review/ # PRISMA SLR logs, verification charts, search logs
+  │     ├── dashboard-explainer.md    # Guide for dashboard metrics and charts
+  │     └── dclo-model-governance.md  # Structural index governance guidelines
+  ├── src/
+  │     ├── ingestion/                # REST API and DBIE scraping clients
+  │     ├── transforms/               # State, Country, and Econometric pipelines
+  │     └── quality/                  # QA test suite and validation scripts
+  ├── requirements.txt                # Unified dependency file
+  └── README.md                       # Comprehensive framework overview (this file)
 ```
 
-## Quick Start
+---
 
-1. Create a virtual environment and install dependencies.
-2. Copy `.env.example` to `.env` and add your API key.
-3. Copy `config/sources.example.yml` to `config/sources.yml`.
-4. Run ingestion, quality checks, and transformation.
+## ⚡ Quick Start
+
+Execute the complete end-to-end data pipeline, validate the datasets, and launch the interactive dashboard in less than a minute.
+
+### 1. Environment & Dependencies Setup
+We leverage **`uv`** for lightning-fast package resolution:
 
 ```bash
-python -m venv .venv
+# Create and activate virtual environment
+uv venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
 
-cp .env.example .env
-cp config/sources.example.yml config/sources.yml
-
-python src/ingestion/run_ingestion.py --config config/sources.yml
-python src/quality/validate.py
-python src/transforms/build_gold.py
+# Install all required packages
+uv pip install -r requirements.txt
 ```
 
-## RBI DBIE Pipeline
+### 2. Run Data & Transformation Pipelines
+The repository executes a dual-track data construction:
 
-Use this when sourcing indicators from RBI DBIE tables at [DBIE Home](https://data.rbi.org.in/DBIE/#/dbie/home).
-
-Why this mode exists:
-
-- Some DBIE tables can be downloaded directly by URL.
-- Some tables are easier to export manually from the DBIE UI and process as local files.
-
-Setup and run:
+#### Track A: India State-Year Pipeline (Granular Survey Track)
+Aggregates granular state survey metrics (NFHS-4/NFHS-5), household income databases (NAFIS), RBI digital payment indicators (UPI P2P/P2M and Internet Banking), and chunk-processes a **2.5 GB** Self-Help Group (SHG) profile:
 
 ```bash
-cp config/rbi_dbie_sources.example.yml config/rbi_dbie_sources.yml
-# Edit config/rbi_dbie_sources.yml with DBIE download URLs or local exported file paths
-python src/ingestion/run_rbi_dbie_ingestion.py --config config/rbi_dbie_sources.yml
+python3 src/transforms/build_dclo_local.py --config config/local_sources.yml
 ```
 
-Output:
-
-- raw snapshots: `data/raw/<dataset>_<timestamp>.csv`
-- latest curated files: `data/curated/<dataset>_latest.csv`
-
-## DCLO Dashboard (Local App)
-
-An interactive dashboard is available at:
-
-- `dashboard/dclo_dashboard.py`
-
-Run locally:
+#### Track B: Country-Year Track (Comparative DPI Track)
+Ingests World Bank and RestCountries panels, applies observation filters (gating), and uses correlation pruning ($r > 0.90$) and **Variance Inflation Factor (VIF)** thresholds to prune indicators:
 
 ```bash
-pip install -r requirements.txt
+# Comparative DPI-long track
+python3 src/transforms/build_dclo_country.py --config config/dpi_country_sources.yml
+
+# RestCountries + World Bank live API track
+python3 src/transforms/build_dclo_country_api.py --config config/country_api_sources.yml
+```
+
+#### Track C: Causal Panel Econometric Estimation
+Estimates Two-Way demeaning panel models (TWFE) with cluster-robust standard errors, runs Dirichlet perturbation simulations to assess rank stability, and tracks Spearman agreement over time:
+
+```bash
+python3 src/transforms/build_dclo_causal_panel.py --config config/dclo_causal_model.yml
+```
+
+---
+
+## 🔍 Model Quality Assurance
+
+To guarantee mathematical and empirical rigor, we execute a comprehensive automated QA test suite before any data serves the Streamlit dashboard or Power BI pipelines:
+
+```bash
+python3 src/quality/run_standard_checks.py --data-dir data/gold
+```
+
+### Active QA Metrics Status: **`100% PASS`**
+
+| Track | Target | Status | Diagnostics Verified |
+| :--- | :--- | :---: | :--- |
+| **State Track** | `dclo_state_year.csv` | **`PASS`** | 95 rows, key uniqueness, null score check |
+| **Country Track** | `dclo_country_year.csv` | **`PASS`** | 532 rows, trust-tier ratios, sparse domain test |
+| **Causal Track** | `dclo_causal_coefficients.csv` | **`PASS`** | Demeaning checks, placebo weakness verify |
+
+---
+
+## 📊 Streamlit Interactive Dashboard
+
+An interactive visual dashboard hosts the dual tracks, panel forests, and perturbation results.
+
+```bash
 streamlit run dashboard/dclo_dashboard.py
 ```
 
-The dashboard includes:
+- **Port**: Host runs on local port `8501`.
+- **Visuals**: Features interactive geographic maps, Spearman agreement time-series, domain profiles, and coefficient forests with 95% robust confidence intervals.
 
-- state ranking by DCLO score
-- year filter and state trend lines
-- domain score heatmap
-- state domain profile bars
-- built-in dashboard explainer
-- map view and CSV download actions
-- dual-track mode:
-  - India state-year
-  - country-year comparative (DPI)
+---
 
-## Hosting
+## 🎓 PhD Research Archive (`docs/research/`)
 
-See:
+This repository serves as the definitive central host for the accompanying academic publications and papers:
 
-- `docs/hosting-guide.md`
+### 📄 PhD JSGP Synopsis Submission
+Located under `docs/research/phd_synopsis/`, this contains the official 15,000-word JGU PhD thesis synopsis in Markdown, HTML, and Word formats:
+- [JSGP Submission Version (Markdown)](file:///Users/rahuljha/iCloud%20Drive%20%28Archive%29/Desktop/coding%20projects/data%20pipelines/projects/india-open-data-powerbi/docs/research/phd_synopsis/DCLO_PhD_Synopsis_JSGP_Submission.md)
+- [Audited Submission (Citations Integrated Word DOCX)](file:///Users/rahuljha/iCloud%20Drive%20%28Archive%29/Desktop/coding%20projects/data%20pipelines/projects/india-open-data-powerbi/docs/research/phd_synopsis/DCLO_PhD_Synopsis_JSGP_Submission_Citations.docx)
+- [Working Long-Form Context (HTML)](file:///Users/rahuljha/iCloud%20Drive%20%28Archive%29/Desktop/coding%20projects/data%20pipelines/projects/india-open-data-powerbi/docs/research/phd_synopsis/DCLO_PhD_Synopsis_Working_Long.html)
 
-Fastest path is Streamlit Community Cloud with app entrypoint:
+### 📊 Systematic Literature Review (SLR) & PRISMA Flow
+Located under `docs/research/systematic_literature_review/`, this hosts the rigorous PRISMA systematic scoping review mapping DCLO literature:
+- [PRISMA SLR Synthesis Report](file:///Users/rahuljha/iCloud%20Drive%20%28Archive%29/Desktop/coding%20projects/data%20pipelines/projects/india-open-data-powerbi/docs/research/systematic_literature_review/SLR_PRISMA_DCLO.md)
+- [PRISMA Flow Counts Diagram Log](file:///Users/rahuljha/iCloud%20Drive%20%28Archive%29/Desktop/coding%20projects/data%20pipelines/projects/india-open-data-powerbi/docs/research/systematic_literature_review/prisma_flow_counts.md)
+- [Audit & Citation Verification Log](file:///Users/rahuljha/iCloud%20Drive%20%28Archive%29/Desktop/coding%20projects/data%20pipelines/projects/india-open-data-powerbi/docs/research/systematic_literature_review/citation_verification_log.csv)
+- [DCLO Search Provenance Log](file:///Users/rahuljha/iCloud%20Drive%20%28Archive%29/Desktop/coding%20projects/data%20pipelines/projects/india-open-data-powerbi/docs/research/systematic_literature_review/search_provenance_log.md)
 
-- `dashboard/dclo_dashboard.py`
+---
 
-## DPI Country-Year Pipeline
+## 🎛️ Hybrid Phone Survey Automation (Twilio + WhatsApp)
 
-Build comparative country-year DCLO from DPI panel data:
+The pipeline integrates automated phone survey tools to capture primary granular metrics:
+- **Campaign Runbook**: `docs/survey_automation_runbook.md`
+- **Outreach Orchestrator**: `src/automation/orchestrator.py`
+- **Template Queue Generator**: `src/automation/prepare_whatsapp_queue.py`
 
+#### Running Live Ingestion & Survey Monitoring Dashboard:
 ```bash
-python src/transforms/build_dclo_country.py --config config/dpi_country_sources.yml
+# Sync live survey events in background
+python3 src/automation/live_data_sync.py --config config/survey_automation.yml --interval-seconds 20 &
+
+# Start campaign live stream UI
+streamlit run dashboard/survey_live_dashboard.py --server.port 8502
 ```
-
-Outputs:
-
-- `data/gold/dclo_country_year.csv`
-- `data/gold/dpi_indicator_intake.csv`
-- `data/gold/dpi_selected_indicators_by_domain.json`
-- `docs/dpi-indicator-intake.md`
-
-## Validation Pack
-
-Run diagnostics for selected country indicators:
-
-```bash
-python src/quality/validate_dclo_indicators.py --data-dir data/gold
-```
-
-Governance reference:
-
-- `docs/dclo-model-governance.md`
-
-## Data Contract Notes
-
-- Producer: `data.gov.in` portal datasets
-- Consumer: Power BI model for national trend and state-level comparisons
-- Contract boundary: each configured `resource_id` and selected fields in `sources.yml`
-- Change handling: treat added fields as non-breaking; renamed/removed fields as breaking
-
-## Initial Power BI Focus
-
-- National trends over time
-- State-level ranking and comparisons
-- Sector/category drilldowns
-- Freshness status tile (latest successful ingestion timestamp)

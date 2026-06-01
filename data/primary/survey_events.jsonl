@@ -1,0 +1,17 @@
+{"event_type": "simulated_call_complete", "timestamp_utc": "2026-03-02T18:44:35.885642+00:00", "campaign_mode": "prototype", "recipient_count": 1}
+{"event_type": "simulated_call_complete", "timestamp_utc": "2026-03-02T18:45:25.931376+00:00", "campaign_mode": "prototype", "recipient_count": 1}
+{"event_type": "twilio_call_created", "timestamp_utc": "2026-03-02T19:16:59.438428+00:00", "campaign_mode": "prototype", "call_sid": "CAcce9bf51401457009b9075010c6a910f", "phone_hash": "201da40af75ff6a318709f320424b6d342569e4100bc9bb2d63c62988d27f211", "from_number": "+41788186778", "status": "queued", "run_id": "20260302T191659Z"}
+{"event_type": "twilio_call_created", "timestamp_utc": "2026-03-02T19:20:42.730734+00:00", "campaign_mode": "prototype", "call_sid": "CAa6fbf2933043a0295e65134e26dda4f1", "phone_hash": "201da40af75ff6a318709f320424b6d342569e4100bc9bb2d63c62988d27f211", "from_number": "+41788186778", "status": "queued", "run_id": "20260302T192042Z"}
+{"event_type": "call_started", "call_sid": "", "timestamp_utc": "2026-03-02T19:20:51.719651+00:00"}
+{"event_type": "call_started", "call_sid": "CAa6fbf2933043a0295e65134e26dda4f1", "timestamp_utc": "2026-03-02T19:21:09.141768+00:00"}
+{"event_type": "call_completed", "call_sid": "CAa6fbf2933043a0295e65134e26dda4f1", "timestamp_utc": "2026-03-02T19:22:03.323273+00:00", "steps_answered": 12}
+{"event_type": "call_status", "call_sid": "CAa6fbf2933043a0295e65134e26dda4f1", "call_status": "completed", "timestamp_utc": "2026-03-02T19:22:06.578440+00:00"}
+{"event_type": "call_started", "call_sid": "", "timestamp_utc": "2026-03-02T19:29:19.805781+00:00"}
+{"event_type": "twilio_call_created", "timestamp_utc": "2026-03-02T19:29:34.557230+00:00", "campaign_mode": "prototype", "call_sid": "CA80eb43edcf48eef241f1db10b6f4058a", "phone_hash": "201da40af75ff6a318709f320424b6d342569e4100bc9bb2d63c62988d27f211", "from_number": "+41788186778", "status": "queued", "run_id": "20260302T192934Z"}
+{"event_type": "call_started", "call_sid": "CA80eb43edcf48eef241f1db10b6f4058a", "timestamp_utc": "2026-03-02T19:29:56.686286+00:00"}
+{"event_type": "call_completed", "call_sid": "CA80eb43edcf48eef241f1db10b6f4058a", "timestamp_utc": "2026-03-02T19:32:56.733477+00:00", "steps_answered": 17}
+{"event_type": "call_status", "call_sid": "CA80eb43edcf48eef241f1db10b6f4058a", "call_status": "completed", "timestamp_utc": "2026-03-02T19:33:03.318617+00:00"}
+{"event_type": "call_started", "call_sid": "", "timestamp_utc": "2026-03-02T19:39:40.692038+00:00"}
+{"event_type": "twilio_call_created", "timestamp_utc": "2026-03-02T19:40:58.201377+00:00", "campaign_mode": "prototype", "call_sid": "CA0d1a1cc6a9827ed2f0838cb9af91ae12", "phone_hash": "201da40af75ff6a318709f320424b6d342569e4100bc9bb2d63c62988d27f211", "from_number": "+41788186778", "status": "queued", "run_id": "20260302T194058Z"}
+{"event_type": "call_started", "call_sid": "CA0d1a1cc6a9827ed2f0838cb9af91ae12", "timestamp_utc": "2026-03-02T19:41:18.342847+00:00"}
+{"event_type": "call_status", "call_sid": "CA0d1a1cc6a9827ed2f0838cb9af91ae12", "call_status": "completed", "timestamp_utc": "2026-03-02T19:41:50.038856+00:00"}

@@ -1,0 +1,32 @@
+{
+  "version": "v0.1",
+  "intro_message": "Hi {name}, thanks for supporting this ITU citizen-experience pilot. This WhatsApp questionnaire takes about 4 minutes. Your responses are anonymous and help compare regulatory intent with lived telecom experience.",
+  "closing_message": "Thank you {name}. Your responses have been recorded. You qualify for INR 200 after successful full completion and verification.",
+  "questions": [
+    {
+      "id": "wa_consent",
+      "type": "consent",
+      "prompt": "Do you consent to participate in this anonymous research? Reply YES or NO."
+    },
+    {
+      "id": "wa_network_quality",
+      "type": "mixed_text_score",
+      "prompt": "How reliable is your mobile internet for important tasks in your country (for example payments, classes, health access)? Reply with short text, and optional score 1-5."
+    },
+    {
+      "id": "wa_regulatory_experience",
+      "type": "open_text",
+      "prompt": "In your experience, what is one telecom policy or regulation that helps users, and one that still causes friction?"
+    },
+    {
+      "id": "wa_affordability",
+      "type": "mixed_text_score",
+      "prompt": "How affordable are mobile data and telecom services for ordinary citizens where you live? Reply with short text, and optional score 1-5."
+    },
+    {
+      "id": "wa_redress",
+      "type": "open_text",
+      "prompt": "If service fails or billing is wrong, how easy is complaint resolution in practice?"
+    }
+  ]
+}

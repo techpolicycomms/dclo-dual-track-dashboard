@@ -1,0 +1,5 @@
+response_id,timestamp_utc,campaign_mode,survey_mode,phone_hash,completion_status,incentive_eligible,eligibility_reason,incentive_amount_inr
+a8926a94-0bcc-4556-9587-b73e1dae664a,2026-03-02T18:44:35.876210+00:00,prototype,voice,784389f359a14cbe2cc2a9305e86291ddcfbafe66517a9295a2ff19770ec16d3,complete,true,eligible_full_completion,200
+7f86dd2d-9c93-4181-bb0f-b8ec0cf13031,2026-03-02T18:45:25.925669+00:00,prototype,voice,784389f359a14cbe2cc2a9305e86291ddcfbafe66517a9295a2ff19770ec16d3,invalid,false,duplicate_response,0
+CAa6fbf2933043a0295e65134e26dda4f1,2026-03-02T19:22:03.319296+00:00,prototype,voice,,partial,false,missing_required_fields,0
+CA80eb43edcf48eef241f1db10b6f4058a,2026-03-02T19:32:56.732504+00:00,prototype,voice,,complete,true,eligible_full_completion,200

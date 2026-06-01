@@ -1,0 +1,4 @@
+respondent_id,name,phone,language,campaign_mode,opt_in_status
+prototype_001,Prototype User,+41788186778,en,prototype,yes
+cohort1_001,Sample Volunteer 1,+910000000001,en,cohort1,pending
+cohort1_002,Sample Volunteer 2,+910000000002,en,cohort1,pending
