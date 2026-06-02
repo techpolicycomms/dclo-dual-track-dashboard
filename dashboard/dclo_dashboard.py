@@ -496,6 +496,92 @@ def render_method_comparison(method_df: pd.DataFrame) -> None:
     st.plotly_chart(fig, use_container_width=True)
 
 
+def simulate_primary_event(event_type: str) -> None:
+    import json
+    import random
+    import datetime
+    import hashlib
+    import uuid
+    from pathlib import Path
+
+    ROOT = Path(__file__).resolve().parents[1]
+    PRIMARY_RESPONSES_PATH = ROOT / "data" / "primary" / "survey_responses.jsonl"
+    PRIMARY_EVENTS_PATH = ROOT / "data" / "primary" / "survey_events.jsonl"
+    PRIMARY_ELIGIBILITY_PATH = ROOT / "data" / "gold" / "survey_incentive_eligibility.csv"
+    PRIMARY_EXPORT_PATH = ROOT / "data" / "gold" / "dpi_dclo_primary_export.csv"
+
+    now_str = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    phone = "+91" + "".join(str(random.randint(0, 9)) for _ in range(10))
+    phone_hash = hashlib.sha256(phone.encode()).hexdigest()
+    sim_id = str(uuid.uuid4())
+
+    if event_type == "whatsapp":
+        wa_event = {
+            "event_type": "twilio_whatsapp_message_received",
+            "timestamp_utc": now_str,
+            "campaign_mode": "prototype",
+            "message_sid": "SM" + uuid.uuid4().hex[:32],
+            "phone_hash": phone_hash,
+            "from_number": phone,
+            "status": "received",
+            "body": random.choice(["नमस्ते DCLO", "प्रणाम", "Yes, start survey", "Option A", "Option B"]),
+            "run_id": "20260602T_SIM"
+        }
+        with open(PRIMARY_EVENTS_PATH, "a", encoding="utf-8") as f:
+            f.write(json.dumps(wa_event) + "\n")
+
+    elif event_type == "call":
+        call_sid = "CA" + uuid.uuid4().hex[:32]
+        call_event = {
+            "event_type": "twilio_call_status_changed",
+            "timestamp_utc": now_str,
+            "campaign_mode": "prototype",
+            "call_sid": call_sid,
+            "phone_hash": phone_hash,
+            "from_number": phone,
+            "status": "completed",
+            "steps_answered": random.randint(10, 17),
+            "run_id": "20260602T_SIM"
+        }
+        with open(PRIMARY_EVENTS_PATH, "a", encoding="utf-8") as f:
+            f.write(json.dumps(call_event) + "\n")
+        
+        response = {
+            "response_id": sim_id,
+            "timestamp_utc": now_str,
+            "campaign_mode": "prototype",
+            "survey_mode": "voice",
+            "phone_hash": phone_hash,
+            "language": random.choice(["Maithili", "Hindi"]),
+            "acc_use_cell": 1,
+            "skl_internet_skills": random.randint(1, 5),
+            "srv_mobile_banking": random.choice([1, 0]),
+            "dignity_score": random.randint(4, 10),
+            "climate_info_seeking": random.randint(1, 5),
+            "climate_self_efficacy": random.randint(1, 5)
+        }
+        with open(PRIMARY_RESPONSES_PATH, "a", encoding="utf-8") as f:
+            f.write(json.dumps(response) + "\n")
+
+    elif event_type == "payout":
+        elig_row = f"\n{sim_id},{now_str},prototype,whatsapp,{phone_hash},complete,true,eligible_full_completion,200"
+        with open(PRIMARY_ELIGIBILITY_PATH, "a", encoding="utf-8") as f:
+            f.write(elig_row)
+        
+        dpi_val = round(random.uniform(3.0, 5.0), 2)
+        acc = random.randint(3, 5)
+        skl = random.randint(3, 5)
+        eco = random.randint(3, 5)
+        srv = random.randint(3, 5)
+        agr = random.randint(3, 5)
+        out = random.randint(3, 5)
+        dclo_pri = round((acc + skl + eco + srv + agr + out) / 6.0, 2)
+        
+        export_row = f"\n{sim_id},{now_str},prototype,whatsapp,India,farmer,NGO,{dpi_val},{acc},{skl},{eco},{srv},{agr},{out},{dclo_pri},complete,True,200"
+        with open(PRIMARY_EXPORT_PATH, "a", encoding="utf-8") as f:
+            f.write(export_row)
+
+
 def main() -> None:
     st.title("DCLO Dashboard")
     st.caption("Digital Capability for Life Outcomes (Dual-Track: India State-Year + Country-Year)")
@@ -622,16 +708,41 @@ def main() -> None:
     if df_year.empty:
         st.warning(f"No DCLO records for {selected_year}.")
         st.stop()
-
     if checks.get("overall_passed") is False:
         st.warning(
             "Model QA checks are currently failing for at least one track. "
             "Use rankings with caution and review `data/gold/dclo_standard_checks_summary.md`."
         )
 
-    tab_measure, tab_causal, tab_robust, tab_provenance = st.tabs(["Measurement", "Causal Evidence", "Robustness", "Data Provenance & Audit"])
+    tab_paper1, tab_paper2, tab_paper3, tab_qa = st.tabs([
+        "Paper 1: Measurement & Formative Construct",
+        "Paper 2: Causal Panel & Robustness Diagnostics",
+        "Paper 3: Situated Capabilities & Field Survey",
+        "Model QA & Reproducibility"
+    ])
 
-    with tab_measure:
+    with tab_paper1:
+        st.markdown(
+            """
+            ### Paper 1: Conceptualising and Measuring DCLO
+            Following **Amartya Sen's Capability Approach** (Sen 1985, 1999), digital capability is modeled as a 
+            formative composite construct that converts digital resources into valuable life outcomes, mediated by 
+            individual, social, and environmental conversion factors.
+            
+            #### Mathematical Formulation
+            Each indicator $X_{i}$ is standard-normalized (winsorised at 5th/95th percentiles to follow OECD 2008 handbook guidelines):
+            $$Z_{i} = \\frac{X_{i} - \\mu_{i}}{\\sigma_{i}}$$
+            
+            The **Domain Score** $S_d$ for each of the 6 pillars (Access, Skills, Services, Agency, Economy, Outcomes) is:
+            $$S_d = \\frac{1}{|I_d|} \\sum_{i \\in I_d} Z_{i}$$
+            
+            The **Formative DCLO Composite Index** is computed as the equal-weighted mean of domain scores:
+            $$DCLO = \\frac{1}{|D|} \\sum_{d \\in D} S_d$$
+            
+            When data availability is unequal, the **Confidence-Weighted Composite** DCLO is computed using coverage-aware weights $w_d$:
+            $$DCLO_{CW} = \\frac{\\sum_{d \\in D} w_d S_d}{\\sum_{d \\in D} w_d}$$
+            """
+        )
         render_kpis(df_year, working_df, selected_year, entity_col=entity_col, score_col=score_col)
         col1, col2 = st.columns([1.25, 1])
         with col1:
@@ -663,9 +774,25 @@ def main() -> None:
             render_domain_heatmap(df_year, entity_col=entity_col, domain_cols=domain_cols, title="Domain Score Heatmap by Country")
             render_downloads(df_year, score_col=score_col, entity_col=entity_col, suffix="country_year")
 
-    with tab_causal:
+    with tab_paper2:
+        st.markdown(
+            """
+            ### Paper 2: Econometric Causal Evidence & Robustness
+            This paper evaluates whether digital capabilities drive real-world life outcomes by estimating a 
+            **two-way fixed effects (TWFE) lagged panel regression model** (Wooldridge 2010):
+            
+            $$Y_{it} = \\beta_1 DCLO_{i, t-1} + \\mathbf{X}'_{i, t-1} \\boldsymbol{\\gamma} + \\alpha_i + \\delta_t + \\epsilon_{it}$$
+            
+            Where:
+            * $Y_{it}$ is the real-world **Life Outcomes index** (`OUT_score`), capturing health, agricultural, and economic outcomes.
+            * $DCLO_{i, t-1}$ is the lagged composite capability score.
+            * $\\mathbf{X}'_{i, t-1}$ represents a vector of lagged controls.
+            * $\\alpha_i$ absorbs time-invariant country-specific confounders (Entity Fixed Effects).
+            * $\\delta_t$ absorbs time-varying macro shocks (Time Fixed Effects).
+            """
+        )
         if track == "India State-Year":
-            st.info("Causal evidence tab is currently available for the country-year comparative track.")
+            st.info("Causal evidence and robustness diagnostics are currently available for the country-year comparative track.")
         else:
             st.caption(
                 "Interpret coefficients as conditional associations from the configured panel model. "
@@ -679,11 +806,9 @@ def main() -> None:
                 sig = causal_coef_df[pvals < 0.05].copy()
                 st.subheader("Statistically Significant Terms (p < 0.05)")
                 st.dataframe(sig.sort_values(["spec_kind", "spec_id", "p_value_norm_approx"]), use_container_width=True)
-
-    with tab_robust:
-        if track == "India State-Year":
-            st.info("Robustness diagnostics are currently generated for the country-year comparative track.")
-        else:
+            
+            st.divider()
+            st.subheader("Robustness & Rank Stability Diagnostics")
             render_method_comparison(method_comparison_df)
             render_rank_stability(rank_stability_df, selected_year=selected_year)
             st.subheader("Caveats and Identification Notes")
@@ -698,12 +823,111 @@ def main() -> None:
                 )
             )
 
-    with tab_provenance:
-        st.caption(
-            "Full audit trail for data verification and reproducibility. "
-            "Every pipeline run records input checksums (SHA-256), row-level accounting, "
-            "analytical parameters, random seeds, and output checksums. "
-            "This follows Christensen & Miguel (2018) transparency principles."
+    with tab_paper3:
+        st.markdown(
+            """
+            ### Paper 3: Situated Capabilities & Field Survey (Twilio Mixed-Mode)
+            Paper 3 explores **situated learning and linguistic justice** in low-resource environments by conducting 
+            live mixed-mode phone surveys. Surveys are delivered in native local languages (e.g. Hindi, Maithili) 
+            via SMS and WhatsApp automated channels, tracking user interaction journeys to assess localized agency.
+            """
+        )
+        
+        st.warning(
+            "⚠️ **PRE-LAUNCH DEMO DATA PLATFORM**: The metrics shown below are currently loaded from high-fidelity pre-launch "
+            "pilot/demo files (`data/primary/*.jsonl`). When the primary phone survey goes live, the Twilio webhook ingestion pipelines "
+            "will automatically stream real-time response logs here in production.",
+            icon="ℹ️"
+        )
+        
+        with st.expander("🔴 Interactive Real-Life Survey Event Demo Panel", expanded=True):
+            st.markdown(
+                """
+                To see how live primary data collection works, you can simulate an incoming survey call, WhatsApp event, or payout check in real-time. 
+                Click any of the buttons below to write a simulated Twilio webhook event to the data files, which will instantly refresh the dashboard:
+                """
+            )
+            demo_cols = st.columns(3)
+            with demo_cols[0]:
+                if st.button("Simulate WhatsApp Inbound Message", key="demo_wa"):
+                    simulate_primary_event("whatsapp")
+                    st.success("WhatsApp event appended! Refreshing...")
+                    st.rerun()
+            with demo_cols[1]:
+                if st.button("Simulate Completed Phone Call", key="demo_call"):
+                    simulate_primary_event("call")
+                    st.success("Completed Voice call & response appended! Refreshing...")
+                    st.rerun()
+            with demo_cols[2]:
+                if st.button("Simulate Payout Eligibility & Export", key="demo_payout"):
+                    simulate_primary_event("payout")
+                    st.success("Payout row & integrated export appended! Refreshing...")
+                    st.rerun()
+        # Load and render primary survey metrics
+        PRIMARY_RESPONSES_PATH = Path(__file__).resolve().parents[1] / "data" / "primary" / "survey_responses.jsonl"
+        PRIMARY_EVENTS_PATH = Path(__file__).resolve().parents[1] / "data" / "primary" / "survey_events.jsonl"
+        PRIMARY_ELIGIBILITY_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "survey_incentive_eligibility.csv"
+        PRIMARY_EXPORT_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dpi_dclo_primary_export.csv"
+
+        def load_jsonl(path: Path) -> pd.DataFrame:
+            import json
+            import os
+            if not path.exists():
+                return pd.DataFrame()
+            rows = []
+            with open(path, "r", encoding="utf-8") as handle:
+                for line in handle:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        rows.append(json.loads(line))
+                    except Exception:
+                        continue
+            return pd.DataFrame(rows)
+
+        responses = load_jsonl(PRIMARY_RESPONSES_PATH)
+        events = load_jsonl(PRIMARY_EVENTS_PATH)
+        eligibility = load_optional_csv(PRIMARY_ELIGIBILITY_PATH)
+        exports = load_optional_csv(PRIMARY_EXPORT_PATH)
+
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Field Responses", int(len(responses)))
+        c2.metric("Interaction Events", int(len(events)))
+        c3.metric("Validated Eligibility", int(len(eligibility)))
+        c4.metric("DPI Primary Exports", int(len(exports)))
+
+        if not eligibility.empty and "completion_status" in eligibility.columns:
+            status_counts = eligibility["completion_status"].value_counts().rename_axis("status").reset_index(name="count")
+            st.subheader("Field Survey Completion Status")
+            st.bar_chart(status_counts.set_index("status"))
+
+        if not eligibility.empty and "incentive_eligible" in eligibility.columns:
+            eligible_count = int((eligibility["incentive_eligible"].astype(str).str.lower() == "true").sum())
+            st.info(f"Verified Payout-Eligible Respondents (INR 200 Incentive): **{eligible_count}**")
+
+        st.subheader("Latest Live Survey Events (Mixed-Mode Phone Channels)")
+        if events.empty:
+            st.warning("No live call events recorded in data/primary/survey_events.jsonl.")
+        else:
+            show_events = events.copy()
+            if "timestamp_utc" in show_events.columns:
+                show_events = show_events.sort_values("timestamp_utc", ascending=False)
+            st.dataframe(show_events.head(15), use_container_width=True)
+
+        st.subheader("DPI/DCLO Primary Integrated Export Preview")
+        if exports.empty:
+            st.warning("No export data available in gold/dpi_dclo_primary_export.csv.")
+        else:
+            st.dataframe(exports.head(15), use_container_width=True)
+
+    with tab_qa:
+        st.markdown(
+            """
+            ### Model QA, Data Provenance & Transparency Audit
+            This tab presents a comprehensive audit trail for reproducibility and transparency in construct aggregation 
+            and causal panel estimation, following Christensen & Miguel (2018) principles.
+            """
         )
         if track == "India State-Year":
             render_provenance(state_manifest, state_verification, "India State-Year")
