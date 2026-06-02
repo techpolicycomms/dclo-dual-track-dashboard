@@ -11,12 +11,12 @@
   "country_track": {
     "passed": true,
     "issues": [],
-    "rows": 532,
+    "rows": 577,
     "year_min": 2014,
     "year_max": 2025,
-    "n_economies": 48,
+    "n_economies": 49,
     "n_years": 12,
-    "panel_balance": 0.9236
+    "panel_balance": 0.9813
   },
   "causal_track": {
     "passed": true,

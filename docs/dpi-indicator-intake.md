@@ -14,6 +14,8 @@ This file classifies indicators for country-year DCLO into `core_formative`, `co
 | indicator_code | indicator_name | pillar | years_covered | economies_covered | imputation_share | dclo_domain | pct_observed_global | panel_coverage | ranking_score | role | gate_pass |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | WTO_SERVICES_BUSINESS_EXPORTS | Services exports (business) | access_usage | 6 | 47 | 0.0 | SRV | 100.0 | 0.4809688581314879 | 154.29688581314878 | context_only | True |
+| GTMI_GTMI | GovTech Maturity Index (overall) | access_usage | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | context_only | True |
+| GTMI_PSDI | GovTech Public Service Delivery Index | access_usage | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | context_only | True |
 | WB_BX.KLT.DINV.WD.GD.ZS | Foreign direct investment net inflows (% of GDP) | access_usage | 10 | 5 | 0.0 | ACC | 100.0 | 0.08650519031141868 | 111.65051903114187 | core_formative | False |
 | WB_IT.NET.SECR.P6 | Secure Internet servers (per 1 million people) | trust_governance | 10 | 5 | 0.0 | ACC | 100.0 | 0.08650519031141868 | 111.65051903114187 | core_formative | False |
 | WB_IT.NET.USER.ZS | Individuals using the Internet (% of population) | access_usage | 11 | 5 | 0.0 | ACC | 100.0 | 0.07785467128027682 | 111.03546712802768 | core_formative | False |
@@ -33,6 +35,9 @@ This file classifies indicators for country-year DCLO into `core_formative`, `co
 | WTO_SERVICES_TOTAL_EXPORTS | Services exports (total) | access_usage | 11 | 47 | 0.0 | SRV | 100.0 | 0.8944636678200693 | 196.8963667820069 | core_formative | True |
 | WTO_SERVICES_TRANSPORT_EXPORTS | Services exports (transport) | access_usage | 11 | 47 | 0.0 | SRV | 100.0 | 0.8944636678200693 | 196.8963667820069 | core_formative | True |
 | WTO_SERVICES_TRAVEL_EXPORTS | Services exports (travel) | access_usage | 11 | 47 | 0.0 | SRV | 100.0 | 0.8944636678200693 | 196.8963667820069 | core_formative | True |
+| GTMI_CGSI | GovTech Core Government Systems Index | access_usage | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | core_formative | True |
+| GTMI_DCEI | GovTech Digital Citizen Engagement Index | trust_governance | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | core_formative | True |
+| GTMI_GTEI | GovTech GovTech Enablers Index | trust_governance | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | core_formative | True |
 | WB_IT.NET.BBND.P2 | Fixed broadband subscriptions (per 100 people) | access_usage | 9 | 5 | 0.0 | ACC | 100.0 | 0.07785467128027682 | 110.53546712802768 | exclude | False |
 | WB_TM.VAL.MRCH.XD.WD | Import value index (2015 = 100) | access_usage | 9 | 5 | 0.0 | ACC | 100.0 | 0.07785467128027682 | 110.53546712802768 | exclude | False |
 | WB_GE.PER.RNK | Government Effectiveness Percentile Rank | trust_governance | 9 | 5 | 0.0 | AGR | 100.0 | 0.07785467128027682 | 110.53546712802768 | exclude | False |
@@ -57,11 +62,6 @@ This file classifies indicators for country-year DCLO into `core_formative`, `co
 | GHG_PROFILE_N2O_KTCO2E | N2O emissions (kt CO2e, profile) | sustainability_resilience | 8 | 5 | 0.0 | OUT | 0.0 | 0.04498269896193772 | 6.998269896193772 | exclude | False |
 | GHG_PROFILE_TOTAL_NO_LULUCF_KTCO2E | GHG emissions without LULUCF (kt CO2e, profile) | sustainability_resilience | 8 | 5 | 0.0 | OUT | 0.0 | 0.04498269896193772 | 6.998269896193772 | exclude | False |
 | WB_SE.ADT.LITR.ZS | Literacy rate adult total (% of people ages 15 and above) | affordability_inclusion | 6 | 2 | 0.0 | SKL | 100.0 | 0.012110726643598616 | 102.91107266435986 | exclude | False |
-| GTMI_CGSI | GovTech Core Government Systems Index | access_usage | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | exclude | False |
-| GTMI_DCEI | GovTech Digital Citizen Engagement Index | trust_governance | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | exclude | False |
-| GTMI_GTEI | GovTech GovTech Enablers Index | trust_governance | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | exclude | False |
-| GTMI_GTMI | GovTech Maturity Index (overall) | access_usage | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | exclude | False |
-| GTMI_PSDI | GovTech Public Service Delivery Index | access_usage | 3 | 47 | 0.0 | SRV | 100.0 | 0.24394463667820068 | 129.84446366782007 | exclude | False |
 | WB_BX.GSR.CCIS.ZS | ICT service exports (% of service exports) | access_usage | 10 | 5 | 0.0 | SRV | 100.0 | 0.08650519031141868 | 111.65051903114187 | exclude | False |
 | WB_NE.EXP.GNFS.ZS | Exports of goods and services (% of GDP) | access_usage | 10 | 5 | 0.0 | SRV | 100.0 | 0.08650519031141868 | 111.65051903114187 | exclude | False |
 | WB_NE.IMP.GNFS.ZS | Imports of goods and services (% of GDP) | access_usage | 10 | 5 | 0.0 | SRV | 100.0 | 0.08650519031141868 | 111.65051903114187 | exclude | False |

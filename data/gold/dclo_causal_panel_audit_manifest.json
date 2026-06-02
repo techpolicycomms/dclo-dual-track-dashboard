@@ -1,7 +1,7 @@
 {
   "pipeline": "build_dclo_causal_panel",
-  "run_id": "20260601T210208Z",
-  "started_at_utc": "2026-06-01T21:02:08.520537+00:00",
+  "run_id": "20260601T210447Z",
+  "started_at_utc": "2026-06-01T21:04:47.293772+00:00",
   "environment": {
     "python_version": "3.12.13 (main, Mar 10 2026, 18:18:07) [Clang 21.1.4 ]",
     "platform": "macOS-26.5.1-arm64-arm-64bit",
@@ -11,7 +11,7 @@
       "streamlit": "1.50.0",
       "plotly": "6.7.0"
     },
-    "git_commit": "1e0e22143b68d1c1be1535307953f40be117e82a"
+    "git_commit": "49b1710de0d2d3530f03dd3510ba2fed998fe85e"
   },
   "config_snapshot": {
     "inputs": {
@@ -28,8 +28,8 @@
       ]
     },
     "baseline_spec": {
-      "id": "twfe_l1_srv",
-      "outcome": "SRV_score",
+      "id": "twfe_l1_out",
+      "outcome": "OUT_score",
       "predictors": [
         "DCLO_score"
       ],
@@ -44,7 +44,7 @@
     "robustness_specs": [
       {
         "id": "twfe_l2_outcome",
-        "outcome": "SRV_score",
+        "outcome": "OUT_score",
         "predictors": [
           "DCLO_score"
         ],
@@ -57,8 +57,8 @@
         "cluster_col": "economy"
       },
       {
-        "id": "twfe_l1_srv_no_control",
-        "outcome": "SRV_score",
+        "id": "twfe_l1_out_no_control",
+        "outcome": "OUT_score",
         "predictors": [
           "DCLO_score"
         ],
@@ -70,7 +70,7 @@
       },
       {
         "id": "pooled_l1",
-        "outcome": "SRV_score",
+        "outcome": "OUT_score",
         "predictors": [
           "DCLO_score"
         ],
@@ -85,7 +85,7 @@
     ],
     "placebo_spec": {
       "id": "placebo_permuted_l1",
-      "outcome": "SRV_score",
+      "outcome": "OUT_score",
       "predictors": [
         "DCLO_score"
       ],
@@ -121,65 +121,65 @@
     "country_scores": {
       "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dclo_country_year.csv",
       "exists": true,
-      "sha256": "78e568e8ba15a14c61a2bf5da4cd0f79f2a7446f56d8a18f2625ed515fa1663c",
-      "size_bytes": 513467,
-      "modified_utc": "2026-06-01T21:02:00.460664+00:00"
+      "sha256": "6eafd4e6b1a463d56bfd1a82759c1c0156716f3a040648d6c3c3856829221fd0",
+      "size_bytes": 621489,
+      "modified_utc": "2026-06-01T21:04:17.294402+00:00"
     }
   },
   "stages": [
     {
       "stage": "panel_filtering",
-      "timestamp_utc": "2026-06-01T21:02:08.640890+00:00",
-      "rows_in": 532,
-      "rows_out": 532,
-      "rows_dropped": 0,
+      "timestamp_utc": "2026-06-01T21:04:47.403327+00:00",
+      "rows_in": 577,
+      "rows_out": 574,
+      "rows_dropped": 3,
       "notes": "Kept entities with >= 5 obs, 48 entities remain"
     },
     {
-      "stage": "fit_baseline_twfe_l1_srv",
-      "timestamp_utc": "2026-06-01T21:02:08.646846+00:00",
-      "rows_in": 532,
-      "rows_out": 484,
+      "stage": "fit_baseline_twfe_l1_out",
+      "timestamp_utc": "2026-06-01T21:04:47.408417+00:00",
+      "rows_in": 574,
+      "rows_out": 526,
       "rows_dropped": 48,
-      "notes": "R2_within=0.0365, F=8.040514034617564, df_resid=425, DW=1.4479731096557253"
+      "notes": "R2_within=0.0598, F=14.860289624704402, df_resid=467, DW=1.056025146486926"
     },
     {
       "stage": "fit_robustness_twfe_l2_outcome",
-      "timestamp_utc": "2026-06-01T21:02:08.650276+00:00",
-      "rows_in": 532,
-      "rows_out": 436,
+      "timestamp_utc": "2026-06-01T21:04:47.411604+00:00",
+      "rows_in": 574,
+      "rows_out": 478,
       "rows_dropped": 96,
-      "notes": "R2_within=0.0035, F=0.6730365936189133, df_resid=378, DW=1.5059193846308305"
+      "notes": "R2_within=0.0333, F=7.233165676751354, df_resid=420, DW=1.051073901136252"
     },
     {
-      "stage": "fit_robustness_twfe_l1_srv_no_control",
-      "timestamp_utc": "2026-06-01T21:02:08.653341+00:00",
-      "rows_in": 532,
-      "rows_out": 484,
+      "stage": "fit_robustness_twfe_l1_out_no_control",
+      "timestamp_utc": "2026-06-01T21:04:47.414517+00:00",
+      "rows_in": 574,
+      "rows_out": 526,
       "rows_dropped": 48,
-      "notes": "R2_within=0.0365, F=16.118865782339213, df_resid=426, DW=1.4479731096557253"
+      "notes": "R2_within=0.0598, F=29.784220746730817, df_resid=468, DW=1.0560251464869257"
     },
     {
       "stage": "fit_robustness_pooled_l1",
-      "timestamp_utc": "2026-06-01T21:02:08.655881+00:00",
-      "rows_in": 532,
-      "rows_out": 484,
+      "timestamp_utc": "2026-06-01T21:04:47.416985+00:00",
+      "rows_in": 574,
+      "rows_out": 526,
       "rows_dropped": 48,
-      "notes": "R2_within=0.2985, F=102.56115748735036, df_resid=482, DW=0.5111178581464979"
+      "notes": "R2_within=0.0414, F=11.319192961500663, df_resid=524, DW=0.994726820418009"
     },
     {
       "stage": "fit_placebo_placebo_permuted_l1",
-      "timestamp_utc": "2026-06-01T21:02:08.662484+00:00",
-      "rows_in": 532,
-      "rows_out": 483,
+      "timestamp_utc": "2026-06-01T21:04:47.423671+00:00",
+      "rows_in": 574,
+      "rows_out": 525,
       "rows_dropped": 49,
-      "notes": "R2_within=0.0002, F=0.045107872665838315, df_resid=424, DW=1.4363175234567314"
+      "notes": "R2_within=0.0001, F=0.019401085876291628, df_resid=466, DW=0.871010321668325"
     },
     {
       "stage": "build_rank_stability",
-      "timestamp_utc": "2026-06-01T21:02:23.638352+00:00",
-      "rows_in": 532,
-      "rows_out": 532,
+      "timestamp_utc": "2026-06-01T21:05:03.434330+00:00",
+      "rows_in": 574,
+      "rows_out": 574,
       "rows_dropped": 0,
       "notes": "250 Dirichlet draws, top_k=20, seed=42"
     }
@@ -188,26 +188,26 @@
     "coefficients": {
       "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dclo_causal_coefficients.csv",
       "exists": true,
-      "sha256": "540d5015170efcf7874ae24acfbb58681d487b98dcb35da84154ff58b09e70b5",
-      "size_bytes": 1425
+      "sha256": "2c6e03f135dbbadcd682fb9f56b15dd2d6ef393e4c409cc4b1233491424cccba",
+      "size_bytes": 1430
     },
     "model_fit": {
       "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dclo_causal_model_fit.csv",
       "exists": true,
-      "sha256": "e46e6f30f3362ff2bcafbe800cddec13de5cf3aa384d0642832cb22cd7e8e6d1",
-      "size_bytes": 1281
+      "sha256": "e6b9cd8dfa03ead0b7f4318f435a45d1458cd9a2e7b55848485bd425b625adbf",
+      "size_bytes": 1269
     },
     "rank_stability": {
       "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dclo_rank_stability.csv",
       "exists": true,
-      "sha256": "2e6062fb5929de2f205a2b71355e987c28226b31cfdad9b5f5f3dc8fd46201a7",
-      "size_bytes": 22426
+      "sha256": "6e4c0463941db93bb5f92ab8ecabb93623e4d26a239afa59db9b3b06f4f0a4dc",
+      "size_bytes": 24318
     },
     "method_comparison": {
       "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dclo_method_comparison.csv",
       "exists": true,
-      "sha256": "c5a92fa2bf18e64602d858c9c0f6ba0e2dee2b54f05986bff3acce0afca2e1e1",
-      "size_bytes": 775
+      "sha256": "92db6237dbe4f32606bb286f3fa588009187e5cd65a85f5797177fb43375a548",
+      "size_bytes": 826
     },
     "verification_report": {
       "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dclo_causal_panel_verification.json",
@@ -216,9 +216,9 @@
       "size_bytes": 148
     }
   },
-  "completed_at_utc": "2026-06-01T21:02:23.648919+00:00",
+  "completed_at_utc": "2026-06-01T21:05:03.445519+00:00",
   "status": "completed",
-  "config_sha256": "b84a2260f461abaaa3a3ed83c3813d809eb1868cfbbea82460f64cdc7c90b3b5",
+  "config_sha256": "ab5853aa5d22e397738c4ce877c1c200a3b7b3c7c48042c8cf886b233057fdef",
   "parameters": {
     "panel_entity_col": "economy",
     "panel_time_col": "year",
@@ -226,7 +226,7 @@
     "panel_min_entities": 25,
     "panel_n_entities": 48,
     "panel_n_years": 12,
-    "panel_n_obs": 532,
+    "panel_n_obs": 574,
     "rank_stability_draws": 250,
     "rank_stability_top_k": 20
   }

@@ -11,8 +11,8 @@ panel:
     - 2
 
 baseline_spec:
-  id: "twfe_l1_srv"
-  outcome: "SRV_score"
+  id: "twfe_l1_out"
+  outcome: "OUT_score"
   predictors:
     - "DCLO_score"
   controls:
@@ -24,7 +24,7 @@ baseline_spec:
 
 robustness_specs:
   - id: "twfe_l2_outcome"
-    outcome: "SRV_score"
+    outcome: "OUT_score"
     predictors:
       - "DCLO_score"
     controls:
@@ -34,8 +34,8 @@ robustness_specs:
     time_fixed_effects: true
     cluster_col: "economy"
 
-  - id: "twfe_l1_srv_no_control"
-    outcome: "SRV_score"
+  - id: "twfe_l1_out_no_control"
+    outcome: "OUT_score"
     predictors:
       - "DCLO_score"
     controls: []
@@ -45,7 +45,7 @@ robustness_specs:
     cluster_col: "economy"
 
   - id: "pooled_l1"
-    outcome: "SRV_score"
+    outcome: "OUT_score"
     predictors:
       - "DCLO_score"
     controls:
@@ -57,7 +57,7 @@ robustness_specs:
 
 placebo_spec:
   id: "placebo_permuted_l1"
-  outcome: "SRV_score"
+  outcome: "OUT_score"
   predictors:
     - "DCLO_score"
   controls:

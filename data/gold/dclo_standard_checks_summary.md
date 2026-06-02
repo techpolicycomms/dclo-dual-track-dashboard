@@ -11,10 +11,10 @@
 
 ## Country Track
 - passed: `True`
-- rows: `532`
-- economies: `48`
+- rows: `577`
+- economies: `49`
 - years: `2014` to `2025`
-- panel_balance: `0.9236`
+- panel_balance: `0.9813`
 - issues:
 
 ## Causal Track
