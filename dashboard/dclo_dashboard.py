@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import json
+import sqlite3
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -22,6 +23,7 @@ COUNTRY_MANIFEST_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / 
 CAUSAL_MANIFEST_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_causal_panel_audit_manifest.json"
 STATE_VERIFICATION_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_state_year_verification.json"
 COUNTRY_VERIFICATION_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_country_year_verification.json"
+LONGITUDINAL_DB_PATH = Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_longitudinal.db"
 STATE_DOMAIN_SCORE_COLUMNS = [
     "ACC_score",
     "SKL_score",
@@ -161,7 +163,7 @@ def render_provenance(manifest: dict, verification: dict, track_name: str) -> No
                 "SHA-256": info.get("sha256", "n/a")[:16] + "..." if info.get("sha256") else "n/a",
                 "Size (bytes)": info.get("size_bytes", "n/a"),
             })
-        st.dataframe(pd.DataFrame(input_rows), use_container_width=True)
+        st.dataframe(pd.DataFrame(input_rows), width="stretch")
 
     # Pipeline stages
     stages = manifest.get("stages", [])
@@ -176,7 +178,7 @@ def render_provenance(manifest: dict, verification: dict, track_name: str) -> No
                 "Dropped": s.get("rows_dropped", 0),
                 "Notes": s.get("notes", "")[:80],
             })
-        st.dataframe(pd.DataFrame(stage_rows), use_container_width=True)
+        st.dataframe(pd.DataFrame(stage_rows), width="stretch")
 
         # Flag accounting warnings
         warnings = [s for s in stages if "accounting_warning" in s]
@@ -194,7 +196,7 @@ def render_provenance(manifest: dict, verification: dict, track_name: str) -> No
                 "SHA-256": info.get("sha256", "n/a")[:16] + "..." if info.get("sha256") else "n/a",
                 "Size (bytes)": info.get("size_bytes", "n/a"),
             })
-        st.dataframe(pd.DataFrame(out_rows), use_container_width=True)
+        st.dataframe(pd.DataFrame(out_rows), width="stretch")
 
     # Analytical parameters
     params = manifest.get("parameters", {})
@@ -326,6 +328,28 @@ def render_domain_profile(df_year: pd.DataFrame, selected_entity: str, entity_co
     st.plotly_chart(fig, use_container_width=True)
 
 
+def render_country_coverage_diagnostics(df_year: pd.DataFrame) -> None:
+    required = {"coverage_ratio", "imputed_indicator_points", "observed_indicator_points", "model_trust_tier"}
+    if not required.issubset(df_year.columns):
+        return
+
+    st.subheader("Coverage Diagnostics")
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Mean observed coverage", f"{df_year['coverage_ratio'].mean() * 100:.1f}%")
+    col2.metric("Median observed indicators", f"{df_year['observed_indicator_points'].median():.0f}")
+    col3.metric("Median imputed indicators", f"{df_year['imputed_indicator_points'].median():.0f}")
+    high_share = (df_year["model_trust_tier"].astype(str) == "High").mean()
+    col4.metric("High-trust rows", f"{high_share * 100:.1f}%")
+
+    trust_counts = (
+        df_year["model_trust_tier"]
+        .value_counts(dropna=False)
+        .rename_axis("Trust tier")
+        .reset_index(name="Rows")
+    )
+    st.dataframe(trust_counts, width="stretch")
+
+
 def render_state_map(df_year: pd.DataFrame) -> None:
     map_df = df_year.copy()
     map_df["lat"] = map_df["state_name"].map(lambda x: STATE_CENTROIDS.get(x, (None, None))[0])
@@ -359,11 +383,18 @@ def render_country_map(df_year: pd.DataFrame, score_col: str) -> None:
     if map_df.empty:
         st.info("No country data available for map.")
         return
+    if "iso3c" in map_df.columns:
+        location_col = "iso3c"
+        location_mode = "ISO-3"
+    else:
+        location_col = "economy"
+        location_mode = "country names"
     fig = px.choropleth(
         map_df,
-        locations="economy",
-        locationmode="country names",
+        locations=location_col,
+        locationmode=location_mode,
         color=score_col,
+        hover_name="economy",
         color_continuous_scale="Viridis",
         title="Country Comparison Map (DCLO)",
     )
@@ -430,7 +461,7 @@ def render_model_fit_table(fit_df: pd.DataFrame) -> None:
         "residual_std",
     ]
     available = [col for col in show_cols if col in fit_df.columns]
-    st.dataframe(fit_df[available].sort_values(["spec_kind", "spec_id"]), use_container_width=True)
+    st.dataframe(fit_df[available].sort_values(["spec_kind", "spec_id"]), width="stretch")
 
 
 def render_rank_stability(stability_df: pd.DataFrame, selected_year: int) -> None:
@@ -636,7 +667,10 @@ def main() -> None:
             entity_col = "state_name"
             domain_cols = STATE_DOMAIN_SCORE_COLUMNS
         else:
-            country_source = st.selectbox("Country data source", ["DPI Comparative", "API (RestCountries + World Bank)"])
+            country_source = st.selectbox(
+                "Country data source",
+                ["API (RestCountries + World Bank)", "DPI Comparative (legacy/high-imputation)"],
+            )
             source_df = country_api_df if country_source.startswith("API") else country_df
             if source_df.empty or not {"economy", "year", "DCLO_score"}.issubset(source_df.columns):
                 st.error("Country-year dataset not available or missing required columns.")
@@ -689,7 +723,12 @@ def main() -> None:
                     st.write(f"- {issue}")
         st.divider()
         st.header("Methodology")
-        unit_text = "state-year (India track)" if track == "India State-Year" else "country-year (DPI comparative track)"
+        if track == "India State-Year":
+            unit_text = "state-year (India track)"
+        elif country_source.startswith("API"):
+            unit_text = "country-year (API track: RestCountries + World Bank)"
+        else:
+            unit_text = "country-year (legacy DPI comparative track)"
         st.markdown(
             "\n".join(
                 [
@@ -714,10 +753,11 @@ def main() -> None:
             "Use rankings with caution and review `data/gold/dclo_standard_checks_summary.md`."
         )
 
-    tab_paper1, tab_paper2, tab_paper3, tab_qa = st.tabs([
+    tab_paper1, tab_paper2, tab_paper3, tab_me, tab_qa = st.tabs([
         "Paper 1: Measurement & Formative Construct",
         "Paper 2: Causal Panel & Robustness Diagnostics",
         "Paper 3: Situated Capabilities & Field Survey",
+        "DCLO Longitudinal M&E (PhD Panel)",
         "Model QA & Reproducibility"
     ])
 
@@ -764,6 +804,8 @@ def main() -> None:
             render_downloads(df_year, score_col=score_col, entity_col=entity_col, suffix="state_year")
         else:
             render_country_map(df_year, score_col=score_col)
+            if country_source.startswith("API"):
+                render_country_coverage_diagnostics(df_year)
             render_trends(
                 working_df,
                 selected_entities,
@@ -805,7 +847,7 @@ def main() -> None:
                 pvals = pd.to_numeric(causal_coef_df["p_value_norm_approx"], errors="coerce")
                 sig = causal_coef_df[pvals < 0.05].copy()
                 st.subheader("Statistically Significant Terms (p < 0.05)")
-                st.dataframe(sig.sort_values(["spec_kind", "spec_id", "p_value_norm_approx"]), use_container_width=True)
+                st.dataframe(sig.sort_values(["spec_kind", "spec_id", "p_value_norm_approx"]), width="stretch")
             
             st.divider()
             st.subheader("Robustness & Rank Stability Diagnostics")
@@ -913,13 +955,122 @@ def main() -> None:
             show_events = events.copy()
             if "timestamp_utc" in show_events.columns:
                 show_events = show_events.sort_values("timestamp_utc", ascending=False)
-            st.dataframe(show_events.head(15), use_container_width=True)
+            st.dataframe(show_events.head(15), width="stretch")
 
         st.subheader("DPI/DCLO Primary Integrated Export Preview")
         if exports.empty:
             st.warning("No export data available in gold/dpi_dclo_primary_export.csv.")
         else:
-            st.dataframe(exports.head(15), use_container_width=True)
+            st.dataframe(exports.head(15), width="stretch")
+
+    with tab_me:
+        st.markdown(
+            """
+            ### DCLO Longitudinal Monitoring & Evaluation (PhD Panel)
+            This tab provides real-time access to the panel database managed by the **Longitudinal Spatial Capability Agent**. 
+            It tracks spatial accessibility decay, linguistic barriers, and livelihood outcomes across 100 villages in Northern Bihar.
+            """
+        )
+        
+        if not LONGITUDINAL_DB_PATH.exists():
+            st.info("Longitudinal SQLite database not found. Run the ingestion agent to populate panel records.")
+        else:
+            # 1. Load Data from SQLite
+            conn = sqlite3.connect(str(LONGITUDINAL_DB_PATH))
+            panel_df = pd.read_sql_query("SELECT * FROM daily_panel", conn)
+            villages_df = pd.read_sql_query("SELECT * FROM villages", conn)
+            conn.close()
+            
+            # Merge villages
+            full_panel = pd.merge(panel_df, villages_df, on="village_id")
+            full_panel['date_parsed'] = pd.to_datetime(full_panel['date'])
+            
+            # 2. Key KPIs
+            num_villages = villages_df['village_id'].nunique()
+            avg_dist = panel_df['dist_to_csc_km'].mean()
+            avg_exclusion = panel_df['spatial_linguistic_exclusion'].mean()
+            panel_corr = panel_df['spatial_linguistic_exclusion'].corr(panel_df['livelihood_outcome'])
+            
+            kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+            kpi1.metric("Villages Monitored", f"{num_villages}")
+            kpi2.metric("Mean Distance to CSC", f"{avg_dist:.2f} km")
+            kpi3.metric("Mean Spatial-Linguistic Exclusion", f"{avg_exclusion:.2f}")
+            kpi4.metric("Exclusion vs. Livelihood Corr", f"{panel_corr:.4f}")
+            
+            # 3. Spatial Map with Time-Slider (Dignity & Access Evolution)
+            st.subheader("I. Spatial-Linguistic Exclusion Zones Over Time")
+            st.markdown("Use the slider below to observe how the rollout of Maithili-language interfaces on Day 15 (May 15, 2026) in Madhubani district shrinks the exclusion zones.")
+            
+            unique_dates = sorted(full_panel['date'].unique().tolist())
+            selected_date_str = st.select_slider("Select Date", options=unique_dates, value=unique_dates[0])
+            
+            day_df = full_panel[full_panel['date'] == selected_date_str].copy()
+            
+            fig_map = px.scatter(
+                day_df,
+                x="longitude",
+                y="latitude",
+                color="spatial_linguistic_exclusion",
+                size=day_df["dist_to_csc_km"].apply(lambda d: min(15.0, max(4.0, d))),
+                color_continuous_scale="YlOrRd",
+                range_color=[0, 10],
+                hover_name="village_id",
+                hover_data=["district_id", "primary_language", "dist_to_csc_km", "livelihood_outcome"],
+                title=f"Village Exclusion Map: {selected_date_str}"
+            )
+            st.plotly_chart(fig_map, use_container_width=True)
+            
+            # 4. Interactive Event Study Chart
+            st.subheader("II. Causal Event Study: Impact of Language Rollout")
+            
+            # Compute relative days
+            event_date = pd.to_datetime("2026-05-15")
+            full_panel['relative_day'] = (full_panel['date_parsed'] - event_date).dt.days
+            
+            event_df = full_panel[(full_panel['relative_day'] >= -10) & (full_panel['relative_day'] <= 10)]
+            
+            # Group
+            grouped = event_df.groupby(['district_id', 'primary_language', 'relative_day'])['livelihood_outcome'].mean().reset_index()
+            grouped['Group'] = grouped.apply(
+                lambda r: 'Treated (MDB + Maithili)' if r['district_id'] == 'MDB' and r['primary_language'] == 'Maithili' else 'Control (All Others)',
+                axis=1
+            )
+            grouped_agg = grouped.groupby(['Group', 'relative_day'])['livelihood_outcome'].mean().reset_index()
+            
+            fig_event = px.line(
+                grouped_agg,
+                x="relative_day",
+                y="livelihood_outcome",
+                color="Group",
+                markers=True,
+                color_discrete_map={'Treated (MDB + Maithili)': 'darkred', 'Control (All Others)': 'gray'},
+                title="Event Study: Parallel Pre-Trends and Post-Intervention Divergence"
+            )
+            fig_event.add_vline(x=0, line_dash="dash", line_color="blue", annotation_text="Policy Rollout (May 15)")
+            st.plotly_chart(fig_event, use_container_width=True)
+            
+            # 5. Econometric Regression Results
+            st.subheader("III. Panel Econometrics Estimation Output (Two-Way Fixed Effects)")
+            st.markdown("Estimated model: $Y_{it} = \\beta_1 \\text{Exclusion}_{it} + \\mathbf{X}'_{it}\\boldsymbol{\\gamma} + \\alpha_i + \\delta_t + \\epsilon_{it}$")
+            
+            report_path = Path(__file__).resolve().parents[1] / "data" / "gold" / "panel_regression_report.txt"
+            if report_path.exists():
+                st.code(report_path.read_text(), language="text")
+            else:
+                st.info("Run panel diagnostics script to generate econometric report.")
+                
+            # 6. Database Preview
+            st.subheader("IV. Raw Panel Database Preview")
+            st.dataframe(full_panel.drop(columns=['date_parsed']).sort_values(['village_id', 'date']).head(100), width="stretch")
+            
+            # Download button for panel csv
+            panel_csv_bytes = full_panel.drop(columns=['date_parsed']).to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="Download Full Panel Data (CSV)",
+                data=panel_csv_bytes,
+                file_name="dclo_longitudinal_panel.csv",
+                mime="text/csv"
+            )
 
     with tab_qa:
         st.markdown(
@@ -942,7 +1093,7 @@ def main() -> None:
         st.markdown(explainer_text)
 
     st.subheader("Filtered Data Preview")
-    st.dataframe(df_year.sort_values(score_col, ascending=False), use_container_width=True)
+    st.dataframe(df_year.sort_values(score_col, ascending=False), width="stretch")
 
 
 if __name__ == "__main__":
