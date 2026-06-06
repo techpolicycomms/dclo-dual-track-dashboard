@@ -1,56 +1,56 @@
 {
   "pipeline": "dclo_longitudinal_agent",
-  "run_id": "20260605T120913Z",
-  "started_at_utc": "2026-06-05T12:09:13.185481+00:00",
-  "completed_at_utc": "2026-06-05T12:09:13.450416+00:00",
+  "run_id": "20260606T020505Z",
+  "started_at_utc": "2026-06-06T02:05:05.734446+00:00",
+  "completed_at_utc": "2026-06-06T02:05:06.450224+00:00",
   "environment": {
-    "python_version": "3.14.5 (main, May 10 2026, 10:21:34) [Clang 21.0.0 (clang-2100.0.123.102)]",
-    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python_version": "3.12.13 (main, Mar  4 2026, 02:26:36) [GCC 13.3.0]",
+    "platform": "Linux-6.17.0-1015-azure-x86_64-with-glibc2.39",
     "packages": {
       "pandas": "3.0.3",
       "numpy": "2.4.6",
       "geopandas": "1.1.3",
-      "sqlite3": "3.53.1"
+      "sqlite3": "3.45.1"
     },
-    "git_commit": "077103a0ef3c60aea3cc16cb125612c5e0923f42"
+    "git_commit": "8c6edf585a184da48ecd98b878546ed6e6837f60"
   },
   "inputs": {
     "dclo_state_year": {
-      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dclo_state_year.csv",
+      "path": "data/gold/dclo_state_year.csv",
       "exists": true,
       "sha256": "2d3a9711ba333dfd29209d210cd0fb33690248772d026774a56f3da102fa70b9",
       "size_bytes": 51758
     },
     "dclo_country_year": {
-      "path": "/Users/rahuljha/iCloud Drive (Archive)/Desktop/coding projects/data pipelines/projects/india-open-data-powerbi/data/gold/dclo_country_year.csv",
+      "path": "data/gold/dclo_country_year.csv",
       "exists": true,
       "sha256": "6eafd4e6b1a463d56bfd1a82759c1c0156716f3a040648d6c3c3856829221fd0",
       "size_bytes": 621489
     },
     "DCLO_Primary_Field_Data": {
-      "path": "/Users/rahuljha/Downloads/DCLO_Primary_Field_Data_2026-06-02.csv",
+      "path": "data/gold/dpi_dclo_primary_export.csv",
       "exists": true,
-      "sha256": "66d164a0ee0ad13604c2cb216af502a290c1ea1fdff29b853ba7e1cc76bda563",
-      "size_bytes": 5483
+      "sha256": "a44a3e2c86ae1e3fc60e9dc855deb185a00f82badaf93ed697aa0127bb6b9f2d",
+      "size_bytes": 619
     }
   },
   "stages": [
     {
       "stage": "database_initialization",
-      "timestamp_utc": "2026-06-05T12:09:13.466611+00:00",
+      "timestamp_utc": "2026-06-06T02:05:06.451670+00:00",
       "notes": "Created core SQLite schema and seeded districts/villages/CSCs."
     },
     {
       "stage": "real_data_ingestion",
-      "timestamp_utc": "2026-06-05T12:09:13.466627+00:00",
+      "timestamp_utc": "2026-06-06T02:05:06.451678+00:00",
       "rows_state_year": 94,
       "rows_country_year": 577,
-      "rows_primary_survey": 12,
+      "rows_primary_survey": 2,
       "notes": "Ingested real gold CSV tables into SQLite panel records successfully."
     },
     {
       "stage": "panel_proximity_processing",
-      "timestamp_utc": "2026-06-05T12:09:13.466649+00:00",
+      "timestamp_utc": "2026-06-06T02:05:06.451690+00:00",
       "rows_in": 3000,
       "rows_out": 3000,
       "notes": "Calculated spatial travel distances and linguistic exclusions across 30-day panel."
@@ -58,9 +58,9 @@
   ],
   "outputs": {
     "database": {
-      "path": "/Users/rahuljha/DPI/dclo_longitudinal.db",
+      "path": "data/gold/dclo_longitudinal.db",
       "exists": true,
-      "size_bytes": 745472
+      "size_bytes": 737280
     }
   },
   "status": "completed"
