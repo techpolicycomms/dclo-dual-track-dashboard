@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "missing_gold_output:dclo_acc_connectivity_weekly.csv"
+  ],
+  "rows": 0
+}

@@ -31,3 +31,16 @@
 ## Verification Reports
 - passed: `True`
 - issues:
+
+## Weekly Secondary Loops
+- passed: `False`
+- loops_available: `3/6`
+  - acc: passed=`False` rows=`0`
+    - missing_gold_output:dclo_acc_connectivity_weekly.csv
+  - skl: passed=`True` rows=`6`
+  - srv: passed=`True` rows=`7`
+  - agr: passed=`True` rows=`4`
+  - eco: passed=`False` rows=`0`
+    - missing_gold_output:dclo_eco_upi_monthly.csv
+  - out: passed=`False` rows=`0`
+    - missing_gold_output:dclo_out_air_quality_weekly.csv

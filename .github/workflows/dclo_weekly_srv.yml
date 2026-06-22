@@ -1,0 +1,50 @@
+name: DCLO Weekly Loop — SRV (DPG Registry)
+
+on:
+  schedule:
+    - cron: '0 6 * * 3' # Every Wednesday 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  run-srv-loop:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pandas pyyaml
+
+      - name: Run SRV ingestion and transform
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/dclo_weekly_loops_agent.py --loop srv
+
+      - name: Run QA checks
+        run: python src/quality/run_standard_checks.py --data-dir ./data/gold
+
+      - name: Commit and push SRV outputs
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/gold/dclo_srv_dpg_registry_weekly.csv \
+                  data/gold/dclo_srv_audit_manifest.json \
+                  data/gold/dclo_srv_verification.json \
+                  data/gold/dclo_standard_checks_summary.json \
+                  data/gold/dclo_standard_checks_summary.md \
+                  data/raw/dpg_registry_latest.csv || true
+          git commit -m "Auto-update DCLO SRV loop (DPG Registry) [skip ci]" || echo "No changes to commit"
+          git push

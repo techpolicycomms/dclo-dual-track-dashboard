@@ -1,0 +1,41 @@
+{
+  "pipeline": "dclo_weekly_skl",
+  "run_id": "20260622T183626Z_skl",
+  "started_at_utc": "2026-06-22T18:36:26.679727+00:00",
+  "completed_at_utc": "2026-06-22T18:36:28.862041+00:00",
+  "environment": {
+    "python_version": "3.11.15 (main, Mar  3 2026, 09:26:23) [GCC 13.3.0]",
+    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "git_commit": "1b87de164ab6407d792bfcf35773bdf3c39c451f"
+  },
+  "inputs": {
+    "config": {
+      "path": "/home/user/dclo-dual-track-dashboard/config/weekly_secondary_loops.yml",
+      "exists": true,
+      "sha256": "493c367c77a5242e7d26b1666a7a3986836dda79f43df525965f93336a51dee5"
+    }
+  },
+  "stages": [
+    {
+      "stage": "ingestion",
+      "timestamp_utc": "2026-06-22T18:36:28.847776+00:00",
+      "status": "ok"
+    },
+    {
+      "stage": "transform",
+      "timestamp_utc": "2026-06-22T18:36:28.862030+00:00",
+      "rows_out": 6,
+      "status": "ok"
+    }
+  ],
+  "outputs": {
+    "gold_csv": {
+      "path": "data/gold/dclo_skl_language_participation_weekly.csv",
+      "exists": true,
+      "sha256": "cafee7ed513d86b70b74586543dae73e64d1a68faed5c4cc21ac9967ec839197",
+      "size_bytes": 577,
+      "rows": 6
+    }
+  },
+  "status": "completed"
+}

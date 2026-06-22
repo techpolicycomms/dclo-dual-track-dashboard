@@ -1,0 +1,5 @@
+entity,period,domain,value,z_value,AGR_score,coverage_ratio,model_trust_tier,avg_tone,fetched_at_utc
+Aadhaar,2026-25,AGR,0,0.0,0.0,1.0,High,,2026-06-22T18:36:51.459000+00:00
+DPI,2026-25,AGR,0,0.0,0.0,1.0,High,,2026-06-22T18:36:51.459000+00:00
+UPI,2026-25,AGR,0,0.0,0.0,1.0,High,,2026-06-22T18:36:51.459000+00:00
+digital_rights,2026-25,AGR,0,0.0,0.0,1.0,High,,2026-06-22T18:36:51.459000+00:00
