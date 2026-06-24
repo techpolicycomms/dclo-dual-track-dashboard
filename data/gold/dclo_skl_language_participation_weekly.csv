@@ -1,0 +1,7 @@
+entity,period,domain,value,z_value,SKL_score,coverage_ratio,model_trust_tier,active_editors,wiki_label,fetched_at_utc
+bn,2026-25,SKL,0,0.0,0.0,1.0,High,0,Bengali,2026-06-22T18:36:26.755994+00:00
+en,2026-25,SKL,0,0.0,0.0,1.0,High,0,English,2026-06-22T18:36:26.755994+00:00
+hi,2026-25,SKL,0,0.0,0.0,1.0,High,0,Hindi,2026-06-22T18:36:26.755994+00:00
+mai,2026-25,SKL,0,0.0,0.0,1.0,High,0,Maithili,2026-06-22T18:36:26.755994+00:00
+ta,2026-25,SKL,0,0.0,0.0,1.0,High,0,Tamil,2026-06-22T18:36:26.755994+00:00
+te,2026-25,SKL,0,0.0,0.0,1.0,High,0,Telugu,2026-06-22T18:36:26.755994+00:00

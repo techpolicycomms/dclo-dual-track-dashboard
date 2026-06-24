@@ -391,6 +391,55 @@ def build_verification_checks(gold_dir: Path) -> Dict[str, object]:
     }
 
 
+WEEKLY_LOOP_CONFIGS = {
+    "acc": {"output_file": "dclo_acc_connectivity_weekly.csv", "score_col": "ACC_score"},
+    "skl": {"output_file": "dclo_skl_language_participation_weekly.csv", "score_col": "SKL_score"},
+    "srv": {"output_file": "dclo_srv_dpg_registry_weekly.csv", "score_col": "SRV_score"},
+    "agr": {"output_file": "dclo_agr_dpi_discourse_weekly.csv", "score_col": "AGR_score"},
+    "eco": {"output_file": "dclo_eco_upi_monthly.csv", "score_col": "ECO_score"},
+    "out": {"output_file": "dclo_out_air_quality_weekly.csv", "score_col": "OUT_score"},
+}
+
+
+def build_weekly_loop_checks(df: pd.DataFrame, loop_name: str, score_col: str) -> Dict[str, object]:
+    issues: List[str] = []
+    required = ["entity", "period", "value", "z_value", score_col, "coverage_ratio", "model_trust_tier"]
+    missing_cols = check_required_columns(df, required)
+    if missing_cols:
+        issues.append(f"{loop_name}_missing_columns:{','.join(missing_cols)}")
+        return {"passed": False, "issues": issues, "rows": int(len(df))}
+
+    if df.duplicated(subset=["entity", "period"]).any():
+        dup_count = int(df.duplicated(subset=["entity", "period"]).sum())
+        issues.append(f"{loop_name}_duplicate_entity_period:{dup_count}")
+
+    null_score = int(df[score_col].isna().sum())
+    if null_score > 0:
+        issues.append(f"{loop_name}_null_score:{null_score}")
+
+    if len(df) < 2:
+        issues.append(f"{loop_name}_insufficient_rows:{len(df)}")
+
+    issues.extend(_check_outliers_iqr(df[score_col], f"{loop_name}_{score_col}"))
+    issues.extend(_check_value_range(df["coverage_ratio"], f"{loop_name}_coverage_ratio", 0.0, 1.0))
+
+    allowed_tiers = {"High", "Medium", "Low"}
+    found_tiers = set(df["model_trust_tier"].dropna().astype(str).unique().tolist())
+    if not found_tiers.issubset(allowed_tiers):
+        issues.append(f"{loop_name}_invalid_trust_tier_values")
+
+    n_periods = df["period"].nunique()
+    n_entities = df["entity"].nunique()
+
+    return {
+        "passed": len(issues) == 0,
+        "issues": issues,
+        "rows": int(len(df)),
+        "n_entities": n_entities,
+        "n_periods": n_periods,
+    }
+
+
 def run(data_dir: str) -> None:
     root = Path(data_dir)
     state_path = root / "dclo_state_year.csv"
@@ -421,12 +470,33 @@ def run(data_dir: str) -> None:
     manifest_result = build_manifest_checks(root)
     verification_result = build_verification_checks(root)
 
+    weekly_loops_results: Dict[str, Any] = {}
+    for loop_name, lcfg in WEEKLY_LOOP_CONFIGS.items():
+        loop_path = root / lcfg["output_file"]
+        if loop_path.exists():
+            loop_df = pd.read_csv(loop_path)
+            loop_result = build_weekly_loop_checks(loop_df, loop_name, lcfg["score_col"])
+        else:
+            loop_result = {"passed": False, "issues": [f"missing_gold_output:{lcfg['output_file']}"], "rows": 0}
+        weekly_loops_results[loop_name] = loop_result
+        verification_path = root / f"dclo_{loop_name}_verification.json"
+        verification_path.write_text(json.dumps(loop_result, indent=2), encoding="utf-8")
+
+    weekly_all_passed = all(r.get("passed", False) for r in weekly_loops_results.values())
+    weekly_available = sum(1 for r in weekly_loops_results.values() if r.get("rows", 0) > 0)
+
     summary: Dict[str, Any] = {
         "state_track": state_result,
         "country_track": country_result,
         "causal_track": causal_result,
         "audit_manifests": manifest_result,
         "verification_reports": verification_result,
+        "weekly_loops": {
+            "passed": weekly_all_passed,
+            "loops_available": weekly_available,
+            "loops_total": len(WEEKLY_LOOP_CONFIGS),
+            "per_loop": weekly_loops_results,
+        },
         "overall_passed": bool(
             state_result.get("passed", False)
             and country_result.get("passed", False)
@@ -501,6 +571,18 @@ def run(data_dir: str) -> None:
     )
     for issue in verification_result.get("issues", []):
         lines.append(f"  - {issue}")
+    lines.extend(
+        [
+            "",
+            "## Weekly Secondary Loops",
+            f"- passed: `{weekly_all_passed}`",
+            f"- loops_available: `{weekly_available}/{len(WEEKLY_LOOP_CONFIGS)}`",
+        ]
+    )
+    for lname, lresult in weekly_loops_results.items():
+        lines.append(f"  - {lname}: passed=`{lresult.get('passed')}` rows=`{lresult.get('rows', 0)}`")
+        for issue in lresult.get("issues", []):
+            lines.append(f"    - {issue}")
     out_md.write_text("\n".join(lines), encoding="utf-8")
 
     print(f"Wrote standard checks JSON: {out_json}")

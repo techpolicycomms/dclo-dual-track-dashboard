@@ -753,12 +753,13 @@ def main() -> None:
             "Use rankings with caution and review `data/gold/dclo_standard_checks_summary.md`."
         )
 
-    tab_paper1, tab_paper2, tab_paper3, tab_me, tab_qa = st.tabs([
+    tab_paper1, tab_paper2, tab_paper3, tab_me, tab_qa, tab_weekly = st.tabs([
         "Paper 1: Measurement & Formative Construct",
         "Paper 2: Causal Panel & Robustness Diagnostics",
         "Paper 3: Situated Capabilities & Field Survey",
         "DCLO Longitudinal M&E (PhD Panel)",
-        "Model QA & Reproducibility"
+        "Model QA & Reproducibility",
+        "Weekly Secondary Signals",
     ])
 
     with tab_paper1:
@@ -1089,11 +1090,113 @@ def main() -> None:
                 st.header("Causal Panel Audit Trail")
                 render_provenance(causal_manifest, {}, "Causal Panel")
 
+    with tab_weekly:
+        _render_weekly_signals()
+
     with st.expander("About this dashboard", expanded=False):
         st.markdown(explainer_text)
 
     st.subheader("Filtered Data Preview")
     st.dataframe(df_year.sort_values(score_col, ascending=False), width="stretch")
+
+
+_WEEKLY_LOOPS = {
+    "ACC — Connectivity (Cloudflare Radar)": {
+        "path": Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_acc_connectivity_weekly.csv",
+        "score_col": "ACC_score",
+        "entity_col": "entity",
+        "value_label": "Download bandwidth",
+        "color": "#1f77b4",
+    },
+    "SKL — Language Participation (Wikimedia)": {
+        "path": Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_skl_language_participation_weekly.csv",
+        "score_col": "SKL_score",
+        "entity_col": "entity",
+        "value_label": "Weekly pageviews",
+        "color": "#ff7f0e",
+    },
+    "SRV — DPG Registry (DPGA)": {
+        "path": Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_srv_dpg_registry_weekly.csv",
+        "score_col": "SRV_score",
+        "entity_col": "entity",
+        "value_label": "DPG count",
+        "color": "#2ca02c",
+    },
+    "AGR — DPI Discourse (GDELT)": {
+        "path": Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_agr_dpi_discourse_weekly.csv",
+        "score_col": "AGR_score",
+        "entity_col": "entity",
+        "value_label": "Article count",
+        "color": "#d62728",
+    },
+    "ECO — UPI Transactions (data.gov.in)": {
+        "path": Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_eco_upi_monthly.csv",
+        "score_col": "ECO_score",
+        "entity_col": "entity",
+        "value_label": "Transaction volume (mn)",
+        "color": "#9467bd",
+    },
+    "OUT — Air Quality PM2.5 (OpenAQ)": {
+        "path": Path(__file__).resolve().parents[1] / "data" / "gold" / "dclo_out_air_quality_weekly.csv",
+        "score_col": "OUT_score",
+        "entity_col": "entity",
+        "value_label": "PM2.5 μg/m³ (lower=better)",
+        "color": "#8c564b",
+    },
+}
+
+
+def _render_weekly_signals() -> None:
+    st.markdown(
+        """
+        ### Weekly Secondary Signals
+        Six independent cloud loops refresh high-frequency secondary datasets every week —
+        one per DCLO pillar. Each loop pulls a fully replicable public source, normalises
+        with the same within-period z-score methodology as the main tracks, and commits
+        a QA-verified gold CSV to the repo.
+        """
+    )
+    available = 0
+    for loop_label, lcfg in _WEEKLY_LOOPS.items():
+        df = load_optional_csv(lcfg["path"])
+        if df.empty:
+            st.info(f"**{loop_label}** — data not yet available (run the corresponding GitHub Actions workflow).")
+            continue
+        available += 1
+        with st.expander(f"**{loop_label}**  ({len(df)} rows, period: {df['period'].max() if 'period' in df.columns else '?'})", expanded=True):
+            score_col = lcfg["score_col"]
+            entity_col = lcfg["entity_col"]
+            value_col = "value"
+            if score_col in df.columns and entity_col in df.columns and value_col in df.columns:
+                top = df.nlargest(20, score_col) if score_col in df.columns else df.head(20)
+                fig = px.bar(
+                    top,
+                    x=entity_col,
+                    y=value_col,
+                    color=score_col,
+                    color_continuous_scale="Blues",
+                    labels={value_col: lcfg["value_label"], entity_col: "Entity", score_col: "Z-score"},
+                    title=f"{lcfg['value_label']} — top entities",
+                )
+                fig.update_layout(height=350, margin=dict(t=40, b=30))
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.dataframe(df.head(20), use_container_width=True)
+
+            if "coverage_ratio" in df.columns:
+                cov = float(df["coverage_ratio"].iloc[0]) if len(df) > 0 else 0.0
+                tier = df["model_trust_tier"].iloc[0] if "model_trust_tier" in df.columns and len(df) > 0 else "?"
+                st.caption(f"Coverage ratio: `{cov:.0%}` | Trust tier: `{tier}`")
+
+    if available == 0:
+        st.warning(
+            "No weekly loops have run yet. Trigger each workflow via GitHub Actions "
+            "(`workflow_dispatch`) or wait for their staggered weekly crons "
+            "(Mon–Sat 06:00 UTC). No-auth loops (SKL, SRV, AGR) can be run locally with "
+            "`python scripts/dclo_weekly_loops_agent.py --loop skl`."
+        )
+    else:
+        st.success(f"{available}/6 weekly loops have data available.")
 
 
 if __name__ == "__main__":

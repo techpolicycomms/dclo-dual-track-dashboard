@@ -34,5 +34,54 @@
     "passed": true,
     "issues": []
   },
+  "weekly_loops": {
+    "passed": false,
+    "loops_available": 3,
+    "loops_total": 6,
+    "per_loop": {
+      "acc": {
+        "passed": false,
+        "issues": [
+          "missing_gold_output:dclo_acc_connectivity_weekly.csv"
+        ],
+        "rows": 0
+      },
+      "skl": {
+        "passed": true,
+        "issues": [],
+        "rows": 6,
+        "n_entities": 6,
+        "n_periods": 1
+      },
+      "srv": {
+        "passed": true,
+        "issues": [],
+        "rows": 7,
+        "n_entities": 7,
+        "n_periods": 1
+      },
+      "agr": {
+        "passed": true,
+        "issues": [],
+        "rows": 4,
+        "n_entities": 4,
+        "n_periods": 1
+      },
+      "eco": {
+        "passed": false,
+        "issues": [
+          "missing_gold_output:dclo_eco_upi_monthly.csv"
+        ],
+        "rows": 0
+      },
+      "out": {
+        "passed": false,
+        "issues": [
+          "missing_gold_output:dclo_out_air_quality_weekly.csv"
+        ],
+        "rows": 0
+      }
+    }
+  },
   "overall_passed": true
 }

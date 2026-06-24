@@ -1,0 +1,110 @@
+output:
+  data_dir: "./data"
+
+gating:
+  week_lookback: 7
+  min_coverage_ratio: 0.50
+
+loops:
+  acc:
+    enabled: true
+    domain: "ACC"
+    description: "Cloudflare Radar — internet quality and speed by country"
+    auth_env_var: "CLOUDFLARE_RADAR_TOKEN"
+    output_file: "dclo_acc_connectivity_weekly.csv"
+    endpoint: "https://api.cloudflare.com/client/v4/radar/quality/speed/top/locations"
+    params:
+      limit: 100
+      format: "json"
+    entity_col: "location"
+    value_col: "bandwidth_download"
+    direction: "positive"
+
+  skl:
+    enabled: true
+    domain: "SKL"
+    description: "Wikimedia pageviews for low-resource-language wikis (Maithili mai, Hindi hi)"
+    auth_env_var: null
+    output_file: "dclo_skl_language_participation_weekly.csv"
+    wikis:
+      - code: "mai"
+        label: "Maithili"
+      - code: "hi"
+        label: "Hindi"
+      - code: "en"
+        label: "English"
+      - code: "bn"
+        label: "Bengali"
+      - code: "ta"
+        label: "Tamil"
+      - code: "te"
+        label: "Telugu"
+    entity_col: "wiki_code"
+    value_col: "total_pageviews"
+    direction: "positive"
+
+  srv:
+    enabled: true
+    domain: "SRV"
+    description: "Digital Public Goods Registry — certified DPG count by SDG sector"
+    auth_env_var: null
+    output_file: "dclo_srv_dpg_registry_weekly.csv"
+    endpoint: "https://api.digitalpublicgoods.net/dpgs"
+    entity_col: "sdg"
+    value_col: "dpg_count"
+    direction: "positive"
+
+  agr:
+    enabled: true
+    domain: "AGR"
+    description: "GDELT 2.0 DOC API — DPI/digital-rights news volume and tone"
+    auth_env_var: null
+    output_file: "dclo_agr_dpi_discourse_weekly.csv"
+    endpoint: "https://api.gdeltproject.org/api/v2/doc/doc"
+    queries:
+      - label: "UPI"
+        term: "UPI OR \"Unified Payments Interface\""
+      - label: "Aadhaar"
+        term: "Aadhaar OR \"digital ID India\""
+      - label: "digital_rights"
+        term: "\"digital rights\" OR \"data protection\" OR \"digital sovereignty\""
+      - label: "DPI"
+        term: "\"digital public infrastructure\" OR \"DPI India\""
+    entity_col: "query_label"
+    value_col: "article_count"
+    tone_col: "avg_tone"
+    direction: "positive"
+
+  eco:
+    enabled: true
+    domain: "ECO"
+    description: "UPI monthly transaction statistics via data.gov.in"
+    auth_env_var: "DATA_GOV_IN_API_KEY"
+    output_file: "dclo_eco_upi_monthly.csv"
+    resource_id: "3b01bcb8-0b14-4abf-b6f2-c1bfd384ba69"
+    entity_col: "month_year"
+    value_col: "volume_mn_transactions"
+    direction: "positive"
+
+  out:
+    enabled: true
+    domain: "OUT"
+    description: "OpenAQ v3 — PM2.5 near Bihar study districts and country-level"
+    auth_env_var: "OPENAQ_API_KEY"
+    output_file: "dclo_out_air_quality_weekly.csv"
+    endpoint: "https://api.openaq.org/v3/locations"
+    study_locations:
+      - label: "Madhubani"
+        lat: 26.3
+        lon: 86.07
+      - label: "Darbhanga"
+        lat: 26.17
+        lon: 85.9
+      - label: "Sitamarhi"
+        lat: 26.6
+        lon: 85.49
+    radius_km: 50
+    parameter: "pm25"
+    entity_col: "location_label"
+    value_col: "pm25_avg"
+    direction: "negative"

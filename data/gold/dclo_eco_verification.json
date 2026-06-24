@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "missing_gold_output:dclo_eco_upi_monthly.csv"
+  ],
+  "rows": 0
+}
