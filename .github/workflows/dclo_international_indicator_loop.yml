@@ -1,0 +1,147 @@
+name: DCLO International Indicator Loop
+
+on:
+  schedule:
+    # Daily light poll — fetch + change-detect (rebuild only when data moves)
+    - cron: '0 6 * * *'
+    # Weekly full check with validation pack
+    - cron: '0 8 * * 1'
+    # World Bank WDI annual refresh window (Apr–Jun)
+    - cron: '0 10 1,15 4,5,6 *'
+    # ITU / ICT indicator window (Nov–Feb)
+    - cron: '0 10 1,15 11,12,1,2 *'
+    # IMF WEO macro release window (Apr & Oct)
+    - cron: '0 10 1,15 4,10 *'
+    # WTO services trade window (quarterly)
+    - cron: '0 10 1 3,6,9,12 *'
+  workflow_dispatch:
+
+jobs:
+  refresh-country-track:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      RESTCOUNTRIES_API_KEY: ${{ secrets.RESTCOUNTRIES_API_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Fetch international indicators
+        run: |
+          python src/ingestion/fetch_restcountries.py --config config/country_api_sources.yml
+          python src/ingestion/fetch_worldbank_indicators.py --config config/country_api_sources.yml
+
+      - name: Detect indicator changes
+        id: changed
+        run: |
+          python scripts/dclo_indicator_change_detector.py \
+            --config config/country_api_sources.yml \
+            --raw-dir data/raw \
+            --state-file data/gold/dclo_indicator_sync_state.json \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Rebuild DCLO API country track
+        if: steps.changed.outputs.should_rebuild == 'true'
+        run: |
+          python src/transforms/build_dclo_country_api.py --config config/country_api_sources.yml
+
+      - name: Rebuild DPI country track (when local DPI inputs exist)
+        if: steps.changed.outputs.should_rebuild == 'true'
+        run: |
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+          import yaml
+
+          cfg = yaml.safe_load(Path("config/dpi_country_sources.yml").read_text(encoding="utf-8"))
+          dpi_long = Path(cfg["inputs"]["dpi_long_path"])
+          if dpi_long.exists():
+              import subprocess
+              code = subprocess.call([
+                  sys.executable,
+                  "src/transforms/build_dclo_country.py",
+                  "--config",
+                  "config/dpi_country_sources.yml",
+              ])
+              raise SystemExit(code)
+          print(f"[skip] DPI long file not found: {dpi_long}")
+          PY
+
+      - name: Validate API country output
+        if: steps.changed.outputs.should_rebuild == 'true'
+        run: |
+          python scripts/validate_dclo_country_api.py \
+            --data-dir data/gold \
+            --report-file data/gold/dclo_country_year_api_validation.json
+
+      - name: Run indicator validation pack (DPI track, when present)
+        if: steps.changed.outputs.should_rebuild == 'true'
+        run: |
+          if [ -f data/gold/dclo_country_year.csv ] && [ -f data/gold/dpi_indicator_intake.csv ]; then
+            python src/quality/validate_dclo_indicators.py --data-dir data/gold
+          else
+            echo "[skip] DPI intake artifacts not present"
+          fi
+
+      - name: Run standard checks
+        if: steps.changed.outputs.should_rebuild == 'true'
+        run: python src/quality/run_standard_checks.py --data-dir data/gold
+
+      - name: QA gate
+        if: steps.changed.outputs.should_rebuild == 'true'
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          summary = json.loads(Path("data/gold/dclo_standard_checks_summary.json").read_text(encoding="utf-8"))
+          if not summary.get("overall_passed"):
+              raise SystemExit("QA gate failed: overall_passed is false")
+          api_report = json.loads(Path("data/gold/dclo_country_year_api_validation.json").read_text(encoding="utf-8"))
+          if not api_report.get("passed"):
+              raise SystemExit("QA gate failed: API country validation failed")
+          print("[qa-gate] passed")
+          PY
+
+      - name: Update sync state
+        if: steps.changed.outputs.should_rebuild == 'true'
+        run: |
+          python scripts/dclo_indicator_change_detector.py \
+            --config config/country_api_sources.yml \
+            --raw-dir data/raw \
+            --state-file data/gold/dclo_indicator_sync_state.json \
+            --update-state
+
+      - name: Commit and push DCLO revisions
+        if: steps.changed.outputs.should_rebuild == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/gold/dclo_country_year_api.csv \
+                  data/gold/dclo_country_year_api_validation.json \
+                  data/gold/dclo_indicator_sync_state.json \
+                  data/gold/dclo_country_year.csv \
+                  data/gold/dpi_indicator_intake.csv \
+                  data/gold/dpi_selected_indicators_by_domain.json \
+                  data/gold/dclo_indicator_missingness_report.csv \
+                  data/gold/dclo_indicator_vif_report.csv \
+                  data/gold/dclo_standard_checks_summary.json \
+                  data/gold/dclo_standard_checks_summary.md
+          REASONS='${{ steps.changed.outputs.change_reasons }}'
+          git commit -m "Auto-revise DCLO country track after international indicator update (${REASONS}) [skip ci]" || echo "No changes to commit"
+          git push

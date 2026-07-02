@@ -17,8 +17,12 @@ def fetch_indicator(base_url: str, indicator_code: str, fmt: str, per_page: int,
     response = requests.get(url, timeout=timeout_seconds)
     response.raise_for_status()
     payload = response.json()
-    if not isinstance(payload, list) or len(payload) < 2 or not isinstance(payload[1], list):
+    if not isinstance(payload, list):
         raise ValueError(f"Unexpected World Bank response for {indicator_code}")
+    if len(payload) < 2 or not isinstance(payload[1], list):
+        message = payload[0] if payload else {}
+        print(f"[worldbank] skipping archived or missing indicator {indicator_code}: {message}")
+        return []
     return payload[1]
 
 

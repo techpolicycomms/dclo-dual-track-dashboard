@@ -1,0 +1,651 @@
+output:
+  data_dir: ./data
+  raw_subdir: raw/news
+  gold_intake_file: dclo_news_intake.csv
+  gold_domain_summary_file: dclo_news_domain_summary.json
+  gold_country_summary_file: dclo_news_country_summary.csv
+  sync_state_file: dclo_news_sync_state.json
+
+fetch:
+  timeout_seconds: 25
+  max_articles_per_feed: 30
+  user_agent: "DCLO-News-Agent/1.0 (research pipeline)"
+  lookback_days: 14
+
+# Top digital / tech publishers by country with RSS where available.
+# Extend this list to add more countries or regional-language outlets.
+publishers:
+  # --- Global / multiregional ---
+  - id: bbc_technology
+    name: BBC Technology
+    country_iso3: GBR
+    language: en
+    tier: global
+    rss_url: https://feeds.bbci.co.uk/news/technology/rss.xml
+
+  - id: techcrunch
+    name: TechCrunch
+    country_iso3: USA
+    language: en
+    tier: global
+    rss_url: https://techcrunch.com/feed/
+
+  - id: the_verge
+    name: The Verge
+    country_iso3: USA
+    language: en
+    tier: global
+    rss_url: https://www.theverge.com/rss/index.xml
+
+  - id: wired
+    name: Wired
+    country_iso3: USA
+    language: en
+    tier: global
+    rss_url: https://www.wired.com/feed/rss
+
+  - id: ars_technica
+    name: Ars Technica
+    country_iso3: USA
+    language: en
+    tier: global
+    rss_url: https://feeds.arstechnica.com/arstechnica/technology-lab
+
+  # --- South Asia ---
+  - id: et_tech_india
+    name: Economic Times Tech
+    country_iso3: IND
+    language: en
+    tier: national
+    rss_url: https://economictimes.indiatimes.com/tech/rssfeeds/13357270.cms
+
+  - id: livemint_tech_india
+    name: Livemint Tech
+    country_iso3: IND
+    language: en
+    tier: national
+    rss_url: https://www.livemint.com/rss/technology
+
+  # --- Europe ---
+  - id: heise_de
+    name: Heise Technology
+    country_iso3: DEU
+    language: de
+    tier: national
+    rss_url: https://www.heise.de/rss/heise-atom.xml
+
+  - id: le_monde_numerique
+    name: Le Monde Numérique
+    country_iso3: FRA
+    language: fr
+    tier: national
+    rss_url: https://www.lemonde.fr/pixels/rss_full.xml
+
+  - id: el_pais_tecnologia
+    name: El País Tecnología
+    country_iso3: ESP
+    language: es
+    tier: national
+    rss_url: https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada
+
+  # --- Latin America ---
+  - id: globo_tech_br
+    name: Globo Tech
+    country_iso3: BRA
+    language: pt
+    tier: national
+    rss_url: https://g1.globo.com/rss/g1/tecnologia/
+
+  # --- East Asia ---
+  - id: nikkei_asia_tech
+    name: Nikkei Asia Technology
+    country_iso3: JPN
+    language: en
+    tier: regional
+    rss_url: https://asia.nikkei.com/rss/feed/nar
+
+  - id: korea_herald_tech
+    name: Korea Herald Tech
+    country_iso3: KOR
+    language: en
+    tier: national
+    rss_url: https://www.koreaherald.com/rss/tech
+
+  # --- Middle East & Africa ---
+  - id: al_jazeera_technology
+    name: Al Jazeera Technology
+    country_iso3: QAT
+    language: en
+    tier: regional
+    rss_url: https://www.aljazeera.com/xml/rss/all.xml
+
+  - id: techcentral_za
+    name: ITWeb South Africa
+    country_iso3: ZAF
+    language: en
+    tier: national
+    rss_url: https://www.itweb.co.za/rss
+
+  # --- Southeast Asia ---
+  - id: channel_news_asia_tech
+    name: CNA Technology
+    country_iso3: SGP
+    language: en
+    tier: regional
+    rss_url: https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=6936
+
+# Google News RSS fills gaps for regional-language digital/tech coverage per country.
+google_news_searches:
+  - id: gn_india_hi
+    publisher_name: Google News India (Hindi)
+    country_iso3: IND
+    language: hi
+    hl: hi
+    gl: IN
+    ceid: IN:hi
+    query: "डिजिटल OR तकनीक OR इंटरनेट OR साइबर"
+
+  - id: gn_india_ta
+    publisher_name: Google News India (Tamil)
+    country_iso3: IND
+    language: ta
+    hl: ta
+    gl: IN
+    ceid: IN:ta
+    query: "டிஜிட்டல் OR தொழில்நுட்பம் OR இணையம்"
+
+  - id: gn_mexico_es
+    publisher_name: Google News Mexico (Spanish)
+    country_iso3: MEX
+    language: es
+    hl: es-419
+    gl: MX
+    ceid: MX:es-419
+    query: "tecnología digital OR internet OR ciberseguridad"
+
+  - id: gn_brazil_pt
+    publisher_name: Google News Brazil (Portuguese)
+    country_iso3: BRA
+    language: pt
+    hl: pt-BR
+    gl: BR
+    ceid: BR:pt-419
+    query: "tecnologia digital OR internet OR inclusão digital"
+
+  - id: gn_france_fr
+    publisher_name: Google News France (French)
+    country_iso3: FRA
+    language: fr
+    hl: fr
+    gl: FR
+    ceid: FR:fr
+    query: "numérique OR technologie OR internet OR cybersécurité"
+
+  - id: gn_germany_de
+    publisher_name: Google News Germany (German)
+    country_iso3: DEU
+    language: de
+    hl: de
+    gl: DE
+    ceid: DE:de
+    query: "Digitalisierung OR Technologie OR Internet OR Cybersicherheit"
+
+  - id: gn_japan_ja
+    publisher_name: Google News Japan (Japanese)
+    country_iso3: JPN
+    language: ja
+    hl: ja
+    gl: JP
+    ceid: JP:ja
+    query: "デジタル OR 技術 OR インターネット OR サイバー"
+
+  - id: gn_korea_ko
+    publisher_name: Google News Korea (Korean)
+    country_iso3: KOR
+    language: ko
+    hl: ko
+    gl: KR
+    ceid: KR:ko
+    query: "디지털 OR 기술 OR 인터넷 OR 사이버"
+
+  - id: gn_china_zh
+    publisher_name: Google News China (Chinese)
+    country_iso3: CHN
+    language: zh
+    hl: zh-CN
+    gl: CN
+    ceid: CN:zh-Hans
+    query: "数字 OR 技术 OR 互联网 OR 网络"
+
+  - id: gn_uae_ar
+    publisher_name: Google News UAE (Arabic)
+    country_iso3: ARE
+    language: ar
+    hl: ar
+    gl: AE
+    ceid: AE:ar
+    query: "تقنية OR رقمي OR إنترنت OR سيبراني"
+
+  - id: gn_saudi_ar
+    publisher_name: Google News Saudi Arabia (Arabic)
+    country_iso3: SAU
+    language: ar
+    hl: ar
+    gl: SA
+    ceid: SA:ar
+    query: "تقنية OR رقمي OR إنترنت OR ذكاء اصطناعي"
+
+  - id: gn_nigeria_en
+    publisher_name: Google News Nigeria (English)
+    country_iso3: NGA
+    language: en
+    hl: en-NG
+    gl: NG
+    ceid: NG:en
+    query: "digital technology OR fintech OR broadband OR startup"
+
+  - id: gn_kenya_en
+    publisher_name: Google News Kenya (English)
+    country_iso3: KEN
+    language: en
+    hl: en-KE
+    gl: KE
+    ceid: KE:en
+    query: "digital technology OR mobile money OR internet"
+
+  - id: gn_indonesia_id
+    publisher_name: Google News Indonesia (Indonesian)
+    country_iso3: IDN
+    language: id
+    hl: id
+    gl: ID
+    ceid: ID:id
+    query: "teknologi digital OR internet OR fintech"
+
+  - id: gn_australia_en
+    publisher_name: Google News Australia (English)
+    country_iso3: AUS
+    language: en
+    hl: en-AU
+    gl: AU
+    ceid: AU:en
+    query: "digital technology OR cybersecurity OR broadband"
+
+  - id: gn_canada_en
+    publisher_name: Google News Canada (English)
+    country_iso3: CAN
+    language: en
+    hl: en-CA
+    gl: CA
+    ceid: CA:en
+    query: "digital technology OR AI OR privacy OR connectivity"
+
+  - id: gn_uk_en
+    publisher_name: Google News UK (English)
+    country_iso3: GBR
+    language: en
+    hl: en-GB
+    gl: GB
+    ceid: GB:en
+    query: "digital technology OR govtech OR broadband OR cyber"
+
+# Multilingual keyword rules for DCLO domain mapping (ACC, SKL, SRV, AGR, ECO, OUT).
+dclo_domain_keywords:
+  ACC:
+    en:
+      - broadband
+      - 5g
+      - fiber
+      - connectivity
+      - internet access
+      - satellite internet
+      - network infrastructure
+      - wi-fi
+      - last mile
+    hi:
+      - इंटरनेट
+      - ब्रॉडबैंड
+      - कनेक्टिविटी
+      - 5जी
+      - नेटवर्क
+    es:
+      - banda ancha
+      - conectividad
+      - internet
+      - fibra
+      - 5g
+    fr:
+      - haut débit
+      - connectivité
+      - internet
+      - fibre
+      - 5g
+    de:
+      - breitband
+      - konnektivität
+      - internet
+      - glasfaser
+      - 5g
+    pt:
+      - banda larga
+      - conectividade
+      - internet
+      - fibra
+    ar:
+      - إنترنت
+      - اتصال
+      - نطاق عريض
+      - ألياف
+    ja:
+      - ブロードバンド
+      - インターネット
+      - 接続
+      - 5g
+    ko:
+      - 브로드밴드
+      - 인터넷
+      - 연결
+      - 5g
+    zh:
+      - 宽带
+      - 互联网
+      - 连接
+      - 5g
+    id:
+      - internet
+      - broadband
+      - konektivitas
+    ta:
+      - இணையம்
+      - இணைப்பு
+
+  SKL:
+    en:
+      - digital literacy
+      - digital skills
+      - upskilling
+      - reskilling
+      - ict training
+      - coding education
+      - stem education
+    hi:
+      - डिजिटल साक्षरता
+      - डिजिटल कौशल
+      - प्रशिक्षण
+      - कौशल विकास
+    es:
+      - alfabetización digital
+      - habilidades digitales
+      - capacitación
+    fr:
+      - littératie numérique
+      - compétences numériques
+      - formation
+    de:
+      - digitale kompetenz
+      - digitale bildung
+      - schulung
+    pt:
+      - letramento digital
+      - habilidades digitais
+      - capacitação
+    ar:
+      - محو الأمية الرقمية
+      - مهارات رقمية
+      - تدريب
+    ja:
+      - デジタルリテラシー
+      - スキル
+      - 教育
+    ko:
+      - 디지털 리터러시
+      - 역량
+      - 교육
+    zh:
+      - 数字素养
+      - 数字技能
+      - 培训
+    id:
+      - literasi digital
+      - keahlian digital
+    ta:
+      - டிஜிட்டல் கல்வி
+      - திறன்
+
+  SRV:
+    en:
+      - govtech
+      - e-government
+      - digital public infrastructure
+      - e-health
+      - telemedicine
+      - digital identity
+      - open data
+      - public services
+    hi:
+      - ई-गवर्नेंस
+      - डिजिटल पब्लिक इंफ्रास्ट्रक्चर
+      - ई-हेल्थ
+      - डिजिटल पहचान
+    es:
+      - gobierno digital
+      - infraestructura pública digital
+      - salud digital
+    fr:
+      - gouvernement numérique
+      - infrastructure publique numérique
+      - e-santé
+    de:
+      - e-government
+      - digitale verwaltung
+      - e-health
+    pt:
+      - governo digital
+      - infraestrutura digital pública
+      - saúde digital
+    ar:
+      - حكومة رقمية
+      - بنية تحتية رقمية
+      - صحة رقمية
+    ja:
+      - 電子政府
+      - デジタル公共
+      - テレメディスン
+    ko:
+      - 전자정부
+      - 디지털 공공
+      - 원격의료
+    zh:
+      - 电子政务
+      - 数字公共基础设施
+      - 远程医疗
+    id:
+      - pemerintahan digital
+      - layanan publik digital
+    ta:
+      - மின் அரசு
+      - டிஜிட்டல் சேவை
+
+  AGR:
+    en:
+      - cybersecurity
+      - privacy
+      - data protection
+      - digital rights
+      - online safety
+      - misinformation
+      - trust
+      - inclusion
+      - gender digital divide
+    hi:
+      - साइबर सुरक्षा
+      - गोपनीयता
+      - डेटा संरक्षण
+      - डिजिटल अधिकार
+      - समावेशन
+    es:
+      - ciberseguridad
+      - privacidad
+      - protección de datos
+      - inclusión digital
+    fr:
+      - cybersécurité
+      - confidentialité
+      - protection des données
+      - inclusion numérique
+    de:
+      - cybersicherheit
+      - datenschutz
+      - digitale teilhabe
+    pt:
+      - cibersegurança
+      - privacidade
+      - proteção de dados
+      - inclusão digital
+    ar:
+      - أمن سيبراني
+      - خصوصية
+      - حماية البيانات
+      - شمول رقمي
+    ja:
+      - サイバーセキュリティ
+      - プライバシー
+      - デジタル包摂
+    ko:
+      - 사이버보안
+      - 프라이버시
+      - 데이터 보호
+      - 디지털 포용
+    zh:
+      - 网络安全
+      - 隐私
+      - 数据保护
+      - 数字包容
+    id:
+      - keamanan siber
+      - privasi
+      - inklusi digital
+    ta:
+      - சைபர் பாதுகாப்பு
+      - தனியுரிமை
+
+  ECO:
+    en:
+      - fintech
+      - digital payments
+      - startup
+      - digital economy
+      - e-commerce
+      - gig economy
+      - ai industry
+      - semiconductor
+    hi:
+      - फिनटेक
+      - डिजिटल भुगतान
+      - स्टार्टअप
+      - डिजिटल अर्थव्यवस्था
+      - ई-कॉमर्स
+    es:
+      - fintech
+      - pagos digitales
+      - economía digital
+      - comercio electrónico
+    fr:
+      - fintech
+      - paiements numériques
+      - économie numérique
+    de:
+      - fintech
+      - digitale zahlungen
+      - digitale wirtschaft
+    pt:
+      - fintech
+      - pagamentos digitais
+      - economia digital
+    ar:
+      - التكنولوجيا المالية
+      - مدفوعات رقمية
+      - اقتصاد رقمي
+    ja:
+      - フィンテック
+      - デジタル決済
+      - スタートアップ
+    ko:
+      - 핀테크
+      - 디지털 결제
+      - 스타트업
+    zh:
+      - 金融科技
+      - 数字支付
+      - 数字经济
+    id:
+      - fintech
+      - pembayaran digital
+      - ekonomi digital
+    ta:
+      - நிதி தொழில்நுட்பம்
+      - டிஜிட்டல் பொருளாதாரம்
+
+  OUT:
+    en:
+      - employment
+      - job creation
+      - health outcomes
+      - education outcomes
+      - wellbeing
+      - poverty reduction
+      - quality of life
+      - life outcomes
+    hi:
+      - रोजगार
+      - स्वास्थ्य परिणाम
+      - शिक्षा परिणाम
+      - जीवन स्तर
+    es:
+      - empleo
+      - resultados de salud
+      - resultados educativos
+      - calidad de vida
+    fr:
+      - emploi
+      - résultats santé
+      - résultats éducatifs
+      - qualité de vie
+    de:
+      - beschäftigung
+      - gesundheit
+      - bildungsergebnisse
+      - lebensqualität
+    pt:
+      - emprego
+      - saúde
+      - educação
+      - qualidade de vida
+    ar:
+      - توظيف
+      - صحة
+      - تعليم
+      - جودة الحياة
+    ja:
+      - 雇用
+      - 健康
+      - 教育
+      - 生活の質
+    ko:
+      - 고용
+      - 건강
+      - 교육
+      - 삶의 질
+    zh:
+      - 就业
+      - 健康
+      - 教育
+      - 生活质量
+    id:
+      - pekerjaan
+      - kesehatan
+      - pendidikan
+    ta:
+      - வேலைவாய்ப்பு
+      - கல்வி
+      - ஆரோக்கியம்
