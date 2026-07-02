@@ -1,0 +1,96 @@
+name: DCLO Digital News Loop
+
+on:
+  schedule:
+    # Morning global tech news sweep
+    - cron: '0 7 * * *'
+    # Afternoon refresh for breaking digital policy / fintech news
+    - cron: '0 15 * * *'
+    # Evening regional-language publisher sweep (Asia / MENA peak hours)
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+jobs:
+  ingest-and-map-news:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Fetch and map digital news to DCLO
+        run: python scripts/dclo_news_agent.py --config config/dclo_news_sources.yml
+
+      - name: Detect news intake changes
+        id: changed
+        run: |
+          python scripts/dclo_news_change_detector.py \
+            --intake-file data/gold/dclo_news_intake.csv \
+            --state-file data/gold/dclo_news_sync_state.json \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Validate news intake
+        if: steps.changed.outputs.should_update == 'true'
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import pandas as pd
+
+          intake = Path("data/gold/dclo_news_intake.csv")
+          if not intake.exists():
+              raise SystemExit("missing dclo_news_intake.csv")
+
+          df = pd.read_csv(intake)
+          if len(df) < 10:
+              raise SystemExit(f"too few news articles: {len(df)}")
+          if df["article_id"].duplicated().any():
+              raise SystemExit("duplicate article_id values")
+          if "primary_dclo_domain" not in df.columns:
+              raise SystemExit("missing primary_dclo_domain column")
+
+          mapped = int((df["primary_dclo_domain"] != "UNMAPPED").sum())
+          mapping_rate = mapped / max(len(df), 1)
+          if mapping_rate < 0.15:
+              raise SystemExit(f"mapping rate too low: {mapping_rate:.2%}")
+
+          summary = json.loads(Path("data/gold/dclo_news_domain_summary.json").read_text(encoding="utf-8"))
+          totals = summary.get("totals", {})
+          print(json.dumps({"rows": len(df), "mapping_rate": mapping_rate, "totals": totals}, indent=2))
+          PY
+
+      - name: Update news sync state
+        if: steps.changed.outputs.should_update == 'true'
+        run: |
+          python scripts/dclo_news_change_detector.py \
+            --intake-file data/gold/dclo_news_intake.csv \
+            --state-file data/gold/dclo_news_sync_state.json \
+            --update-state
+
+      - name: Commit and push news intake
+        if: steps.changed.outputs.should_update == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/gold/dclo_news_intake.csv \
+                  data/gold/dclo_news_domain_summary.json \
+                  data/gold/dclo_news_country_summary.csv \
+                  data/gold/dclo_news_sync_state.json
+          REASONS='${{ steps.changed.outputs.change_reasons }}'
+          git commit -m "Auto-update DCLO digital news intake and domain mapping (${REASONS}) [skip ci]" || echo "No changes to commit"
+          git push
