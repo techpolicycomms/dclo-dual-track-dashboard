@@ -614,8 +614,8 @@ def simulate_primary_event(event_type: str) -> None:
 
 
 def main() -> None:
-    st.title("DCLO Dashboard")
-    st.caption("Digital Capability for Life Outcomes (Dual-Track: India State-Year + Country-Year)")
+    st.title("PCS & DCLO Research Dashboard")
+    st.caption("Public Capability Stack (PCS) & Digital Capability for Life Outcomes (DCLO) Index (Dual-Track: India State-Year + Country-Year)")
 
     try:
         state_df = load_data(STATE_DATA_PATH)
@@ -757,23 +757,30 @@ def main() -> None:
         "Paper 1: Measurement & Formative Construct",
         "Paper 2: Causal Panel & Robustness Diagnostics",
         "Paper 3: Situated Capabilities & Field Survey",
-        "DCLO Longitudinal M&E (PhD Panel)",
+        "PCS Longitudinal M&E (PhD Panel)",
         "Model QA & Reproducibility"
     ])
 
     with tab_paper1:
         st.markdown(
             """
-            ### Paper 1: Conceptualising and Measuring DCLO
+            ### Paper 1: Measuring the Public Capability Stack (PCS) via the DCLO Index
             Following **Amartya Sen's Capability Approach** (Sen 1985, 1999), digital capability is modeled as a 
             formative composite construct that converts digital resources into valuable life outcomes, mediated by 
-            individual, social, and environmental conversion factors.
+            individual, social, and environmental conversion factors. The formative **DCLO Index** operationalizes and measures the layers of the **Public Capability Stack (PCS)**:
+            
+            * **Access** $\\rightarrow$ *Layer 1: Digital Resources* (DPI platforms, standards)
+            * **Skills** $\\rightarrow$ *Layer 3: Conversion Factors* (literacy, agency)
+            * **Services** $\\rightarrow$ *Layer 2: Demand Signals* (service engagement)
+            * **Agency/Trust** $\\rightarrow$ *Layer 4: Governance & Safeguards* (safeguards, language justice)
+            * **Economy/Eco-Sust** $\\rightarrow$ *Layer 5: Public Capabilities* (accountable operational budget)
+            * **Outcomes** $\\rightarrow$ *Layer 6: Life Outcomes* (realized capabilities/freedoms)
             
             #### Mathematical Formulation
             Each indicator $X_{i}$ is standard-normalized (winsorised at 5th/95th percentiles to follow OECD 2008 handbook guidelines):
             $$Z_{i} = \\frac{X_{i} - \\mu_{i}}{\\sigma_{i}}$$
             
-            The **Domain Score** $S_d$ for each of the 6 pillars (Access, Skills, Services, Agency, Economy, Outcomes) is:
+            The **Domain Score** $S_d$ for each of the 6 pillars is:
             $$S_d = \\frac{1}{|I_d|} \\sum_{i \\in I_d} Z_{i}$$
             
             The **Formative DCLO Composite Index** is computed as the equal-weighted mean of domain scores:
@@ -821,13 +828,13 @@ def main() -> None:
             """
             ### Paper 2: Econometric Causal Evidence & Robustness
             This paper evaluates whether digital capabilities drive real-world life outcomes by estimating a 
-            **two-way fixed effects (TWFE) lagged panel regression model** (Wooldridge 2010):
+            **two-way fixed effects (TWFE) lagged panel regression model** (Wooldridge 2010) of the **DCLO Index** (which operationalizes the layers of the **Public Capability Stack**):
             
             $$Y_{it} = \\beta_1 DCLO_{i, t-1} + \\mathbf{X}'_{i, t-1} \\boldsymbol{\\gamma} + \\alpha_i + \\delta_t + \\epsilon_{it}$$
             
             Where:
-            * $Y_{it}$ is the real-world **Life Outcomes index** (`OUT_score`), capturing health, agricultural, and economic outcomes.
-            * $DCLO_{i, t-1}$ is the lagged composite capability score.
+            * $Y_{it}$ is the real-world **Life Outcomes index** (`OUT_score`), capturing health, agricultural, and economic outcomes (*PCS Layer 6*).
+            * $DCLO_{i, t-1}$ is the lagged composite capability score (formative composite of *PCS Layers 1-5*).
             * $\\mathbf{X}'_{i, t-1}$ represents a vector of lagged controls.
             * $\\alpha_i$ absorbs time-invariant country-specific confounders (Entity Fixed Effects).
             * $\\delta_t$ absorbs time-varying macro shocks (Time Fixed Effects).
@@ -957,7 +964,7 @@ def main() -> None:
                 show_events = show_events.sort_values("timestamp_utc", ascending=False)
             st.dataframe(show_events.head(15), width="stretch")
 
-        st.subheader("DPI/DCLO Primary Integrated Export Preview")
+        st.subheader("PCS/DCLO Primary Integrated Export Preview")
         if exports.empty:
             st.warning("No export data available in gold/dpi_dclo_primary_export.csv.")
         else:
@@ -966,9 +973,9 @@ def main() -> None:
     with tab_me:
         st.markdown(
             """
-            ### DCLO Longitudinal Monitoring & Evaluation (PhD Panel)
+            ### PCS Longitudinal Monitoring & Evaluation (PhD Panel)
             This tab provides real-time access to the panel database managed by the **Longitudinal Spatial Capability Agent**. 
-            It tracks spatial accessibility decay, linguistic barriers, and livelihood outcomes across 100 villages in Northern Bihar.
+            It tracks spatial accessibility decay and linguistic barriers (*PCS Layer 4: Governance & Safeguards*) and livelihood outcomes (*PCS Layer 6: Life Outcomes*) across 100 villages in Northern Bihar.
             """
         )
         

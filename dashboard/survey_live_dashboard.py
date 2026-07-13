@@ -45,7 +45,7 @@ def auto_refresh_section() -> None:
 def main() -> None:
     auto_refresh_section()
     st.title("Live Phone Survey Monitoring")
-    st.caption("Incoming survey data, eligibility status, and DPI/DCLO exports update automatically.")
+    st.caption("Incoming survey data, eligibility status, and PCS/DCLO exports update automatically.")
 
     responses = read_jsonl(RESPONSES_PATH)
     events = read_jsonl(EVENTS_PATH)
@@ -85,7 +85,7 @@ def main() -> None:
             show_responses = show_responses.sort_values("timestamp_utc", ascending=False)
         st.dataframe(show_responses.head(30), use_container_width=True)
 
-    st.subheader("DPI/DCLO export preview")
+    st.subheader("PCS/DCLO export preview")
     if exports.empty:
         st.warning("No export rows found yet.")
     else:
