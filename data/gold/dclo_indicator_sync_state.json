@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "last_checked_utc": "2026-07-14T08:12:07.704741+00:00",
-  "last_rebuild_utc": "2026-07-14T08:12:07.704741+00:00",
+  "last_checked_utc": "2026-07-17T08:14:50.950809+00:00",
+  "last_rebuild_utc": "2026-07-17T08:14:50.950809+00:00",
   "last_rebuild_reasons": [
     "world_bank:fingerprint_changed",
-    "world_bank:observed_core_row_count_changed"
+    "restcountries:fingerprint_changed"
   ],
   "sources": {
     "world_bank": {
@@ -35,12 +35,12 @@
         "SP.DYN.LE00.IN": 2024,
         "SP.POP.GROW": 2025
       },
-      "fingerprint_sha256": "4043e40db8826b83ff3c43ad48adc60f88519c107a384bd9297b56f86bf2f2bf"
+      "fingerprint_sha256": "625f3530cd526872123c9ee97ad6b37eb030545f430d58c7da9db18926733719"
     },
     "restcountries": {
       "exists": true,
       "country_count": 293,
-      "fingerprint_sha256": "e6160bbbc059a2f3c0973ee7f6b67332075046e10367421a38824638c3fae2ba"
+      "fingerprint_sha256": "453ff637829af34ecdfa90ad44f9006e01dcd9e1517b4b4d079f50839ca7d5c4"
     },
     "dpi_long": {
       "exists": false
