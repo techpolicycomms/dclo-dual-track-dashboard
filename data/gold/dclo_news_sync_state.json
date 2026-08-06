@@ -1,11 +1,12 @@
 {
   "version": 1,
-  "last_checked_utc": "2026-08-05T16:42:16.760229+00:00",
-  "last_update_utc": "2026-08-05T16:42:16.760229+00:00",
+  "last_checked_utc": "2026-08-06T00:03:26.525845+00:00",
+  "last_update_utc": "2026-08-06T00:03:26.525845+00:00",
   "last_update_reasons": [
-    "article_fingerprint_changed"
+    "article_fingerprint_changed",
+    "new_articles_added"
   ],
-  "article_fingerprint_sha256": "55988c0f666406e7f87bc7063602dfaae38832b34be7aae0994c94eb4fb36fae",
-  "article_count": 11595,
-  "mapped_count": 2084
+  "article_fingerprint_sha256": "71554f1bf2a517a215b722a59d88bfdaa0484be82ae54bda19d38a7fb816c609",
+  "article_count": 11633,
+  "mapped_count": 2089
 }
