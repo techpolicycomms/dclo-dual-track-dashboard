@@ -1,8 +1,8 @@
 {
   "pipeline": "dclo_longitudinal_agent",
-  "run_id": "20260808T004839Z",
-  "started_at_utc": "2026-08-08T00:48:39.051828+00:00",
-  "completed_at_utc": "2026-08-08T00:48:39.977784+00:00",
+  "run_id": "20260809T005213Z",
+  "started_at_utc": "2026-08-09T00:52:13.630313+00:00",
+  "completed_at_utc": "2026-08-09T00:52:14.597406+00:00",
   "environment": {
     "python_version": "3.12.13 (main, Jun 16 2026, 22:05:08) [GCC 13.3.0]",
     "platform": "Linux-6.17.0-1020-azure-x86_64-with-glibc2.39",
@@ -12,7 +12,7 @@
       "geopandas": "1.1.4",
       "sqlite3": "3.45.1"
     },
-    "git_commit": "3331dbcceab02e84092c2599befc899090a9c70d"
+    "git_commit": "bb170ffaa7432a1e579377b4f8f340cbda11055d"
   },
   "inputs": {
     "dclo_state_year": {
@@ -37,12 +37,12 @@
   "stages": [
     {
       "stage": "database_initialization",
-      "timestamp_utc": "2026-08-08T00:48:39.979119+00:00",
+      "timestamp_utc": "2026-08-09T00:52:14.598994+00:00",
       "notes": "Created core SQLite schema and seeded districts/villages/CSCs."
     },
     {
       "stage": "real_data_ingestion",
-      "timestamp_utc": "2026-08-08T00:48:39.979127+00:00",
+      "timestamp_utc": "2026-08-09T00:52:14.599001+00:00",
       "rows_state_year": 94,
       "rows_country_year": 577,
       "rows_primary_survey": 2,
@@ -50,7 +50,7 @@
     },
     {
       "stage": "panel_proximity_processing",
-      "timestamp_utc": "2026-08-08T00:48:39.979136+00:00",
+      "timestamp_utc": "2026-08-09T00:52:14.599014+00:00",
       "rows_in": 3000,
       "rows_out": 3000,
       "notes": "Calculated spatial travel distances and linguistic exclusions across 30-day panel."
