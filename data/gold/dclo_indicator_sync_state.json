@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_checked_utc": "2026-09-16T11:05:04.768540+00:00",
-  "last_rebuild_utc": "2026-09-16T11:05:04.768540+00:00",
+  "last_checked_utc": "2026-09-25T11:26:06.024384+00:00",
+  "last_rebuild_utc": "2026-09-25T11:26:06.024384+00:00",
   "last_rebuild_reasons": [
     "world_bank:fingerprint_changed",
     "world_bank:row_count_changed",
@@ -11,9 +11,9 @@
   "sources": {
     "world_bank": {
       "exists": true,
-      "row_count": 308880,
-      "core_row_count": 308880,
-      "observed_core_row_count": 146140,
+      "row_count": 291955,
+      "core_row_count": 291955,
+      "observed_core_row_count": 135376,
       "indicator_count": 18,
       "core_indicator_count": 18,
       "max_year_overall": 2025,
@@ -37,7 +37,7 @@
         "SP.DYN.LE00.IN": 2024,
         "SP.POP.GROW": 2025
       },
-      "fingerprint_sha256": "625f3530cd526872123c9ee97ad6b37eb030545f430d58c7da9db18926733719"
+      "fingerprint_sha256": "8bb087d0d21a4f56861c3c7a9a4d737c838f7837fd32dc9a9f4148e09588edc3"
     },
     "restcountries": {
       "exists": true,
