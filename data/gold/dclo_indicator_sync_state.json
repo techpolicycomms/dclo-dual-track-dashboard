@@ -1,9 +1,10 @@
 {
   "version": 1,
-  "last_checked_utc": "2026-10-09T12:48:59.781701+00:00",
-  "last_rebuild_utc": "2026-10-09T12:48:59.781701+00:00",
+  "last_checked_utc": "2026-10-10T12:07:17.752901+00:00",
+  "last_rebuild_utc": "2026-10-10T12:07:17.752901+00:00",
   "last_rebuild_reasons": [
     "world_bank:fingerprint_changed",
+    "world_bank:new_indicator_year",
     "world_bank:row_count_changed",
     "world_bank:core_row_count_changed",
     "world_bank:observed_core_row_count_changed"
@@ -11,14 +12,14 @@
   "sources": {
     "world_bank": {
       "exists": true,
-      "row_count": 309210,
-      "core_row_count": 309210,
-      "observed_core_row_count": 146292,
+      "row_count": 296757,
+      "core_row_count": 296757,
+      "observed_core_row_count": 142278,
       "indicator_count": 18,
       "core_indicator_count": 18,
       "max_year_overall": 2025,
       "max_year_by_indicator": {
-        "EG.CFT.ACCS.ZS": 2023,
+        "EG.CFT.ACCS.ZS": 2024,
         "EN.ATM.PM25.MC.M3": 2023,
         "FB.CBK.BRWR.P3": 2024,
         "IT.CEL.SETS.P2": 2025,
@@ -37,7 +38,7 @@
         "SP.DYN.LE00.IN": 2024,
         "SP.POP.GROW": 2025
       },
-      "fingerprint_sha256": "93eebc9ebcdcf2267a2a38aa6d22706fa554b7828b01e1b678af05eab43a4679"
+      "fingerprint_sha256": "5a21876597b4e2555a1c787d9c0c1562e2b581c5d46a26e58195549e23b39378"
     },
     "restcountries": {
       "exists": true,
