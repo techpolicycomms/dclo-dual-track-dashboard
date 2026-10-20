@@ -1,38 +1,38 @@
 {
-  "generated_at_utc": "2026-10-20T01:39:00.003157+00:00",
+  "generated_at_utc": "2026-10-20T12:34:14.068911+00:00",
   "config_path": "config/dclo_news_sources.yml",
   "totals": {
-    "ACC": 727,
-    "SKL": 211,
-    "SRV": 18,
-    "AGR": 589,
-    "ECO": 240,
-    "OUT": 150,
-    "UNMAPPED": 9131,
-    "total_articles": 11066,
-    "mapped_articles": 1935,
-    "mapping_rate": 0.1749
+    "ACC": 732,
+    "SKL": 207,
+    "SRV": 17,
+    "AGR": 576,
+    "ECO": 237,
+    "OUT": 153,
+    "UNMAPPED": 9118,
+    "total_articles": 11040,
+    "mapped_articles": 1922,
+    "mapping_rate": 0.1741
   },
   "by_publisher": [
     {
       "publisher_name": "Al Jazeera Technology",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 965
+      "count": 967
     },
     {
       "publisher_name": "Google News China (Chinese)",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 781
+      "count": 782
     },
     {
       "publisher_name": "Google News Korea (Korean)",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 775
+      "count": 774
     },
     {
       "publisher_name": "Google News India (Hindi)",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 701
+      "count": 712
     },
     {
       "publisher_name": "Google News Saudi Arabia (Arabic)",
@@ -42,82 +42,82 @@
     {
       "publisher_name": "Google News Japan (Japanese)",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 641
+      "count": 638
     },
     {
       "publisher_name": "Heise Technology",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 497
+      "count": 499
     },
     {
       "publisher_name": "CNA Technology",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 409
-    },
-    {
-      "publisher_name": "Google News Mexico (Spanish)",
-      "primary_dclo_domain": "UNMAPPED",
-      "count": 355
-    },
-    {
-      "publisher_name": "Google News Indonesia (Indonesian)",
-      "primary_dclo_domain": "UNMAPPED",
-      "count": 355
+      "count": 412
     },
     {
       "publisher_name": "Google News France (French)",
       "primary_dclo_domain": "UNMAPPED",
+      "count": 352
+    },
+    {
+      "publisher_name": "Google News Mexico (Spanish)",
+      "primary_dclo_domain": "UNMAPPED",
       "count": 351
+    },
+    {
+      "publisher_name": "Google News Indonesia (Indonesian)",
+      "primary_dclo_domain": "UNMAPPED",
+      "count": 348
     },
     {
       "publisher_name": "Wired",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 282
+      "count": 272
     },
     {
       "publisher_name": "Google News UAE (Arabic)",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 261
+      "count": 260
+    },
+    {
+      "publisher_name": "Google News Germany (German)",
+      "primary_dclo_domain": "UNMAPPED",
+      "count": 231
     },
     {
       "publisher_name": "Google News Canada (English)",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 232
-    },
-    {
-      "publisher_name": "Google News Germany (German)",
-      "primary_dclo_domain": "UNMAPPED",
-      "count": 226
+      "count": 229
     },
     {
       "publisher_name": "The Verge",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 216
+      "count": 215
     },
     {
       "publisher_name": "Google News Germany (German)",
       "primary_dclo_domain": "ACC",
-      "count": 199
-    },
-    {
-      "publisher_name": "Google News Brazil (Portuguese)",
-      "primary_dclo_domain": "UNMAPPED",
-      "count": 187
+      "count": 194
     },
     {
       "publisher_name": "TechCrunch",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 187
+      "count": 191
+    },
+    {
+      "publisher_name": "Google News Brazil (Portuguese)",
+      "primary_dclo_domain": "UNMAPPED",
+      "count": 185
     },
     {
       "publisher_name": "Economic Times Tech",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 181
+      "count": 167
     },
     {
       "publisher_name": "Google News India (Tamil)",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 162
+      "count": 167
     },
     {
       "publisher_name": "ITWeb South Africa",
@@ -127,57 +127,57 @@
     {
       "publisher_name": "Google News France (French)",
       "primary_dclo_domain": "ACC",
-      "count": 132
+      "count": 135
     },
     {
       "publisher_name": "Google News France (French)",
       "primary_dclo_domain": "AGR",
-      "count": 125
+      "count": 121
     },
     {
       "publisher_name": "Google News UK (English)",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 103
+      "count": 99
     },
     {
       "publisher_name": "Livemint Tech",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 92
+      "count": 95
     },
     {
       "publisher_name": "Google News Nigeria (English)",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 79
+      "count": 78
     },
     {
       "publisher_name": "Google News India (Hindi)",
       "primary_dclo_domain": "AGR",
-      "count": 79
+      "count": 77
     },
     {
       "publisher_name": "Le Monde Numérique",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 72
+      "count": 74
     },
     {
       "publisher_name": "Google News Australia (English)",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 69
+      "count": 68
     },
     {
       "publisher_name": "Google News India (Hindi)",
       "primary_dclo_domain": "ACC",
-      "count": 62
+      "count": 61
     },
     {
       "publisher_name": "Google News Australia (English)",
       "primary_dclo_domain": "AGR",
-      "count": 57
+      "count": 58
     },
     {
       "publisher_name": "Google News China (Chinese)",
       "primary_dclo_domain": "ACC",
-      "count": 54
+      "count": 55
     },
     {
       "publisher_name": "BBC Technology",
@@ -185,54 +185,59 @@
       "count": 54
     },
     {
-      "publisher_name": "Google News Japan (Japanese)",
-      "primary_dclo_domain": "AGR",
-      "count": 52
+      "publisher_name": "Google News China (Chinese)",
+      "primary_dclo_domain": "OUT",
+      "count": 48
     },
     {
       "publisher_name": "Google News Nigeria (English)",
       "primary_dclo_domain": "ECO",
-      "count": 50
-    },
-    {
-      "publisher_name": "Google News China (Chinese)",
-      "primary_dclo_domain": "OUT",
       "count": 47
     },
     {
-      "publisher_name": "Economic Times Tech",
-      "primary_dclo_domain": "ECO",
-      "count": 38
+      "publisher_name": "Google News Japan (Japanese)",
+      "primary_dclo_domain": "AGR",
+      "count": 46
     },
     {
       "publisher_name": "TechCrunch",
       "primary_dclo_domain": "ECO",
+      "count": 39
+    },
+    {
+      "publisher_name": "Google News Canada (English)",
+      "primary_dclo_domain": "ACC",
       "count": 38
     },
     {
-      "publisher_name": "Google News Germany (German)",
-      "primary_dclo_domain": "AGR",
-      "count": 37
-    },
-    {
-      "publisher_name": "Google News Australia (English)",
-      "primary_dclo_domain": "SKL",
+      "publisher_name": "Google News Mexico (Spanish)",
+      "primary_dclo_domain": "ACC",
       "count": 36
     },
     {
       "publisher_name": "Google News Korea (Korean)",
       "primary_dclo_domain": "ACC",
-      "count": 36
-    },
-    {
-      "publisher_name": "Google News Canada (English)",
-      "primary_dclo_domain": "ACC",
       "count": 35
     },
     {
-      "publisher_name": "Google News Mexico (Spanish)",
-      "primary_dclo_domain": "ACC",
+      "publisher_name": "Google News Germany (German)",
+      "primary_dclo_domain": "AGR",
       "count": 34
+    },
+    {
+      "publisher_name": "Google News Australia (English)",
+      "primary_dclo_domain": "SKL",
+      "count": 34
+    },
+    {
+      "publisher_name": "Economic Times Tech",
+      "primary_dclo_domain": "ECO",
+      "count": 34
+    },
+    {
+      "publisher_name": "Google News Korea (Korean)",
+      "primary_dclo_domain": "AGR",
+      "count": 33
     },
     {
       "publisher_name": "Globo Tech",
@@ -240,19 +245,14 @@
       "count": 33
     },
     {
-      "publisher_name": "Google News Korea (Korean)",
-      "primary_dclo_domain": "AGR",
-      "count": 31
-    },
-    {
       "publisher_name": "Google News Mexico (Spanish)",
       "primary_dclo_domain": "AGR",
-      "count": 31
+      "count": 30
     },
     {
       "publisher_name": "Google News Canada (English)",
       "primary_dclo_domain": "AGR",
-      "count": 28
+      "count": 27
     },
     {
       "publisher_name": "Google News Japan (Japanese)",
@@ -262,17 +262,7 @@
     {
       "publisher_name": "Google News Canada (English)",
       "primary_dclo_domain": "SKL",
-      "count": 25
-    },
-    {
-      "publisher_name": "Google News China (Chinese)",
-      "primary_dclo_domain": "AGR",
-      "count": 23
-    },
-    {
-      "publisher_name": "Google News Korea (Korean)",
-      "primary_dclo_domain": "OUT",
-      "count": 22
+      "count": 24
     },
     {
       "publisher_name": "El País Tecnología",
@@ -280,64 +270,64 @@
       "count": 22
     },
     {
-      "publisher_name": "Globo Tech",
-      "primary_dclo_domain": "ACC",
-      "count": 20
+      "publisher_name": "Google News China (Chinese)",
+      "primary_dclo_domain": "AGR",
+      "count": 22
     },
     {
       "publisher_name": "Google News Korea (Korean)",
-      "primary_dclo_domain": "SKL",
-      "count": 18
+      "primary_dclo_domain": "OUT",
+      "count": 22
     },
     {
       "publisher_name": "Google News UAE (Arabic)",
       "primary_dclo_domain": "ACC",
+      "count": 21
+    },
+    {
+      "publisher_name": "Globo Tech",
+      "primary_dclo_domain": "ACC",
+      "count": 19
+    },
+    {
+      "publisher_name": "Google News Nigeria (English)",
+      "primary_dclo_domain": "SKL",
       "count": 18
     },
     {
-      "publisher_name": "Google News UK (English)",
+      "publisher_name": "Google News Korea (Korean)",
       "primary_dclo_domain": "SKL",
+      "count": 17
+    },
+    {
+      "publisher_name": "Google News Indonesia (Indonesian)",
+      "primary_dclo_domain": "OUT",
       "count": 16
     },
     {
-      "publisher_name": "Google News Indonesia (Indonesian)",
-      "primary_dclo_domain": "OUT",
+      "publisher_name": "Google News Kenya (English)",
+      "primary_dclo_domain": "UNMAPPED",
+      "count": 16
+    },
+    {
+      "publisher_name": "Google News China (Chinese)",
+      "primary_dclo_domain": "ECO",
       "count": 15
     },
     {
-      "publisher_name": "Google News Nigeria (English)",
+      "publisher_name": "Google News UK (English)",
       "primary_dclo_domain": "SKL",
       "count": 15
     },
     {
       "publisher_name": "Heise Technology",
       "primary_dclo_domain": "AGR",
-      "count": 15
-    },
-    {
-      "publisher_name": "ITWeb South Africa",
-      "primary_dclo_domain": "ACC",
-      "count": 14
-    },
-    {
-      "publisher_name": "Google News Kenya (English)",
-      "primary_dclo_domain": "UNMAPPED",
-      "count": 14
-    },
-    {
-      "publisher_name": "Google News India (Hindi)",
-      "primary_dclo_domain": "SKL",
-      "count": 14
-    },
-    {
-      "publisher_name": "Google News China (Chinese)",
-      "primary_dclo_domain": "ECO",
       "count": 14
     },
     {
       "publisher_name": "Google News Mexico (Spanish)",
       "primary_dclo_domain": "ECO",
-      "count": 13
+      "count": 14
     },
     {
       "publisher_name": "TechCrunch",
@@ -345,14 +335,14 @@
       "count": 13
     },
     {
-      "publisher_name": "CNA Technology",
-      "primary_dclo_domain": "AGR",
-      "count": 12
+      "publisher_name": "Google News India (Hindi)",
+      "primary_dclo_domain": "SKL",
+      "count": 13
     },
     {
-      "publisher_name": "Economic Times Tech",
-      "primary_dclo_domain": "AGR",
-      "count": 12
+      "publisher_name": "ITWeb South Africa",
+      "primary_dclo_domain": "ACC",
+      "count": 13
     },
     {
       "publisher_name": "The Verge",
@@ -368,6 +358,11 @@
       "publisher_name": "Google News China (Chinese)",
       "primary_dclo_domain": "SKL",
       "count": 12
+    },
+    {
+      "publisher_name": "Economic Times Tech",
+      "primary_dclo_domain": "AGR",
+      "count": 11
     },
     {
       "publisher_name": "Google News Korea (Korean)",
@@ -375,48 +370,53 @@
       "count": 11
     },
     {
+      "publisher_name": "Globo Tech",
+      "primary_dclo_domain": "AGR",
+      "count": 10
+    },
+    {
+      "publisher_name": "Globo Tech",
+      "primary_dclo_domain": "OUT",
+      "count": 10
+    },
+    {
+      "publisher_name": "Google News Saudi Arabia (Arabic)",
+      "primary_dclo_domain": "ACC",
+      "count": 10
+    },
+    {
+      "publisher_name": "Google News India (Hindi)",
+      "primary_dclo_domain": "ECO",
+      "count": 10
+    },
+    {
       "publisher_name": "CNA Technology",
       "primary_dclo_domain": "ECO",
-      "count": 11
+      "count": 10
+    },
+    {
+      "publisher_name": "CNA Technology",
+      "primary_dclo_domain": "AGR",
+      "count": 10
     },
     {
       "publisher_name": "Ars Technica",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 11
-    },
-    {
-      "publisher_name": "Globo Tech",
-      "primary_dclo_domain": "AGR",
-      "count": 10
-    },
-    {
-      "publisher_name": "Globo Tech",
-      "primary_dclo_domain": "OUT",
-      "count": 10
+      "count": 9
     },
     {
       "publisher_name": "Google News Mexico (Spanish)",
       "primary_dclo_domain": "SKL",
-      "count": 10
-    },
-    {
-      "publisher_name": "Google News Saudi Arabia (Arabic)",
-      "primary_dclo_domain": "ACC",
-      "count": 10
-    },
-    {
-      "publisher_name": "Google News Indonesia (Indonesian)",
-      "primary_dclo_domain": "ECO",
       "count": 9
     },
     {
-      "publisher_name": "Google News India (Hindi)",
-      "primary_dclo_domain": "ECO",
+      "publisher_name": "Google News UK (English)",
+      "primary_dclo_domain": "AGR",
       "count": 9
     },
     {
-      "publisher_name": "Google News France (French)",
-      "primary_dclo_domain": "SKL",
+      "publisher_name": "ITWeb South Africa",
+      "primary_dclo_domain": "AGR",
       "count": 9
     },
     {
@@ -425,17 +425,32 @@
       "count": 9
     },
     {
-      "publisher_name": "Google News UK (English)",
+      "publisher_name": "Google News Indonesia (Indonesian)",
+      "primary_dclo_domain": "ECO",
+      "count": 9
+    },
+    {
+      "publisher_name": "Google News France (French)",
+      "primary_dclo_domain": "SKL",
+      "count": 9
+    },
+    {
+      "publisher_name": "Google News UAE (Arabic)",
       "primary_dclo_domain": "AGR",
       "count": 8
     },
     {
-      "publisher_name": "Livemint Tech",
+      "publisher_name": "Heise Technology",
       "primary_dclo_domain": "ACC",
       "count": 8
     },
     {
-      "publisher_name": "Google News Kenya (English)",
+      "publisher_name": "Economic Times Tech",
+      "primary_dclo_domain": "ACC",
+      "count": 8
+    },
+    {
+      "publisher_name": "Livemint Tech",
       "primary_dclo_domain": "ACC",
       "count": 8
     },
@@ -445,23 +460,8 @@
       "count": 8
     },
     {
-      "publisher_name": "Economic Times Tech",
+      "publisher_name": "Google News Kenya (English)",
       "primary_dclo_domain": "ACC",
-      "count": 8
-    },
-    {
-      "publisher_name": "Google News UAE (Arabic)",
-      "primary_dclo_domain": "AGR",
-      "count": 8
-    },
-    {
-      "publisher_name": "Le Monde Numérique",
-      "primary_dclo_domain": "ACC",
-      "count": 7
-    },
-    {
-      "publisher_name": "Livemint Tech",
-      "primary_dclo_domain": "AGR",
       "count": 7
     },
     {
@@ -470,29 +470,14 @@
       "count": 7
     },
     {
-      "publisher_name": "Google News Germany (German)",
-      "primary_dclo_domain": "SKL",
-      "count": 7
-    },
-    {
-      "publisher_name": "Heise Technology",
-      "primary_dclo_domain": "ACC",
-      "count": 7
-    },
-    {
       "publisher_name": "The Verge",
       "primary_dclo_domain": "ECO",
       "count": 7
     },
     {
-      "publisher_name": "Google News India (Tamil)",
+      "publisher_name": "Le Monde Numérique",
       "primary_dclo_domain": "ACC",
       "count": 7
-    },
-    {
-      "publisher_name": "Economic Times Tech",
-      "primary_dclo_domain": "SKL",
-      "count": 6
     },
     {
       "publisher_name": "Al Jazeera Technology",
@@ -500,58 +485,53 @@
       "count": 6
     },
     {
-      "publisher_name": "The Verge",
+      "publisher_name": "Google News Germany (German)",
       "primary_dclo_domain": "SKL",
-      "count": 6
-    },
-    {
-      "publisher_name": "The Verge",
-      "primary_dclo_domain": "AGR",
-      "count": 6
-    },
-    {
-      "publisher_name": "Google News UAE (Arabic)",
-      "primary_dclo_domain": "OUT",
-      "count": 6
-    },
-    {
-      "publisher_name": "Le Monde Numérique",
-      "primary_dclo_domain": "OUT",
-      "count": 6
-    },
-    {
-      "publisher_name": "Google News France (French)",
-      "primary_dclo_domain": "OUT",
       "count": 6
     },
     {
       "publisher_name": "Google News Germany (German)",
       "primary_dclo_domain": "OUT",
-      "count": 5
+      "count": 6
     },
     {
-      "publisher_name": "Wired",
-      "primary_dclo_domain": "ECO",
-      "count": 5
+      "publisher_name": "Economic Times Tech",
+      "primary_dclo_domain": "SKL",
+      "count": 6
     },
     {
       "publisher_name": "Le Monde Numérique",
-      "primary_dclo_domain": "SKL",
-      "count": 5
-    },
-    {
-      "publisher_name": "Google News Nigeria (English)",
-      "primary_dclo_domain": "AGR",
-      "count": 5
-    },
-    {
-      "publisher_name": "Google News Nigeria (English)",
-      "primary_dclo_domain": "ACC",
-      "count": 5
+      "primary_dclo_domain": "OUT",
+      "count": 6
     },
     {
       "publisher_name": "TechCrunch",
       "primary_dclo_domain": "ACC",
+      "count": 6
+    },
+    {
+      "publisher_name": "The Verge",
+      "primary_dclo_domain": "AGR",
+      "count": 6
+    },
+    {
+      "publisher_name": "The Verge",
+      "primary_dclo_domain": "SKL",
+      "count": 6
+    },
+    {
+      "publisher_name": "Google News UAE (Arabic)",
+      "primary_dclo_domain": "OUT",
+      "count": 6
+    },
+    {
+      "publisher_name": "Google News France (French)",
+      "primary_dclo_domain": "OUT",
+      "count": 6
+    },
+    {
+      "publisher_name": "Google News Brazil (Portuguese)",
+      "primary_dclo_domain": "ACC",
       "count": 5
     },
     {
@@ -560,17 +540,52 @@
       "count": 5
     },
     {
+      "publisher_name": "Google News Indonesia (Indonesian)",
+      "primary_dclo_domain": "SKL",
+      "count": 5
+    },
+    {
+      "publisher_name": "Le Monde Numérique",
+      "primary_dclo_domain": "SKL",
+      "count": 5
+    },
+    {
+      "publisher_name": "Livemint Tech",
+      "primary_dclo_domain": "AGR",
+      "count": 5
+    },
+    {
+      "publisher_name": "Google News Nigeria (English)",
+      "primary_dclo_domain": "ACC",
+      "count": 5
+    },
+    {
+      "publisher_name": "Wired",
+      "primary_dclo_domain": "ECO",
+      "count": 5
+    },
+    {
+      "publisher_name": "Google News India (Tamil)",
+      "primary_dclo_domain": "ACC",
+      "count": 5
+    },
+    {
       "publisher_name": "Heise Technology",
       "primary_dclo_domain": "OUT",
       "count": 5
     },
     {
-      "publisher_name": "Google News Brazil (Portuguese)",
+      "publisher_name": "Google News UK (English)",
       "primary_dclo_domain": "ACC",
       "count": 5
     },
     {
-      "publisher_name": "Google News UK (English)",
+      "publisher_name": "Google News Nigeria (English)",
+      "primary_dclo_domain": "AGR",
+      "count": 5
+    },
+    {
+      "publisher_name": "Wired",
       "primary_dclo_domain": "ACC",
       "count": 4
     },
@@ -580,13 +595,18 @@
       "count": 4
     },
     {
-      "publisher_name": "Al Jazeera Technology",
-      "primary_dclo_domain": "SKL",
+      "publisher_name": "Google News Canada (English)",
+      "primary_dclo_domain": "ECO",
       "count": 4
     },
     {
       "publisher_name": "Google News Brazil (Portuguese)",
       "primary_dclo_domain": "AGR",
+      "count": 4
+    },
+    {
+      "publisher_name": "Al Jazeera Technology",
+      "primary_dclo_domain": "SKL",
       "count": 4
     },
     {
@@ -600,24 +620,24 @@
       "count": 4
     },
     {
-      "publisher_name": "ITWeb South Africa",
-      "primary_dclo_domain": "AGR",
-      "count": 4
-    },
-    {
-      "publisher_name": "Google News Canada (English)",
-      "primary_dclo_domain": "ECO",
-      "count": 4
-    },
-    {
-      "publisher_name": "Google News Brazil (Portuguese)",
-      "primary_dclo_domain": "SKL",
-      "count": 4
-    },
-    {
       "publisher_name": "Google News Kenya (English)",
       "primary_dclo_domain": "ECO",
       "count": 4
+    },
+    {
+      "publisher_name": "Google News UAE (Arabic)",
+      "primary_dclo_domain": "SKL",
+      "count": 3
+    },
+    {
+      "publisher_name": "Google News Australia (English)",
+      "primary_dclo_domain": "ECO",
+      "count": 3
+    },
+    {
+      "publisher_name": "Globo Tech",
+      "primary_dclo_domain": "ECO",
+      "count": 3
     },
     {
       "publisher_name": "Google News UK (English)",
@@ -625,23 +645,8 @@
       "count": 3
     },
     {
-      "publisher_name": "Google News Japan (Japanese)",
-      "primary_dclo_domain": "OUT",
-      "count": 3
-    },
-    {
-      "publisher_name": "Google News Indonesia (Indonesian)",
-      "primary_dclo_domain": "SKL",
-      "count": 3
-    },
-    {
       "publisher_name": "CNA Technology",
       "primary_dclo_domain": "SKL",
-      "count": 3
-    },
-    {
-      "publisher_name": "Google News Australia (English)",
-      "primary_dclo_domain": "ECO",
       "count": 3
     },
     {
@@ -655,23 +660,68 @@
       "count": 2
     },
     {
+      "publisher_name": "Google News Australia (English)",
+      "primary_dclo_domain": "SRV",
+      "count": 2
+    },
+    {
       "publisher_name": "CNA Technology",
       "primary_dclo_domain": "ACC",
+      "count": 2
+    },
+    {
+      "publisher_name": "ITWeb South Africa",
+      "primary_dclo_domain": "SKL",
+      "count": 2
+    },
+    {
+      "publisher_name": "El País Tecnología",
+      "primary_dclo_domain": "AGR",
+      "count": 2
+    },
+    {
+      "publisher_name": "Google News Brazil (Portuguese)",
+      "primary_dclo_domain": "ECO",
+      "count": 2
+    },
+    {
+      "publisher_name": "Google News Canada (English)",
+      "primary_dclo_domain": "SRV",
+      "count": 2
+    },
+    {
+      "publisher_name": "Google News Japan (Japanese)",
+      "primary_dclo_domain": "OUT",
+      "count": 2
+    },
+    {
+      "publisher_name": "Google News Kenya (English)",
+      "primary_dclo_domain": "AGR",
+      "count": 2
+    },
+    {
+      "publisher_name": "Google News Brazil (Portuguese)",
+      "primary_dclo_domain": "SKL",
+      "count": 2
+    },
+    {
+      "publisher_name": "Heise Technology",
+      "primary_dclo_domain": "ECO",
+      "count": 2
+    },
+    {
+      "publisher_name": "Heise Technology",
+      "primary_dclo_domain": "SKL",
       "count": 2
     },
     {
       "publisher_name": "Wired",
-      "primary_dclo_domain": "ACC",
+      "primary_dclo_domain": "SKL",
       "count": 2
     },
     {
-      "publisher_name": "Google News Australia (English)",
-      "primary_dclo_domain": "SRV",
-      "count": 2
-    },
-    {
-      "publisher_name": "Globo Tech",
-      "primary_dclo_domain": "ECO",
+      "publisher_name": "Wired",
+      "primary_dclo_domain": "AGR",
       "count": 2
     },
     {
@@ -680,59 +730,14 @@
       "count": 2
     },
     {
-      "publisher_name": "Google News UAE (Arabic)",
-      "primary_dclo_domain": "SKL",
-      "count": 2
-    },
-    {
-      "publisher_name": "Wired",
-      "primary_dclo_domain": "SKL",
-      "count": 2
-    },
-    {
-      "publisher_name": "ITWeb South Africa",
-      "primary_dclo_domain": "SKL",
-      "count": 2
-    },
-    {
-      "publisher_name": "Heise Technology",
-      "primary_dclo_domain": "ECO",
-      "count": 2
-    },
-    {
-      "publisher_name": "Google News India (Hindi)",
-      "primary_dclo_domain": "SRV",
-      "count": 2
-    },
-    {
-      "publisher_name": "Wired",
-      "primary_dclo_domain": "AGR",
-      "count": 2
-    },
-    {
-      "publisher_name": "Google News Kenya (English)",
-      "primary_dclo_domain": "AGR",
-      "count": 2
-    },
-    {
-      "publisher_name": "Google News Canada (English)",
-      "primary_dclo_domain": "SRV",
-      "count": 2
-    },
-    {
-      "publisher_name": "Google News Brazil (Portuguese)",
-      "primary_dclo_domain": "ECO",
-      "count": 2
-    },
-    {
       "publisher_name": "Google News Japan (Japanese)",
       "primary_dclo_domain": "ECO",
       "count": 2
     },
     {
-      "publisher_name": "Heise Technology",
+      "publisher_name": "Globo Tech",
       "primary_dclo_domain": "SKL",
-      "count": 2
+      "count": 1
     },
     {
       "publisher_name": "BBC Technology",
@@ -760,22 +765,7 @@
       "count": 1
     },
     {
-      "publisher_name": "Globo Tech",
-      "primary_dclo_domain": "SKL",
-      "count": 1
-    },
-    {
       "publisher_name": "Google News Korea (Korean)",
-      "primary_dclo_domain": "SRV",
-      "count": 1
-    },
-    {
-      "publisher_name": "Google News India (Hindi)",
-      "primary_dclo_domain": "OUT",
-      "count": 1
-    },
-    {
-      "publisher_name": "Google News France (French)",
       "primary_dclo_domain": "SRV",
       "count": 1
     },
@@ -787,6 +777,26 @@
     {
       "publisher_name": "Google News India (Tamil)",
       "primary_dclo_domain": "ECO",
+      "count": 1
+    },
+    {
+      "publisher_name": "Google News India (Hindi)",
+      "primary_dclo_domain": "SRV",
+      "count": 1
+    },
+    {
+      "publisher_name": "Google News France (French)",
+      "primary_dclo_domain": "SRV",
+      "count": 1
+    },
+    {
+      "publisher_name": "Google News Canada (English)",
+      "primary_dclo_domain": "OUT",
+      "count": 1
+    },
+    {
+      "publisher_name": "Google News India (Hindi)",
+      "primary_dclo_domain": "OUT",
       "count": 1
     },
     {
@@ -839,32 +849,32 @@
     {
       "country_iso3": "IND",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 1136
+      "count": 1141
     },
     {
       "country_iso3": "QAT",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 965
+      "count": 967
     },
     {
       "country_iso3": "CHN",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 781
+      "count": 782
     },
     {
       "country_iso3": "KOR",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 775
+      "count": 774
     },
     {
       "country_iso3": "DEU",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 723
+      "count": 730
     },
     {
       "country_iso3": "USA",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 696
+      "count": 687
     },
     {
       "country_iso3": "SAU",
@@ -874,52 +884,57 @@
     {
       "country_iso3": "JPN",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 641
+      "count": 638
     },
     {
       "country_iso3": "FRA",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 423
+      "count": 426
     },
     {
       "country_iso3": "SGP",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 409
-    },
-    {
-      "country_iso3": "IDN",
-      "primary_dclo_domain": "UNMAPPED",
-      "count": 355
+      "count": 412
     },
     {
       "country_iso3": "MEX",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 355
+      "count": 351
+    },
+    {
+      "country_iso3": "IDN",
+      "primary_dclo_domain": "UNMAPPED",
+      "count": 348
     },
     {
       "country_iso3": "ARE",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 261
+      "count": 260
     },
     {
       "country_iso3": "CAN",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 232
+      "count": 229
     },
     {
       "country_iso3": "BRA",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 220
+      "count": 218
     },
     {
       "country_iso3": "DEU",
       "primary_dclo_domain": "ACC",
-      "count": 206
+      "count": 202
     },
     {
       "country_iso3": "GBR",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 157
+      "count": 153
+    },
+    {
+      "country_iso3": "FRA",
+      "primary_dclo_domain": "ACC",
+      "count": 142
     },
     {
       "country_iso3": "ZAF",
@@ -928,108 +943,103 @@
     },
     {
       "country_iso3": "FRA",
-      "primary_dclo_domain": "ACC",
-      "count": 139
-    },
-    {
-      "country_iso3": "FRA",
       "primary_dclo_domain": "AGR",
-      "count": 126
+      "count": 122
     },
     {
       "country_iso3": "IND",
       "primary_dclo_domain": "AGR",
-      "count": 98
+      "count": 93
     },
     {
       "country_iso3": "IND",
       "primary_dclo_domain": "ACC",
-      "count": 85
+      "count": 82
     },
     {
       "country_iso3": "NGA",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 79
+      "count": 78
     },
     {
       "country_iso3": "AUS",
       "primary_dclo_domain": "UNMAPPED",
-      "count": 69
+      "count": 68
     },
     {
       "country_iso3": "AUS",
       "primary_dclo_domain": "AGR",
-      "count": 57
+      "count": 58
     },
     {
       "country_iso3": "CHN",
       "primary_dclo_domain": "ACC",
-      "count": 54
-    },
-    {
-      "country_iso3": "JPN",
-      "primary_dclo_domain": "AGR",
-      "count": 52
-    },
-    {
-      "country_iso3": "DEU",
-      "primary_dclo_domain": "AGR",
-      "count": 52
-    },
-    {
-      "country_iso3": "NGA",
-      "primary_dclo_domain": "ECO",
-      "count": 50
+      "count": 55
     },
     {
       "country_iso3": "USA",
       "primary_dclo_domain": "ECO",
-      "count": 50
-    },
-    {
-      "country_iso3": "IND",
-      "primary_dclo_domain": "ECO",
-      "count": 48
+      "count": 51
     },
     {
       "country_iso3": "CHN",
       "primary_dclo_domain": "OUT",
+      "count": 48
+    },
+    {
+      "country_iso3": "DEU",
+      "primary_dclo_domain": "AGR",
+      "count": 48
+    },
+    {
+      "country_iso3": "NGA",
+      "primary_dclo_domain": "ECO",
       "count": 47
     },
     {
-      "country_iso3": "AUS",
-      "primary_dclo_domain": "SKL",
+      "country_iso3": "JPN",
+      "primary_dclo_domain": "AGR",
+      "count": 46
+    },
+    {
+      "country_iso3": "IND",
+      "primary_dclo_domain": "ECO",
+      "count": 45
+    },
+    {
+      "country_iso3": "CAN",
+      "primary_dclo_domain": "ACC",
+      "count": 38
+    },
+    {
+      "country_iso3": "MEX",
+      "primary_dclo_domain": "ACC",
       "count": 36
     },
     {
       "country_iso3": "KOR",
       "primary_dclo_domain": "ACC",
-      "count": 36
-    },
-    {
-      "country_iso3": "CAN",
-      "primary_dclo_domain": "ACC",
       "count": 35
     },
     {
-      "country_iso3": "MEX",
-      "primary_dclo_domain": "ACC",
+      "country_iso3": "AUS",
+      "primary_dclo_domain": "SKL",
       "count": 34
     },
     {
       "country_iso3": "KOR",
       "primary_dclo_domain": "AGR",
-      "count": 31
+      "count": 33
     },
     {
       "country_iso3": "MEX",
       "primary_dclo_domain": "AGR",
-      "count": 31
+      "count": 30
     },
     {
       "country_iso3": "CAN",
       "primary_dclo_domain": "AGR",
-      "count": 28
+      "count": 27
     },
     {
       "country_iso3": "JPN",
@@ -1039,17 +1049,27 @@
     {
       "country_iso3": "BRA",
       "primary_dclo_domain": "ACC",
-      "count": 25
+      "count": 24
     },
     {
       "country_iso3": "CAN",
       "primary_dclo_domain": "SKL",
-      "count": 25
+      "count": 24
+    },
+    {
+      "country_iso3": "USA",
+      "primary_dclo_domain": "ACC",
+      "count": 23
+    },
+    {
+      "country_iso3": "KOR",
+      "primary_dclo_domain": "OUT",
+      "count": 22
     },
     {
       "country_iso3": "CHN",
       "primary_dclo_domain": "AGR",
-      "count": 23
+      "count": 22
     },
     {
       "country_iso3": "ESP",
@@ -1057,9 +1077,9 @@
       "count": 22
     },
     {
-      "country_iso3": "KOR",
-      "primary_dclo_domain": "OUT",
-      "count": 22
+      "country_iso3": "ARE",
+      "primary_dclo_domain": "ACC",
+      "count": 21
     },
     {
       "country_iso3": "USA",
@@ -1069,11 +1089,6 @@
     {
       "country_iso3": "IND",
       "primary_dclo_domain": "SKL",
-      "count": 21
-    },
-    {
-      "country_iso3": "USA",
-      "primary_dclo_domain": "ACC",
       "count": 20
     },
     {
@@ -1082,29 +1097,39 @@
       "count": 19
     },
     {
-      "country_iso3": "ARE",
-      "primary_dclo_domain": "ACC",
+      "country_iso3": "NGA",
+      "primary_dclo_domain": "SKL",
       "count": 18
     },
     {
       "country_iso3": "KOR",
       "primary_dclo_domain": "SKL",
-      "count": 18
-    },
-    {
-      "country_iso3": "GBR",
-      "primary_dclo_domain": "SKL",
       "count": 17
     },
     {
-      "country_iso3": "NGA",
-      "primary_dclo_domain": "SKL",
-      "count": 15
+      "country_iso3": "KEN",
+      "primary_dclo_domain": "UNMAPPED",
+      "count": 16
     },
     {
       "country_iso3": "IDN",
       "primary_dclo_domain": "OUT",
+      "count": 16
+    },
+    {
+      "country_iso3": "GBR",
+      "primary_dclo_domain": "SKL",
+      "count": 16
+    },
+    {
+      "country_iso3": "CHN",
+      "primary_dclo_domain": "ECO",
       "count": 15
+    },
+    {
+      "country_iso3": "FRA",
+      "primary_dclo_domain": "SKL",
+      "count": 14
     },
     {
       "country_iso3": "BRA",
@@ -1112,29 +1137,19 @@
       "count": 14
     },
     {
-      "country_iso3": "KEN",
-      "primary_dclo_domain": "UNMAPPED",
+      "country_iso3": "MEX",
+      "primary_dclo_domain": "ECO",
       "count": 14
     },
     {
       "country_iso3": "ZAF",
       "primary_dclo_domain": "ACC",
-      "count": 14
+      "count": 13
     },
     {
       "country_iso3": "FRA",
-      "primary_dclo_domain": "SKL",
-      "count": 14
-    },
-    {
-      "country_iso3": "CHN",
-      "primary_dclo_domain": "ECO",
-      "count": 14
-    },
-    {
-      "country_iso3": "MEX",
-      "primary_dclo_domain": "ECO",
-      "count": 13
+      "primary_dclo_domain": "OUT",
+      "count": 12
     },
     {
       "country_iso3": "CHN",
@@ -1143,16 +1158,6 @@
     },
     {
       "country_iso3": "SAU",
-      "primary_dclo_domain": "OUT",
-      "count": 12
-    },
-    {
-      "country_iso3": "SGP",
-      "primary_dclo_domain": "AGR",
-      "count": 12
-    },
-    {
-      "country_iso3": "FRA",
       "primary_dclo_domain": "OUT",
       "count": 12
     },
@@ -1162,9 +1167,24 @@
       "count": 11
     },
     {
+      "country_iso3": "DEU",
+      "primary_dclo_domain": "OUT",
+      "count": 11
+    },
+    {
+      "country_iso3": "GBR",
+      "primary_dclo_domain": "AGR",
+      "count": 10
+    },
+    {
+      "country_iso3": "SGP",
+      "primary_dclo_domain": "AGR",
+      "count": 10
+    },
+    {
       "country_iso3": "SGP",
       "primary_dclo_domain": "ECO",
-      "count": 11
+      "count": 10
     },
     {
       "country_iso3": "SAU",
@@ -1174,16 +1194,6 @@
     {
       "country_iso3": "MEX",
       "primary_dclo_domain": "SKL",
-      "count": 10
-    },
-    {
-      "country_iso3": "DEU",
-      "primary_dclo_domain": "OUT",
-      "count": 10
-    },
-    {
-      "country_iso3": "GBR",
-      "primary_dclo_domain": "AGR",
       "count": 9
     },
     {
@@ -1192,14 +1202,19 @@
       "count": 9
     },
     {
-      "country_iso3": "DEU",
-      "primary_dclo_domain": "SKL",
+      "country_iso3": "ZAF",
+      "primary_dclo_domain": "AGR",
       "count": 9
     },
     {
       "country_iso3": "IDN",
       "primary_dclo_domain": "ECO",
       "count": 9
+    },
+    {
+      "country_iso3": "DEU",
+      "primary_dclo_domain": "SKL",
+      "count": 8
     },
     {
       "country_iso3": "ARE",
@@ -1209,11 +1224,6 @@
     {
       "country_iso3": "IDN",
       "primary_dclo_domain": "AGR",
-      "count": 8
-    },
-    {
-      "country_iso3": "KEN",
-      "primary_dclo_domain": "ACC",
       "count": 8
     },
     {
@@ -1222,9 +1232,9 @@
       "count": 7
     },
     {
-      "country_iso3": "ARE",
-      "primary_dclo_domain": "OUT",
-      "count": 6
+      "country_iso3": "KEN",
+      "primary_dclo_domain": "ACC",
+      "count": 7
     },
     {
       "country_iso3": "QAT",
@@ -1232,8 +1242,28 @@
       "count": 6
     },
     {
+      "country_iso3": "ARE",
+      "primary_dclo_domain": "OUT",
+      "count": 6
+    },
+    {
+      "country_iso3": "BRA",
+      "primary_dclo_domain": "ECO",
+      "count": 5
+    },
+    {
+      "country_iso3": "GBR",
+      "primary_dclo_domain": "ACC",
+      "count": 5
+    },
+    {
       "country_iso3": "NGA",
       "primary_dclo_domain": "AGR",
+      "count": 5
+    },
+    {
+      "country_iso3": "IDN",
+      "primary_dclo_domain": "SKL",
       "count": 5
     },
     {
@@ -1247,23 +1277,8 @@
       "count": 5
     },
     {
-      "country_iso3": "BRA",
-      "primary_dclo_domain": "SKL",
-      "count": 5
-    },
-    {
-      "country_iso3": "IDN",
-      "primary_dclo_domain": "ACC",
-      "count": 4
-    },
-    {
-      "country_iso3": "BRA",
-      "primary_dclo_domain": "ECO",
-      "count": 4
-    },
-    {
-      "country_iso3": "GBR",
-      "primary_dclo_domain": "ACC",
+      "country_iso3": "MEX",
+      "primary_dclo_domain": "SRV",
       "count": 4
     },
     {
@@ -1272,22 +1287,12 @@
       "count": 4
     },
     {
-      "country_iso3": "ZAF",
-      "primary_dclo_domain": "ECO",
-      "count": 4
-    },
-    {
-      "country_iso3": "MEX",
-      "primary_dclo_domain": "SRV",
+      "country_iso3": "IDN",
+      "primary_dclo_domain": "ACC",
       "count": 4
     },
     {
       "country_iso3": "ZAF",
-      "primary_dclo_domain": "AGR",
-      "count": 4
-    },
-    {
-      "country_iso3": "KEN",
       "primary_dclo_domain": "ECO",
       "count": 4
     },
@@ -1297,23 +1302,13 @@
       "count": 4
     },
     {
-      "country_iso3": "IDN",
-      "primary_dclo_domain": "SKL",
-      "count": 3
-    },
-    {
-      "country_iso3": "JPN",
-      "primary_dclo_domain": "OUT",
-      "count": 3
+      "country_iso3": "KEN",
+      "primary_dclo_domain": "ECO",
+      "count": 4
     },
     {
       "country_iso3": "SGP",
       "primary_dclo_domain": "SKL",
-      "count": 3
-    },
-    {
-      "country_iso3": "AUS",
-      "primary_dclo_domain": "ECO",
       "count": 3
     },
     {
@@ -1322,9 +1317,24 @@
       "count": 3
     },
     {
-      "country_iso3": "IND",
-      "primary_dclo_domain": "SRV",
+      "country_iso3": "BRA",
+      "primary_dclo_domain": "SKL",
       "count": 3
+    },
+    {
+      "country_iso3": "ARE",
+      "primary_dclo_domain": "SKL",
+      "count": 3
+    },
+    {
+      "country_iso3": "AUS",
+      "primary_dclo_domain": "ECO",
+      "count": 3
+    },
+    {
+      "country_iso3": "CAN",
+      "primary_dclo_domain": "SRV",
+      "count": 2
     },
     {
       "country_iso3": "AUS",
@@ -1332,8 +1342,28 @@
       "count": 2
     },
     {
+      "country_iso3": "QAT",
+      "primary_dclo_domain": "ACC",
+      "count": 2
+    },
+    {
+      "country_iso3": "KEN",
+      "primary_dclo_domain": "AGR",
+      "count": 2
+    },
+    {
+      "country_iso3": "IND",
+      "primary_dclo_domain": "SRV",
+      "count": 2
+    },
+    {
       "country_iso3": "JPN",
       "primary_dclo_domain": "ECO",
+      "count": 2
+    },
+    {
+      "country_iso3": "ESP",
+      "primary_dclo_domain": "AGR",
       "count": 2
     },
     {
@@ -1342,16 +1372,6 @@
       "count": 2
     },
     {
-      "country_iso3": "CAN",
-      "primary_dclo_domain": "SRV",
-      "count": 2
-    },
-    {
-      "country_iso3": "ARE",
-      "primary_dclo_domain": "SKL",
-      "count": 2
-    },
-    {
       "country_iso3": "SAU",
       "primary_dclo_domain": "AGR",
       "count": 2
@@ -1372,8 +1392,8 @@
       "count": 2
     },
     {
-      "country_iso3": "QAT",
-      "primary_dclo_domain": "ACC",
+      "country_iso3": "JPN",
+      "primary_dclo_domain": "OUT",
       "count": 2
     },
     {
@@ -1382,13 +1402,13 @@
       "count": 2
     },
     {
-      "country_iso3": "KEN",
-      "primary_dclo_domain": "AGR",
-      "count": 2
-    },
-    {
       "country_iso3": "ARE",
       "primary_dclo_domain": "ECO",
+      "count": 1
+    },
+    {
+      "country_iso3": "CAN",
+      "primary_dclo_domain": "OUT",
       "count": 1
     },
     {
